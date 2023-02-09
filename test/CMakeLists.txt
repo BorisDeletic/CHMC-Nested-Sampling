@@ -1,6 +1,5 @@
 include(GoogleTest)
 
-
 add_executable(first_test
         first_test.cpp
 )
