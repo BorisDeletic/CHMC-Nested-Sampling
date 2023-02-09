@@ -1,0 +1,6 @@
+[submodule "extern/googletest"]
+	path = extern/googletest
+	url = https://github.com/google/googletest.git
+[submodule "extern/enzyme"]
+	path = extern/enzyme
+	url = https://github.com/EnzymeAD/Enzyme.git
