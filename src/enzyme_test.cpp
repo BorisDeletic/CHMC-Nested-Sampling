@@ -4,6 +4,7 @@ int enzyme_dup;
 int enzyme_const;
 
 extern double __enzyme_autodiff(...);
+
 double sumarray(double* x, int size) {
     double sum = 0;
     for (int i = 0; i < size; i++) {

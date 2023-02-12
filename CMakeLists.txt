@@ -23,6 +23,7 @@ if(PACKAGE_TESTS)
     add_subdirectory(extern/googletest)
 endif()
 
+
 # Find Enzyme Package
 find_package(Enzyme REQUIRED COMPONENTS ClangEnzyme)
 
@@ -36,6 +37,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
 add_executable(CHMC_Nested_Sampling main.cpp)
 
 add_subdirectory(src)
-#target_include_directories(CHMC_Nested_Sampling PUBLIC include)
+#add_subdirectory(likelihood)
+
+target_include_directories(CHMC_Nested_Sampling PUBLIC include)
+#target_include_directories(CHMC_Nested_Sampling PUBLIC likelihood)
+
+#target_link_libraries(CHMC_Nested_Sampling Likelihood)
 target_link_libraries(CHMC_Nested_Sampling CHMC_NS_Lib)
 
