@@ -8,7 +8,7 @@ int enzyme_dup;
 int enzyme_const;
 extern double __enzyme_autodiff(...);
 
-double likelihood(double* theta, int n) {
+double Likelihood::likelihood(double* theta, int n) {
     double sum = 0;
     for (int i = 0; i < n; i++) {
         sum += theta[i] * theta[i] * theta[i];
@@ -16,7 +16,7 @@ double likelihood(double* theta, int n) {
     return sum;
 }
 
-double gradient(double* theta, double* d_theta, int size) {
+double Likelihood::gradient(double* theta, double* d_theta, int size) {
     return __enzyme_autodiff(likelihood,
                              enzyme_dup, theta, d_theta,
                              enzyme_const, size);
