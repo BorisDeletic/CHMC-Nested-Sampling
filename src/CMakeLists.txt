@@ -4,7 +4,7 @@ find_package(Eigen3)
 
 set(LIB_SOURCES
         CHMC/CHMC.cpp
-        CHMC/Leapfrog.cpp CHMC/Leapfrog.h)
+        CHMC/LeapfrogIntegrator.cpp CHMC/LeapfrogIntegrator.h)
 
 add_library(CHMC_NS_Lib ${LIB_SOURCES})
 

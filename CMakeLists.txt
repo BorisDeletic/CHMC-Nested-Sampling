@@ -8,7 +8,7 @@ message("Found LLVM at: " ${Enzyme_LLVM_BINARY_DIR})
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_C_COMPILER "${Enzyme_LLVM_BINARY_DIR}/bin/clang")
-set(CMAKE_CXX_COMPILER "${Enzyme_LLVM_BINARY_DIR}/bin/clang")
+set(CMAKE_CXX_COMPILER "${Enzyme_LLVM_BINARY_DIR}/bin/clang++")
 set(CMAKE_MODULE_PATH
         ${CMAKE_MODULE_PATH}
         "${PROJECT_SOURCE_DIR}/cmake")
@@ -41,9 +41,11 @@ add_executable(CHMC_Nested_Sampling main.cpp)
 add_subdirectory(src)
 add_subdirectory(likelihood)
 
-target_include_directories(CHMC_Nested_Sampling PUBLIC include)
-target_include_directories(CHMC_Nested_Sampling PUBLIC likelihood)
+target_include_directories(CHMC_Nested_Sampling PUBLIC
+        include
+        likelihood)
 
-target_link_libraries(CHMC_Nested_Sampling Likelihood)
-target_link_libraries(CHMC_Nested_Sampling CHMC_NS_Lib)
+target_link_libraries(CHMC_Nested_Sampling
+        CHMC_NS_Lib
+        Likelihood)
 
