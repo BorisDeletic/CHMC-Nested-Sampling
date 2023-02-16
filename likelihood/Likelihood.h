@@ -7,7 +7,7 @@
 
 class Likelihood {
 public:
-    static double likelihood(double *theta, int n);
+    static double likelihood(double* theta, int size);
     static double gradient(double* theta, double* d_theta, int size);
 };
 

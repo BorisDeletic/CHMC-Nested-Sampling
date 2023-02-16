@@ -1,11 +1,13 @@
 include(GoogleTest)
 
-add_executable(first_test
+add_executable(CMHC_Test
         first_test.cpp
+#        CHMC/Leapfrog.cpp
 )
 
-target_link_libraries(first_test
+target_link_libraries(CMHC_Test
+    #    GTest::gtest
         GTest::gtest_main
 )
 
-gtest_discover_tests(first_test)
+gtest_discover_tests(CMHC_Test)

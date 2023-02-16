@@ -19,10 +19,12 @@ project(CHMC_Nested_Sampling)
 option(PACKAGE_TESTS "Build the tests" ON)
 if(PACKAGE_TESTS)
     enable_testing()
+    include(GoogleTest)
     add_subdirectory(test)
     add_subdirectory(extern/googletest)
 endif()
 
+add_subdirectory(extern/eigen)
 
 # Find Enzyme Package
 find_package(Enzyme REQUIRED COMPONENTS ClangEnzyme)

@@ -4,17 +4,19 @@
 
 #include "Likelihood.h"
 
-int enzyme_dup;
-int enzyme_const;
-extern double __enzyme_autodiff(...);
-
-double Likelihood::likelihood(double* theta, int n) {
+//log likelihood
+double Likelihood::likelihood(double* theta, int size) {
     double sum = 0;
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < size; i++) {
         sum += theta[i] * theta[i] * theta[i];
     }
     return sum;
 }
+
+
+int enzyme_dup;
+int enzyme_const;
+extern double __enzyme_autodiff(...);
 
 double Likelihood::gradient(double* theta, double* d_theta, int size) {
     return __enzyme_autodiff(likelihood,
