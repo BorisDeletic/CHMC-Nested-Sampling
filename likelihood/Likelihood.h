@@ -5,10 +5,10 @@
 #ifndef CHMC_NESTED_SAMPLING_LIKELIHOOD_H
 #define CHMC_NESTED_SAMPLING_LIKELIHOOD_H
 
-class Likelihood {
-public:
-    static double likelihood(double* theta, int size);
-    static double gradient(double* theta, double* d_theta, int size);
+namespace Likelihood
+{
+    double likelihood(double* theta, int size);
+    double gradient(double* theta, double* d_theta, int size);
 };
 
 //double likelihood(double* theta, int n);

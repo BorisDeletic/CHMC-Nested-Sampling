@@ -1,14 +1,12 @@
 #include "LeapfrogIntegrator.h"
 #include <stdexcept>
 
-LeapfrogIntegrator::LeapfrogIntegrator(const double epsilon, const int dimension)
+
+LeapfrogIntegrator::LeapfrogIntegrator(const double epsilon)
     :
     mEpsilon(epsilon),
     mXUpdatedBeforeP(false)
 {
-    mX.resize(dimension);
-    mP.resize(dimension);
-    mHalfstepP.resize(dimension);
 }
 
 
@@ -22,7 +20,7 @@ void LeapfrogIntegrator::UpdateX(const Eigen::VectorXd &a) {
 // mHalfstepP must be calculated using previous position for correctness.
 void LeapfrogIntegrator::UpdateP(const Eigen::VectorXd &a) {
     if (!mXUpdatedBeforeP) {
-        throw std::runtime_error("LEAPFROG: Position X was not updated before Momentum P.");
+        throw std::runtime_error("LEAPFROG_INTEGRATOR: Position X was not updated before Momentum P.");
     }
 
     mP = mHalfstepP + 0.5 * mEpsilon * a;
@@ -31,7 +29,9 @@ void LeapfrogIntegrator::UpdateP(const Eigen::VectorXd &a) {
 }
 
 void LeapfrogIntegrator::SetP(const Eigen::VectorXd &p) {
-    mHalfstepP = mHalfstepP - mP + p; // change halfstepP to be retroactively calcuted with new p.
     mP = p;
+
+   // mHalfstepP.resize(p.size()); // no operation if halfstep == p
+    mHalfstepP = mHalfstepP - mP + p; // change halfstepP to be retroactively calcuted with new p.
 }
 

@@ -19,7 +19,7 @@ protected:
     Eigen::Vector2d a {{-1.0, -1.0}};
     Eigen::Vector2d zero {{0, 0}};
 
-    LeapfrogIntegrator l_integrator = LeapfrogIntegrator(0.1, 2);
+    LeapfrogIntegrator l_integrator = LeapfrogIntegrator(0.1);
 };
 
 TEST_F(LeapfrogTest, UpdateIncorrectOrder) {
