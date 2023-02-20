@@ -8,7 +8,7 @@
 // Constrained Hamiltonian class. Trajectory reflects off likelihood constraint boundary.
 class Hamiltonian {
 public:
-    Hamiltonian(double epsilon);
+    Hamiltonian(double epsilon, int dimension);
 
     const Eigen::VectorXd& GetX() const { return mIntegrator.GetX(); };
     const Eigen::VectorXd& GetP() const { return mIntegrator.GetP(); };
@@ -17,11 +17,14 @@ public:
     void Evolve(int steps);
 private:
     void UpdateGradient(const Eigen::VectorXd& x);
+    void UpdateLikelihood(const Eigen::VectorXd& x);
 
     LeapfrogIntegrator mIntegrator;
 
     Eigen::VectorXd mGradient;
+    double mLikelihood;
     double mLikelihoodConstraint;
+    const int mDimension;
 };
 
 

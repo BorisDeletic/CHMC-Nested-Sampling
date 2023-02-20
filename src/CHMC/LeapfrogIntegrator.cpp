@@ -31,7 +31,7 @@ void LeapfrogIntegrator::UpdateP(const Eigen::VectorXd &a) {
 void LeapfrogIntegrator::SetP(const Eigen::VectorXd &p) {
     mP = p;
 
-   // mHalfstepP.resize(p.size()); // no operation if halfstep == p
+    mHalfstepP.resize(p.size()); // no operation if halfstep == p
     mHalfstepP = mHalfstepP - mP + p; // change halfstepP to be retroactively calcuted with new p.
 }
 
