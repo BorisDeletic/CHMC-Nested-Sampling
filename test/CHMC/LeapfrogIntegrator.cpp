@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include "LeapfrogIntegrator.h"
+#include <gtest/gtest.h>
 #include <Eigen/Dense>
 #include <stdexcept>
 

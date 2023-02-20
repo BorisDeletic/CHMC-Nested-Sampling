@@ -11,9 +11,7 @@ set(LIB_SOURCES
 add_library(CHMC_NS_Lib ${LIB_SOURCES})
 
 target_link_libraries(CHMC_NS_Lib
-        Likelihood
         Eigen3::Eigen)
 
 target_include_directories(CHMC_NS_Lib PUBLIC
-        ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR}/likelihood)
+        ${PROJECT_SOURCE_DIR}/include)

@@ -1,49 +1,36 @@
 #include "Hamiltonian.h"
-#include "Likelihood.h"
 
-Hamiltonian::Hamiltonian(const double epsilon, const int dimension)
+
+Hamiltonian::Hamiltonian(ILikelihood& likelihood, const double epsilon)
     :
-        mIntegrator(epsilon),
-        mDimension(dimension)
+        mLikelihood(likelihood),
+        mIntegrator(epsilon)
 {
-    mGradient.resize(mDimension);
 }
 
 void Hamiltonian::SetHamiltonian(const Eigen::VectorXd &x, const Eigen::VectorXd &p, const double likelihoodConstraint) {
-    assert((x.size() == mDimension) && (p.size() == mDimension));
     mIntegrator.SetX(x);
     mIntegrator.SetP(p);
 
     mLikelihoodConstraint = likelihoodConstraint;
 
-    UpdateGradient(x);
+    mGradient = mLikelihood.Gradient(mIntegrator.GetX());
 }
 
 
-void Hamiltonian::Evolve(const int steps) {
-
-    for (int i = 0; i < steps; i++) {
+void Hamiltonian::Evolve(const int steps)
+{
+    for (int i = 0; i < steps; i++)
+    {
         mIntegrator.UpdateX(mGradient);
 
-        UpdateLikelihood(mIntegrator.GetX());
-        UpdateGradient(mIntegrator.GetX());
+        mCurrentLikelihood = mLikelihood.Likelihood(mIntegrator.GetX());
+        mGradient = mLikelihood.Gradient(mIntegrator.GetX());
 
-        // Reflections off likehood countour here.
+        // Reflections off likelihood contour here.
 
         mIntegrator.UpdateP(mGradient);
     }
-}
-
-
-void Hamiltonian::UpdateGradient(const Eigen::VectorXd &x) {
-    memset(mGradient.data(), 0, mDimension * sizeof(double));
-
-    Likelihood::gradient(const_cast<double *>(x.data()), mGradient.data(), mDimension);
-}
-
-
-void Hamiltonian::UpdateLikelihood(const Eigen::VectorXd &x) {
-    mLikelihood = Likelihood::likelihood(const_cast<double *>(x.data()), mDimension);
 }
 
 

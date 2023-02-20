@@ -3,6 +3,7 @@ include(GoogleTest)
 
 add_executable(CHMC_Test
         CHMC/LeapfrogIntegrator.cpp
+        CHMC/Hamiltonian.cpp
 )
 
 target_include_directories(CHMC_Test PRIVATE
@@ -11,6 +12,7 @@ target_include_directories(CHMC_Test PRIVATE
 
 target_link_libraries(CHMC_Test
         GTest::gtest_main
+        GTest::gmock_main
         CHMC_NS_Lib
 )
 
