@@ -1,7 +1,3 @@
-//
-// Created by Boris Deletic on 14/02/2023.
-//
-
 #ifndef CHMC_NESTED_SAMPLING_POINT_H
 #define CHMC_NESTED_SAMPLING_POINT_H
 

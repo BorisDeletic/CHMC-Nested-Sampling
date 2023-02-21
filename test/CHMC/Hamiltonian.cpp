@@ -33,16 +33,49 @@ protected:
 
 
 TEST_F(HamiltonianTest, ZeroGradientEvolve) {
-    int steps = 10;
+    int steps = 15;
 
     EXPECT_CALL(likelihood, Likelihood(_))
             .Times(steps)
             .WillRepeatedly(Return(0));
+
     EXPECT_CALL(likelihood, Gradient(_))
             .Times(steps)
             .WillRepeatedly(Return(zero));
 
     hamiltonian.Evolve(steps);
+    const Eigen::VectorXd& xf = hamiltonian.GetX();
+
+    EXPECT_DOUBLE_EQ(xf[0], -0.5);
+    EXPECT_DOUBLE_EQ(xf[1], 4.0);
+}
 
 
+TEST_F(HamiltonianTest, CircularMotionEvolve) {
+    const double tolerance = 1e-3;
+    const double k = 0.1;
+    int steps = 50;
+
+    EXPECT_CALL(likelihood, Likelihood(_))
+            .Times(steps)
+            .WillRepeatedly(Return(0));
+
+    EXPECT_CALL(likelihood, Gradient(_))
+            .Times(steps + 1)
+            .WillRepeatedly([k] (const Eigen::VectorXd& x) {
+                return - k * x / pow(x.norm(), 1.5);
+            });
+
+    //set init conditions
+    Eigen::Vector2d x {{0.0, 1.0}};
+    Eigen::Vector2d p {{sqrt(k), 0.0}};
+    hamiltonian.SetHamiltonian(x, p, likelihoodConstraint);
+
+    hamiltonian.Evolve(steps);
+
+    const Eigen::VectorXd& xf = hamiltonian.GetX();
+
+    EXPECT_NEAR(xf.norm(), 1.0, tolerance);
+    EXPECT_NEAR(xf[0], 1.0, 0.1);
+    EXPECT_NEAR(xf[1], 0.0, 0.1);
 }
