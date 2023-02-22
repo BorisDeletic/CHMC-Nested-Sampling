@@ -1,8 +1,9 @@
 #include "types.h"
 #include "ILikelihood.h"
-#include "Hamiltonian.h"
 #include <Eigen/Dense>
 #include <random>
+
+class Hamiltonian;
 
 // Constrained HMC
 class CHMC {
@@ -13,7 +14,7 @@ public:
 private:
     Eigen::VectorXd SampleMomentum(int size);
 
-    Hamiltonian mHamiltonian;
+    std::unique_ptr<Hamiltonian> mHamiltonian;
 
     const int mPathLength;
     std::normal_distribution<double> mNorm;
