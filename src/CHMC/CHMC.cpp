@@ -1,7 +1,6 @@
 #include "CHMC.h"
-
-#include <memory>
 #include "Hamiltonian.h"
+#include <memory>
 
 CHMC::CHMC(ILikelihood& likelihood, double epsilon, int pathLength)
     :
@@ -23,17 +22,13 @@ Eigen::VectorXd CHMC::SampleMomentum(const int size) {
 
 
 MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint) {
-    Eigen::Map<const Eigen::VectorXd> x(old.theta, old.size);
-    const Eigen::VectorXd p = SampleMomentum(old.size);
+    const Eigen::VectorXd p = SampleMomentum(old.theta.size());
 
-    mHamiltonian->SetHamiltonian(x, p, likelihoodConstraint);
+    mHamiltonian->SetHamiltonian(old.theta, p, likelihoodConstraint);
     mHamiltonian->Evolve(mPathLength);
 
-    const double* newTheta = static_cast<const double *>(mHamiltonian->GetX().data());
-
     MCPoint newPoint = {
-            newTheta,
-            old.size,
+            mHamiltonian->GetX(),
             mHamiltonian->GetLikelihood()
     };
 

@@ -1,16 +1,11 @@
 #include "Hamiltonian.h"
+#include "../MockLikelihood.h"
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <Eigen/Dense>
 
 using ::testing::_;
 using ::testing::Return;
-class MockLikelihood : public ILikelihood {
-public:
-    MOCK_METHOD(double, Likelihood, (const Eigen::VectorXd&), (override));
-    MOCK_METHOD(Eigen::VectorXd, Gradient, (const Eigen::VectorXd&), (override));
-};
-
 
 class HamiltonianTest : public ::testing::Test {
 protected:
