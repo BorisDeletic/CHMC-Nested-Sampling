@@ -6,6 +6,8 @@ set(LIB_SOURCES
         CHMC/CHMC.cpp
         CHMC/LeapfrogIntegrator.cpp CHMC/LeapfrogIntegrator.h
         CHMC/Hamiltonian.cpp CHMC/Hamiltonian.h
+        Logger.cpp Logger.h
+        NestedSampler.cpp
         )
 
 add_library(CHMC_NS_Lib ${LIB_SOURCES})

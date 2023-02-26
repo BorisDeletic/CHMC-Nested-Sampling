@@ -9,5 +9,9 @@ typedef struct MCPoint {
     const double likelihood;
 } MCPoint;
 
+bool operator<(const MCPoint& a, const MCPoint& b) {
+    return a.likelihood < b.likelihood;
+}
+
 
 #endif //CHMC_NESTED_SAMPLING_TYPES_H

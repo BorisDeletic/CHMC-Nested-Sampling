@@ -11,6 +11,8 @@ CHMC::CHMC(ILikelihood& likelihood, double epsilon, int pathLength)
     mHamiltonian = std::make_unique<Hamiltonian>(likelihood, epsilon);
 }
 
+CHMC::~CHMC() = default;
+
 // Normally distributed
 Eigen::VectorXd CHMC::SampleMomentum(const int size) {
     Eigen::VectorXd v = Eigen::VectorXd::NullaryExpr(size, [&](){
@@ -34,3 +36,4 @@ MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint) {
 
     return newPoint;
 }
+

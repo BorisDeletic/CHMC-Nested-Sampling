@@ -5,7 +5,7 @@ add_executable(CHMC_Test
         CHMC/LeapfrogIntegrator.cpp
         CHMC/Hamiltonian.cpp
         MockLikelihood.h
-        CHMC/CHMC.cpp)
+        CHMC/GaussianCHMC.cpp)
 
 target_include_directories(CHMC_Test PRIVATE
         ${PROJECT_SOURCE_DIR}/include

@@ -11,17 +11,30 @@ public:
 };
 
 
-const double GaussianLogLikelihood(const Eigen::ArrayXd& theta, const Eigen::ArrayXd& mean, const Eigen::ArrayXd& var) {
-    double loglikelihood = - var.log().sum() - var.size() * std::log(2 * M_PI) / 2;
+class GaussianLogLikelihood : public ILikelihood {
+public:
+    inline GaussianLogLikelihood(const Eigen::ArrayXd& mean, const Eigen::ArrayXd& var) :
+        mean(mean), var(var) {};
 
-    loglikelihood -= ((theta - mean) / var).pow(2).sum() / 2;
 
-    return loglikelihood;
-}
+    double Likelihood(const Eigen::VectorXd& theta)
+    {
+        double loglikelihood = - var.log().sum() - var.size() * std::log(2 * M_PI) / 2;
 
-Eigen::VectorXd GaussianGradient(const Eigen::ArrayXd& theta, const Eigen::ArrayXd& mean, const Eigen::ArrayXd& var) {
-    return ((theta - mean) / var.pow(2)).matrix();
-}
+        loglikelihood -= ((theta.array() - mean) / var).pow(2).sum() / 2;
+        return loglikelihood;
+    };
+
+    Eigen::VectorXd Gradient(const Eigen::VectorXd& theta)
+    {
+        return - ((theta.array() - mean) / var.pow(2)).matrix();
+    };
+
+private:
+    const Eigen::ArrayXd mean;
+    const Eigen::ArrayXd var;
+};
+
 
 
 #endif //CHMC_NESTED_SAMPLING_MOCKLIKELIHOOD_H
