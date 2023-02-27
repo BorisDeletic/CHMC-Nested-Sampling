@@ -23,6 +23,8 @@ NestedSampler::NestedSampler(CHMC& chmc, IPrior& prior, ILikelihood& likelihood,
     }
 }
 
+NestedSampler::~NestedSampler() = default;
+
 
 void NestedSampler::Initialise() {
     for (int i = mLivePoints.size(); i < mNumLive; i++) {

@@ -1,5 +1,5 @@
 #include "Hamiltonian.h"
-#include "../MockLikelihood.h"
+#include "MockLikelihood.h"
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <Eigen/Dense>

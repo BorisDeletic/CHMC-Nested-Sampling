@@ -24,7 +24,7 @@ Eigen::VectorXd CHMC::SampleMomentum(const int size) {
 }
 
 
-MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint) {
+const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint) {
     const Eigen::VectorXd p = SampleMomentum(old.theta.size());
 
     mHamiltonian->SetHamiltonian(old.theta, p, likelihoodConstraint);

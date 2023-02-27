@@ -13,6 +13,7 @@ class Logger;
 class NestedSampler {
 public:
     NestedSampler(CHMC&, IPrior&, ILikelihood&, int numLive, std::string name);
+    ~NestedSampler();
 
     void Initialise();
     void Run(int steps);

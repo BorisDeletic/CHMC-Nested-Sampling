@@ -1,3 +1,6 @@
+#ifndef CHMC_NESTED_SAMPLING_CHMC_H
+#define CHMC_NESTED_SAMPLING_CHMC_H
+
 #include "types.h"
 #include "ILikelihood.h"
 #include <Eigen/Dense>
@@ -11,7 +14,7 @@ public:
     CHMC(ILikelihood&, double epsilon, int pathLength);
     ~CHMC();
 
-    MCPoint SamplePoint(const MCPoint& old, double likelihoodConstraint);
+    virtual const MCPoint SamplePoint(const MCPoint& old, double likelihoodConstraint);
 private:
     Eigen::VectorXd SampleMomentum(int size);
 
@@ -25,4 +28,5 @@ private:
     const int mPathLength;
 };
 
+#endif //CHMC_NESTED_SAMPLING_CHMC_H
 

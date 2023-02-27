@@ -1,21 +1,24 @@
 enable_testing()
 include(GoogleTest)
 
-add_executable(CHMC_Test
-        CHMC/LeapfrogIntegrator.cpp
-        CHMC/Hamiltonian.cpp
-        MockLikelihood.h
-        CHMC/GaussianCHMC.cpp)
 
-target_include_directories(CHMC_Test PRIVATE
-        ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR}/src/CHMC
+add_executable(NestedSampler_Test
+        NestedSampler.cpp
         )
 
-target_link_libraries(CHMC_Test
+target_include_directories(NestedSampler_Test PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/src
+        ${PROJECT_SOURCE_DIR}/test/mock
+        )
+
+target_link_libraries(NestedSampler_Test
         GTest::gtest_main
         GTest::gmock_main
         CHMC_NS_Lib
 )
 
-gtest_discover_tests(CHMC_Test)
+
+add_subdirectory(CHMC)
+
+gtest_discover_tests(NestedSampler_Test)

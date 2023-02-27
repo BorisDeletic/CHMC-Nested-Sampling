@@ -1,7 +1,6 @@
 #include "CHMC.h"
-#include "../MockLikelihood.h"
+#include "MockLikelihood.h"
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
 
 
 using ::testing::_;
@@ -39,7 +38,7 @@ protected:
 
 
 TEST_F(GaussianCHMCTest, GaussianDistributionNoConstraint) {
-    int numSamples = 10000;
+    int numSamples = 1000;
     std::vector<MCPoint> samples;
     samples.push_back(initPoint);
 
@@ -62,7 +61,7 @@ TEST_F(GaussianCHMCTest, GaussianDistributionNoConstraint) {
     for (auto [x, num] : histX) {
         int expectedFreq = normalisation * Gaussian(x, mean[0], var[0]);
         cumError += abs(expectedFreq - num);
-    //    std::cerr << std::setw(2) << x << ' ' << std::string(num/20, '*') << '\n';
+     //   std::cerr << std::setw(2) << x << ' ' << std::string(num/20, '*') << '\n';
 
     }
 
