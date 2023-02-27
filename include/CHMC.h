@@ -12,7 +12,6 @@ public:
     ~CHMC();
 
     MCPoint SamplePoint(const MCPoint& old, double likelihoodConstraint);
-    const int GetDimension() { mLikelihood.GetDimension(); };
 private:
     Eigen::VectorXd SampleMomentum(int size);
 

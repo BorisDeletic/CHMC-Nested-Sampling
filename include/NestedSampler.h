@@ -17,14 +17,15 @@ public:
     void Initialise();
     void Run(int steps);
 private:
-    MCPoint SampleFromPrior();
+    void NestedSamplingStep();
+    const MCPoint SampleFromPrior();
 
     CHMC& mCHMC;
     IPrior& mPrior;
     ILikelihood& mLikelihood;
     std::unique_ptr<Logger> mLogger;
 
-    std::set<MCPoint> mLivePoints;
+    std::multiset<MCPoint> mLivePoints;
     const int mNumLive;
     const int mDimension;
 

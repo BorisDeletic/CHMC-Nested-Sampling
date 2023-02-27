@@ -9,7 +9,7 @@ typedef struct MCPoint {
     const double likelihood;
 } MCPoint;
 
-bool operator<(const MCPoint& a, const MCPoint& b) {
+inline bool operator<(const MCPoint& a, const MCPoint& b) {
     return a.likelihood < b.likelihood;
 }
 

@@ -1,6 +1,8 @@
 #include "NestedSampler.h"
 #include "Logger.h"
 #include <stdexcept>
+#include <algorithm>
+#include <iostream>
 
 
 NestedSampler::NestedSampler(CHMC& chmc, IPrior& prior, ILikelihood& likelihood,
@@ -10,16 +12,17 @@ NestedSampler::NestedSampler(CHMC& chmc, IPrior& prior, ILikelihood& likelihood,
     mPrior(prior),
     mLikelihood(likelihood),
     mNumLive(numLive),
-    mDimension(mCHMC.GetDimension()),
+    mDimension(mLikelihood.GetDimension()),
     gen(rd()),
     mUniform(0,1),
     mName(name)
 {
     mLogger = std::make_unique<Logger>(mName);
-    if (mCHMC.GetDimension() != mPrior.GetDimension()) {
+    if (mLikelihood.GetDimension() != mPrior.GetDimension()) {
         throw std::runtime_error("LIKELIHOOD AND PRIOR HAVE DIFFERENT DIMENSIONS");
     }
 }
+
 
 void NestedSampler::Initialise() {
     for (int i = mLivePoints.size(); i < mNumLive; i++) {
@@ -28,11 +31,30 @@ void NestedSampler::Initialise() {
     }
 }
 
-void NestedSampler::Run(int steps) {
 
+void NestedSampler::Run(int steps) {
+    for (int i = 0; i < steps; i++) {
+        std::cout << "NS Step: " << i << std::endl;
+        NestedSamplingStep();
+    }
 }
 
-MCPoint NestedSampler::SampleFromPrior() {
+
+void NestedSampler::NestedSamplingStep() {
+    auto lowestIt = mLivePoints.begin();
+    const MCPoint& deadPoint = *lowestIt;
+    const double likelihoodConstraint = deadPoint.likelihood;
+
+    mLogger->WriteDeadPoint(deadPoint);
+
+    const MCPoint newPoint = mCHMC.SamplePoint(deadPoint, likelihoodConstraint);
+
+    mLivePoints.erase(lowestIt);
+    mLivePoints.insert(newPoint);
+}
+
+
+const MCPoint NestedSampler::SampleFromPrior() {
     Eigen::VectorXd cube = Eigen::VectorXd::NullaryExpr(mDimension, [&](){
         return mUniform(gen);
     });
@@ -45,5 +67,3 @@ MCPoint NestedSampler::SampleFromPrior() {
 
     return pointFromPrior;
 }
-
-

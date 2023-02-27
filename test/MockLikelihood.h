@@ -8,6 +8,7 @@ class MockLikelihood : public ILikelihood {
 public:
     MOCK_METHOD(double, Likelihood, (const Eigen::VectorXd&), (override));
     MOCK_METHOD(Eigen::VectorXd, Gradient, (const Eigen::VectorXd&), (override));
+    MOCK_METHOD(const int, GetDimension, (), (override));
 };
 
 
@@ -29,6 +30,8 @@ public:
     {
         return - ((theta.array() - mean) / var.pow(2)).matrix();
     };
+
+    const int GetDimension() { return mean.size(); };
 
 private:
     const Eigen::ArrayXd mean;
