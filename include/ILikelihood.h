@@ -7,6 +7,7 @@ class ILikelihood {
 public:
     virtual double Likelihood(const Eigen::VectorXd& x) = 0;
     virtual Eigen::VectorXd Gradient(const Eigen::VectorXd& x) = 0;
+    virtual const int GetDimension() = 0;
 };
 
 #endif //CHMC_NESTED_SAMPLING_ILIKELIHOOD_H

@@ -4,6 +4,7 @@
 
 CHMC::CHMC(ILikelihood& likelihood, double epsilon, int pathLength)
     :
+    mLikelihood(likelihood),
     mPathLength(pathLength),
     gen(rd()),
     mNorm(0,1)
@@ -13,7 +14,7 @@ CHMC::CHMC(ILikelihood& likelihood, double epsilon, int pathLength)
 
 CHMC::~CHMC() = default;
 
-// Normally distributed
+
 Eigen::VectorXd CHMC::SampleMomentum(const int size) {
     Eigen::VectorXd v = Eigen::VectorXd::NullaryExpr(size, [&](){
         return mNorm(gen);

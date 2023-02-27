@@ -4,7 +4,9 @@
 #include <Eigen/Dense>
 
 class IPrior {
+public:
     virtual const Eigen::VectorXd PriorTransform(const Eigen::VectorXd& cube) = 0;
+    virtual const int GetDimension() = 0;
 };
 
 #endif //CHMC_NESTED_SAMPLING_IPRIOR_H
