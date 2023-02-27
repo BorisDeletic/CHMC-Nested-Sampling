@@ -1,9 +1,11 @@
 #ifndef CHMC_NESTED_SAMPLING_NESTEDSAMPLING_H
 #define CHMC_NESTED_SAMPLING_NESTEDSAMPLING_H
 
-#include "CHMC.h"
+#include "ISampler.h"
+#include "ILikelihood.h"
 #include "IPrior.h"
 #include "types.h"
+#include <random>
 #include <memory>
 #include <string>
 #include <set>
@@ -12,7 +14,7 @@ class Logger;
 
 class NestedSampler {
 public:
-    NestedSampler(CHMC&, IPrior&, ILikelihood&, int numLive, std::string name);
+    NestedSampler(ISampler&, IPrior&, ILikelihood&, int numLive, std::string name);
     ~NestedSampler();
 
     void Initialise();
@@ -21,7 +23,7 @@ private:
     void NestedSamplingStep();
     const MCPoint SampleFromPrior();
 
-    CHMC& mCHMC;
+    ISampler& mSampler;
     IPrior& mPrior;
     ILikelihood& mLikelihood;
     std::unique_ptr<Logger> mLogger;

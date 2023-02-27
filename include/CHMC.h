@@ -1,20 +1,21 @@
 #ifndef CHMC_NESTED_SAMPLING_CHMC_H
 #define CHMC_NESTED_SAMPLING_CHMC_H
 
-#include "types.h"
+#include "ISampler.h"
 #include "ILikelihood.h"
+#include "types.h"
 #include <Eigen/Dense>
 #include <random>
 
 class Hamiltonian;
 
 // Constrained HMC
-class CHMC {
+class CHMC : public ISampler {
 public:
     CHMC(ILikelihood&, double epsilon, int pathLength);
     ~CHMC();
 
-    virtual const MCPoint SamplePoint(const MCPoint& old, double likelihoodConstraint);
+    const MCPoint SamplePoint(const MCPoint& old, double likelihoodConstraint);
 private:
     Eigen::VectorXd SampleMomentum(int size);
 

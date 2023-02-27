@@ -1,8 +1,0 @@
-#ifndef CHMC_NESTED_SAMPLING_MOCKCHMC_H
-#define CHMC_NESTED_SAMPLING_MOCKCHMC_H
-
-#include <gmock/gmock.h>
-
-
-
-#endif //CHMC_NESTED_SAMPLING_MOCKCHMC_H
