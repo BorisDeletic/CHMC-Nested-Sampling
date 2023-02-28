@@ -5,19 +5,18 @@
 #include <iostream>
 
 
-NestedSampler::NestedSampler(ISampler& sampler, IPrior& prior, ILikelihood& likelihood,
-                             int numLive, std::string name)
+NestedSampler::NestedSampler(ISampler& sampler, IPrior& prior, ILikelihood& likelihood, Logger& logger,
+                             int numLive)
     :
     mSampler(sampler),
     mPrior(prior),
     mLikelihood(likelihood),
+    mLogger(logger),
     mNumLive(numLive),
     mDimension(mLikelihood.GetDimension()),
     gen(rd()),
-    mUniform(0,1),
-    mName(name)
+    mUniform(0,1)
 {
-    mLogger = std::make_unique<Logger>(mName);
     if (mDimension != mPrior.GetDimension()) {
         throw std::runtime_error("LIKELIHOOD AND PRIOR HAVE DIFFERENT DIMENSIONS");
     }
@@ -47,7 +46,7 @@ void NestedSampler::NestedSamplingStep() {
     const MCPoint& deadPoint = *lowestIt;
     const double likelihoodConstraint = deadPoint.likelihood;
 
-    mLogger->WriteDeadPoint(deadPoint);
+    mLogger.WriteDeadPoint(deadPoint);
 
     const MCPoint newPoint = mSampler.SamplePoint(deadPoint, likelihoodConstraint);
 

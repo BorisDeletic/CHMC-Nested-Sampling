@@ -6,6 +6,7 @@
 
 class MockLogger : public Logger {
 public:
+    MockLogger() : Logger("MockLogger") {}
     MOCK_METHOD(void, WriteDeadPoint, (const MCPoint&), (override));
 };
 

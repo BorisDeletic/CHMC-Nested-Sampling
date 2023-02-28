@@ -6,7 +6,7 @@ set(LIB_SOURCES
         CHMC/CHMC.cpp
         CHMC/LeapfrogIntegrator.cpp CHMC/LeapfrogIntegrator.h
         CHMC/Hamiltonian.cpp CHMC/Hamiltonian.h
-        Logger.cpp Logger.h
+        Logger.cpp
         NestedSampler.cpp
         )
 

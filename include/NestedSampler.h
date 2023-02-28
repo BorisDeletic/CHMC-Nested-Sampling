@@ -14,7 +14,7 @@ class Logger;
 
 class NestedSampler {
 public:
-    NestedSampler(ISampler&, IPrior&, ILikelihood&, int numLive, std::string name);
+    NestedSampler(ISampler&, IPrior&, ILikelihood&, Logger&, int numLive);
     ~NestedSampler();
 
     void Initialise();
@@ -26,7 +26,7 @@ private:
     ISampler& mSampler;
     IPrior& mPrior;
     ILikelihood& mLikelihood;
-    std::unique_ptr<Logger> mLogger;
+    Logger& mLogger;
 
     std::multiset<MCPoint> mLivePoints;
     const int mNumLive;

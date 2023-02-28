@@ -36,7 +36,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
     -Xclang -load -Xclang ${ClangEnzyme} -O2 -fno-vectorize -fno-unroll-loops")
 
 
-add_executable(CHMC_Nested_Sampling main.cpp)
+add_executable(CHMC_Nested_Sampling
+        main.cpp
+        app/Gaussian.cpp app/Gaussian.h
+        )
 
 add_subdirectory(src)
 add_subdirectory(likelihood)
