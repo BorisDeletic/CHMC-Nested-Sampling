@@ -32,7 +32,8 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
 
     MCPoint newPoint = {
             mHamiltonian->GetX(),
-            mHamiltonian->GetLikelihood()
+            mHamiltonian->GetLikelihood(),
+            likelihoodConstraint
     };
 
     return newPoint;

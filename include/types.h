@@ -7,6 +7,7 @@
 typedef struct MCPoint {
     const Eigen::VectorXd theta;
     const double likelihood;
+    const double birthLikelihood;
 } MCPoint;
 
 inline bool operator<(const MCPoint& a, const MCPoint& b) {

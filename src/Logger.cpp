@@ -16,5 +16,5 @@ void Logger::WriteDeadPoint(const MCPoint& point) {
         mFile << x << " ";
     }
 
-    mFile << point.likelihood << " " << point.likelihood << std::endl;
+    mFile << point.likelihood << " " << point.birthLikelihood << std::endl;
 }

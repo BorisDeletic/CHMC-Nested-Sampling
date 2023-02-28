@@ -25,7 +25,8 @@ protected:
     Eigen::Vector2d theta {{0, 0}};
     MCPoint point = {
             theta,
-            2
+            2,
+            3
     };
 
     MockSampler mSampler;

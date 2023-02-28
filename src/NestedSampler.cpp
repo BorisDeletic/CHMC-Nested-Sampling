@@ -1,7 +1,6 @@
 #include "NestedSampler.h"
 #include "Logger.h"
 #include <stdexcept>
-#include <algorithm>
 #include <iostream>
 
 
@@ -63,7 +62,8 @@ const MCPoint NestedSampler::SampleFromPrior() {
 
     MCPoint pointFromPrior = {
             theta,
-            mLikelihood.Likelihood(theta)
+            mLikelihood.Likelihood(theta),
+            maxLikelihood
     };
 
     return pointFromPrior;

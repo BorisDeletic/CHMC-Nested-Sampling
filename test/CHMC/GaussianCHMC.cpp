@@ -26,7 +26,8 @@ protected:
 
     MCPoint initPoint = {
             zero,
-            gaussianLikelihood.Likelihood(zero)
+            gaussianLikelihood.Likelihood(zero),
+            1e30
     };
 
     const double infLikelihood = 1e9;
