@@ -15,4 +15,15 @@ inline bool operator<(const MCPoint& a, const MCPoint& b) {
 }
 
 
+typedef struct NSConfig {
+    const int numLive;
+    const int maxIters;
+    const double precisionCriterion;
+} NSConfig;
+
+
+typedef struct NSSummary {
+    const double logZ;
+} NSSummary;
+
 #endif //CHMC_NESTED_SAMPLING_TYPES_H

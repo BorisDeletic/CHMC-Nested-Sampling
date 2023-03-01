@@ -7,15 +7,20 @@
 
 class Logger {
 public:
-    Logger(std::string fname);
+    Logger(std::string name);
 
-    virtual void WriteDeadPoint(const MCPoint& point);
+    virtual void WriteDeadPoint(const MCPoint&);
+    virtual void WriteSummary(const NSSummary&);
   //  void WriteLivePoints();
   //  void ReadLivePoints();
 
 private:
-    std::string mFilename;
-    std::ofstream mFile;
+    std::string mName;
+    std::string mDeadFilename;
+    std::string mSummaryFilename;
+
+    std::ofstream mDeadFile;
+    std::ofstream mSummaryFile;
 };
 
 #endif //CHMC_NESTED_SAMPLING_LOGGER_H

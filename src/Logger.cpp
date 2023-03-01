@@ -1,20 +1,32 @@
 #include "Logger.h"
 
-Logger::Logger(std::string fname)
-    : mFilename(fname)
+Logger::Logger(std::string name)
+    :
+    mName(name),
+    mDeadFilename(name + "_dead-birth.txt"),
+    mSummaryFilename(mName + ".stats")
 {
-    mFile.open(mFilename);
+    mDeadFile.open(mDeadFilename);
 }
 
 
 void Logger::WriteDeadPoint(const MCPoint& point) {
-    if (!mFile.is_open()) {
-        mFile.open(mFilename, std::ios::app);
+    if (!mDeadFile.is_open()) {
+        mDeadFile.open(mDeadFilename, std::ios::app);
     }
 
     for (const double x : point.theta) {
-        mFile << x << " ";
+        mDeadFile << x << " ";
     }
 
-    mFile << point.likelihood << " " << point.birthLikelihood << std::endl;
+    mDeadFile << point.likelihood << " " << point.birthLikelihood << std::endl;
+}
+
+
+void Logger::WriteSummary(const NSSummary& summary) {
+    mSummaryFile.open(mSummaryFilename);
+
+    mSummaryFile << "Log (Z) = " << summary.logZ << std::endl;
+
+    mSummaryFile.close();
 }

@@ -14,29 +14,41 @@ class Logger;
 
 class NestedSampler {
 public:
-    NestedSampler(ISampler&, IPrior&, ILikelihood&, Logger&, int numLive);
+    NestedSampler(ISampler&, IPrior&, ILikelihood&, Logger&, NSConfig config);
     ~NestedSampler();
 
     void Initialise();
-    void Run(int steps);
+    void Run();
 private:
     void NestedSamplingStep();
     const MCPoint SampleFromPrior();
+
+    void UpdateLogEvidence(const double logLikelihood);
+    const double EstimateLogEvidenceRemaining();
+
+    const bool TerminateSampling();
+    const double logAdd(const double logA, const double logB);
+    const double logAdd(const Eigen::ArrayXd& logV);
 
     ISampler& mSampler;
     IPrior& mPrior;
     ILikelihood& mLikelihood;
     Logger& mLogger;
+    NSConfig mConfig;
 
     std::multiset<MCPoint> mLivePoints;
-    const int mNumLive;
-    const int mDimension;
+    double mLogZ; // log evidence
+//    double mLogZRemaining; // estimate of evidence remaining in live points
 
     std::random_device rd;
     std::mt19937 gen;
     std::uniform_real_distribution<double> mUniform;
 
-    const double maxLikelihood = -1e30;
+    int mIter;
+
+    const double minLikelihood = -1e30;
+    const double initialLogWeight;
+    const int mDimension;
 };
 
 #endif //CHMC_NESTED_SAMPLING_NESTEDSAMPLING_H
