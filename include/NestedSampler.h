@@ -36,7 +36,7 @@ private:
     std::mt19937 gen;
     std::uniform_real_distribution<double> mUniform;
 
-    const double maxLikelihood = 1e30;
+    const double maxLikelihood = -1e30;
 };
 
 #endif //CHMC_NESTED_SAMPLING_NESTEDSAMPLING_H

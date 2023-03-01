@@ -11,7 +11,7 @@ RejectionSampler::RejectionSampler(ILikelihood& likelihood, double epsilon)
 const MCPoint RejectionSampler::SamplePoint(const MCPoint &old, const double likelihoodConstraint)
 {
     double stepSize = mEpsilon;
-    int chainSteps = 20;
+    int chainSteps = 200;
     int accepts = 0;
     int rejections = 0;
 
