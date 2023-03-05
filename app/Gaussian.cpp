@@ -1,7 +1,7 @@
 #include "Gaussian.h"
 
 
-const double GaussianLikelihood::Likelihood(const Eigen::VectorXd& theta)
+const double GaussianLikelihood::LogLikelihood(const Eigen::VectorXd& theta)
 {
     double loglikelihood = - var.log().sum() - var.size() * std::log(2 * M_PI) / 2;
 

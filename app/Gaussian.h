@@ -11,7 +11,7 @@ public:
     inline GaussianLikelihood(const Eigen::VectorXd mean, const Eigen::VectorXd var)
         : mean(mean.array()), var(var.array()) {}
 
-    const double Likelihood(const Eigen::VectorXd& theta);
+    const double LogLikelihood(const Eigen::VectorXd& theta);
     const Eigen::VectorXd Gradient(const Eigen::VectorXd& theta);
     const int GetDimension() { return mean.size(); };
 

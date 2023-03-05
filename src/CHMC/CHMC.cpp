@@ -17,7 +17,7 @@ CHMC::~CHMC() = default;
 
 Eigen::VectorXd CHMC::SampleMomentum(const int size) {
     Eigen::VectorXd v = Eigen::VectorXd::NullaryExpr(size, [&](){
-        return mNorm(gen);
+        return 0.5*mNorm(gen);
     });
 
     return v;

@@ -20,17 +20,37 @@ protected:
     Eigen::Vector2d p {{-1.0, 2.0}};
     Eigen::Vector2d zero {{0, 0}};
 
-    const double likelihoodConstraint = 1e9;
+    const double likelihoodConstraint = -2;
 
     MockLikelihood likelihood;
     Hamiltonian hamiltonian = Hamiltonian(likelihood, 0.1);
 };
 
 
+class GaussianHamiltonianTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+
+    }
+
+    Eigen::Vector2d mean {{0, 0}};
+    Eigen::Vector2d var {{0.5, 0.5}};
+
+    Eigen::Vector2d zero {{0, 0}};
+
+    const double epsilon = 0.05;
+    const double steps = 500;
+
+    GaussianLikelihood mGaussianLikelihood = GaussianLikelihood(mean, var);
+    Hamiltonian mHamiltonian = Hamiltonian(mGaussianLikelihood, epsilon);
+};
+
+
+
 TEST_F(HamiltonianTest, ZeroGradientEvolve) {
     int steps = 15;
 
-    EXPECT_CALL(likelihood, Likelihood(_))
+    EXPECT_CALL(likelihood, LogLikelihood(_))
             .Times(steps)
             .WillRepeatedly(Return(0));
 
@@ -51,14 +71,14 @@ TEST_F(HamiltonianTest, CircularMotionEvolve) {
     const double k = 0.1;
     int steps = 50;
 
-    EXPECT_CALL(likelihood, Likelihood(_))
+    EXPECT_CALL(likelihood, LogLikelihood(_))
             .Times(steps)
             .WillRepeatedly(Return(0));
 
     EXPECT_CALL(likelihood, Gradient(_))
             .Times(steps + 1)
             .WillRepeatedly([k] (const Eigen::VectorXd& x) {
-                return - k * x / pow(x.norm(), 1.5);
+                return k * x / pow(x.norm(), 1.5);
             });
 
     //set init conditions
@@ -73,4 +93,72 @@ TEST_F(HamiltonianTest, CircularMotionEvolve) {
     EXPECT_NEAR(xf.norm(), 1.0, tolerance);
     EXPECT_NEAR(xf[0], 1.0, 0.1);
     EXPECT_NEAR(xf[1], 0.0, 0.1);
+}
+
+
+TEST_F(HamiltonianTest, ReflectPerpendicularIncident) {
+    int steps = 2;
+
+    Eigen::Vector2d xi {{1.0, 1.0}};
+    Eigen::Vector2d pi {{1.0, 0.0}};
+    Eigen::Vector2d grad {{-0.5, 0.0}};
+
+    EXPECT_CALL(likelihood, LogLikelihood(_))
+            .Times(steps)
+            .WillOnce(Return(-10))
+            .WillOnce(Return(0));
+
+    EXPECT_CALL(likelihood, Gradient(_))
+            .Times(steps + 1)
+            .WillRepeatedly(Return(-grad));
+
+    hamiltonian.SetHamiltonian(xi, pi, likelihoodConstraint);
+    hamiltonian.Evolve(steps);
+
+    const Eigen::VectorXd& pf = hamiltonian.GetP();
+
+    EXPECT_DOUBLE_EQ(pf[0], -1.1);
+    EXPECT_DOUBLE_EQ(pf[1], 0.0);
+}
+
+
+TEST_F(HamiltonianTest, Reflect45Degrees) {
+    int steps = 2;
+
+    Eigen::Vector2d xi {{1.0, 1.0}};
+    Eigen::Vector2d pi {{0.5, 0.5}};
+    Eigen::Vector2d grad {{-0.5, 0.0}};
+
+    EXPECT_CALL(likelihood, LogLikelihood(_))
+            .Times(steps)
+            .WillOnce(Return(-10))
+            .WillOnce(Return(0));
+
+    EXPECT_CALL(likelihood, Gradient(_))
+            .Times(steps + 1)
+            .WillRepeatedly(Return(-grad));
+
+    hamiltonian.SetHamiltonian(xi, pi, likelihoodConstraint);
+    hamiltonian.Evolve(steps);
+
+    const Eigen::VectorXd& pf = hamiltonian.GetP();
+
+    EXPECT_DOUBLE_EQ(pf[0], -0.6);
+    EXPECT_DOUBLE_EQ(pf[1], 0.5);
+}
+
+
+TEST_F(GaussianHamiltonianTest, HardReflectionOffBoundary) {
+    Eigen::Vector2d boundary {{0.6, 0.1}};
+    double likelihoodConstraint = mGaussianLikelihood.LogLikelihood(boundary);
+
+    Eigen::Vector2d xi {{-0.45, 0.2}};
+    Eigen::Vector2d pi {{1.0, 1.0}};
+
+    mHamiltonian.SetHamiltonian(xi, pi, likelihoodConstraint);
+    mHamiltonian.Evolve(steps);
+
+    std::cerr << mHamiltonian.GetLikelihood() << ", "
+                << mHamiltonian.GetX()[0] << ", "
+                << mHamiltonian.GetX()[1] << std::endl;
 }

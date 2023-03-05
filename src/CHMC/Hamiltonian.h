@@ -12,20 +12,25 @@ class Hamiltonian {
 public:
     Hamiltonian(ILikelihood& likelihood, double epsilon);
 
-    const Eigen::VectorXd& GetX() const { return mIntegrator.GetX(); };
-    const Eigen::VectorXd& GetP() const { return mIntegrator.GetP(); };
+    const Eigen::VectorXd& GetX() const { return mX; };
+    const Eigen::VectorXd& GetP() const { return mP; };
     const double GetLikelihood() const { return mCurrentLikelihood; };
 
     void SetHamiltonian(const Eigen::VectorXd& x, const Eigen::VectorXd& p, double likelihoodConstraint);
     void Evolve(int steps);
 
 private:
+    Eigen::VectorXd ReflectP(const Eigen::VectorXd& incidentP, const Eigen::VectorXd& normal);
+
     ILikelihood& mLikelihood;
     LeapfrogIntegrator mIntegrator;
 
-    Eigen::VectorXd mGradient;
+    Eigen::VectorXd mForce;
     double mCurrentLikelihood;
     double mLikelihoodConstraint;
+
+    Eigen::VectorXd mX;
+    Eigen::VectorXd mP;
 };
 
 

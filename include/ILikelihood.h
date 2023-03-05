@@ -5,7 +5,7 @@
 
 class ILikelihood {
 public:
-    virtual const double Likelihood(const Eigen::VectorXd& x) = 0;
+    virtual const double LogLikelihood(const Eigen::VectorXd& x) = 0;
     virtual const Eigen::VectorXd Gradient(const Eigen::VectorXd& x) = 0;
     virtual const int GetDimension() = 0;
 };

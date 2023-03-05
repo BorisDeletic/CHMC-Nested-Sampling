@@ -26,7 +26,7 @@ const MCPoint RejectionSampler::SamplePoint(const MCPoint &old, const double lik
         });
 
         Eigen::VectorXd trialTheta = newTheta + stepSize * rand;
-        const double trialLikelihood = mLikelihood.Likelihood(trialTheta);
+        const double trialLikelihood = mLikelihood.LogLikelihood(trialTheta);
 
         // Only accept if L > Lconstraint
         if (trialLikelihood > likelihoodConstraint) {

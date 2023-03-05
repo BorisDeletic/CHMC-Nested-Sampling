@@ -84,7 +84,7 @@ const MCPoint NestedSampler::SampleFromPrior() {
 
     MCPoint pointFromPrior = {
             theta,
-            mLikelihood.Likelihood(theta),
+            mLikelihood.LogLikelihood(theta),
             minLikelihood
     };
 

@@ -10,28 +10,32 @@ LeapfrogIntegrator::LeapfrogIntegrator(const double epsilon)
 }
 
 
-void LeapfrogIntegrator::UpdateX(const Eigen::VectorXd &a) {
-    mHalfstepP = mP + 0.5 * mEpsilon * a;
-    mX = mX + mEpsilon * mHalfstepP;
+Eigen::VectorXd
+LeapfrogIntegrator::UpdateX(const Eigen::VectorXd &x, const Eigen::VectorXd &p, const Eigen::VectorXd &a) {
+    mHalfstepP = p + 0.5 * mEpsilon * a;
+    Eigen::VectorXd newX = x + mEpsilon * mHalfstepP;
 
     mXUpdatedBeforeP = true;
+
+    return newX;
 }
 
 // mHalfstepP must be calculated using previous position for correctness.
-void LeapfrogIntegrator::UpdateP(const Eigen::VectorXd &a) {
+Eigen::VectorXd
+LeapfrogIntegrator::UpdateP(const Eigen::VectorXd &x, const Eigen::VectorXd &p, const Eigen::VectorXd &a) {
     if (!mXUpdatedBeforeP) {
         throw std::runtime_error("LEAPFROG_INTEGRATOR: Position X was not updated before Momentum P.");
     }
 
-    mP = mHalfstepP + 0.5 * mEpsilon * a;
+    Eigen::VectorXd newP = mHalfstepP + 0.5 * mEpsilon * a;
 
     mXUpdatedBeforeP = false;
+
+    return newP;
 }
 
-void LeapfrogIntegrator::SetP(const Eigen::VectorXd &p) {
-    mP = p;
-
-    mHalfstepP.resize(p.size()); // no operation if halfstep == p
-    mHalfstepP = mHalfstepP - mP + p; // change halfstepP to be retroactively calcuted with new p.
+void LeapfrogIntegrator::ChangeP(const Eigen::VectorXd& oldP, const Eigen::VectorXd& newP) {
+    mHalfstepP.resize(oldP.size()); // no operation if halfstep == p
+    mHalfstepP = mHalfstepP - oldP + newP; // change halfstepP to be retroactively calcuted with new p.
 }
 

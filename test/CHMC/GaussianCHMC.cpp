@@ -22,24 +22,24 @@ protected:
     Eigen::Array2d mean {{0.1, 0.1}};
     Eigen::Array2d var {{0.5, 0.5}};
 
-    GaussianLogLikelihood gaussianLikelihood = GaussianLogLikelihood(mean, var);
+    GaussianLikelihood gaussianLikelihood = GaussianLikelihood(mean, var);
 
     MCPoint initPoint = {
             zero,
-            gaussianLikelihood.Likelihood(zero),
+            gaussianLikelihood.LogLikelihood(zero),
             1e30
     };
 
-    const double infLikelihood = 1e9;
+    const double infLikelihood = -1e9;
     const double epsilon = 0.05;
-    const int pathLength = 30;
+    const int pathLength = 50;
 
     CHMC mCHMC = CHMC(gaussianLikelihood, epsilon, pathLength);
 };
 
 
 TEST_F(GaussianCHMCTest, GaussianDistributionNoConstraint) {
-    int numSamples = 1000;
+    int numSamples = 2000;
     std::vector<MCPoint> samples;
     samples.push_back(initPoint);
 
@@ -62,11 +62,37 @@ TEST_F(GaussianCHMCTest, GaussianDistributionNoConstraint) {
     for (auto [x, num] : histX) {
         int expectedFreq = normalisation * Gaussian(x, mean[0], var[0]);
         cumError += abs(expectedFreq - num);
-     //   std::cerr << std::setw(2) << x << ' ' << std::string(num/20, '*') << '\n';
+       // std::cerr << std::setw(2) << x << ' ' << std::string(num/20, '*') << '\n';
 
     }
 
     int tolerance = 10 * sqrt(numSamples);
     EXPECT_NEAR(cumError, 0, tolerance);
 }
+
+
+
+TEST_F(GaussianCHMCTest, SamplesDontViolateConstraint) {
+    Eigen::Vector2d boundary {{0.6, 0.1}};
+    double likelihoodConstraint = gaussianLikelihood.LogLikelihood(boundary);
+
+    std::cerr << likelihoodConstraint << std::endl;
+
+    const int numSamples = 500;
+    std::vector<MCPoint> samples;
+    samples.push_back(initPoint);
+
+    for (int i = 0; i < numSamples; i++) {
+        MCPoint newPoint = mCHMC.SamplePoint(samples.back(), likelihoodConstraint);
+        samples.push_back(newPoint);
+        std::cerr << newPoint.likelihood << ", "
+            << newPoint.theta[0] << ", "
+            << newPoint.theta[1] << std::endl ;
+    }
+
+    for (auto& point : samples) {
+        EXPECT_GE(point.likelihood, likelihoodConstraint);
+    }
+}
+
 
