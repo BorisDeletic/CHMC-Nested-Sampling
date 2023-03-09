@@ -4,8 +4,10 @@
 Hamiltonian::Hamiltonian(ILikelihood& likelihood, const double epsilon)
     :
         mLikelihood(likelihood),
-        mIntegrator(epsilon)
+        mIntegrator(epsilon),
+        mDimension(likelihood.GetDimension())
 {
+    mMetric = Eigen::MatrixXd::Identity(mDimension, mDimension);
 }
 
 void Hamiltonian::SetHamiltonian(const Eigen::VectorXd &x, const Eigen::VectorXd &p, const double likelihoodConstraint) {
@@ -16,8 +18,6 @@ void Hamiltonian::SetHamiltonian(const Eigen::VectorXd &x, const Eigen::VectorXd
 
     mLogLikelihood = mLikelihood.LogLikelihood(x);
     mGradient = mLikelihood.Gradient(x);
-
-    mEnergy = 0.5 * mP.squaredNorm() - mLogLikelihood;
 }
 
 
@@ -46,8 +46,6 @@ void Hamiltonian::Evolve()
     mGradient = mLikelihood.Gradient(mX);
 
     mP = mIntegrator.UpdateP(mX, mP, mGradient);
-    mEnergy = 0.5 * mP.squaredNorm() - mLogLikelihood;
-
 }
 
 
@@ -59,6 +57,10 @@ Hamiltonian::ReflectP(const Eigen::VectorXd &incidentP, const Eigen::VectorXd &n
     Eigen::VectorXd reflectedP = incidentP - 2 * incidentP.dot(nHat) * nHat;
 
     return reflectedP;
+}
+
+const double Hamiltonian::GetEnergy() {
+    return 0.5 * mP.transpose() * mMetric.inverse() * mP - mLogLikelihood;
 }
 
 

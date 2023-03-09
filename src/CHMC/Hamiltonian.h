@@ -6,7 +6,6 @@
 #include <Eigen/Dense>
 #include <functional>
 
-
 // Constrained Hamiltonian class. Trajectory reflects off likelihood constraint boundary.
 class Hamiltonian {
 public:
@@ -14,10 +13,12 @@ public:
 
     const Eigen::VectorXd& GetX() const { return mX; };
     const Eigen::VectorXd& GetP() const { return mP; };
-    const double GetEnergy() const {return mEnergy; };
+    const Eigen::MatrixXd& GetMetric() const { return mMetric; };
+    const double GetEnergy();
     const double GetLikelihood() const { return mLogLikelihood; };
 
     void SetHamiltonian(const Eigen::VectorXd& x, const Eigen::VectorXd& p, double likelihoodConstraint);
+    void SetMetric(const Eigen::MatrixXd& metric) { mMetric = metric; };
     void Evolve();
 
 private:
@@ -29,10 +30,11 @@ private:
     Eigen::VectorXd mGradient;
     double mLogLikelihood;
     double mLikelihoodConstraint;
+    const int mDimension;
 
     Eigen::VectorXd mX;
     Eigen::VectorXd mP;
-    double mEnergy;
+    Eigen::MatrixXd mMetric;
 };
 
 

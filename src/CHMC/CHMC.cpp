@@ -18,11 +18,13 @@ CHMC::~CHMC() = default;
 
 
 Eigen::VectorXd CHMC::SampleMomentum(const int size) {
-    Eigen::VectorXd v = Eigen::VectorXd::NullaryExpr(size, [&](){
+    Eigen::VectorXd n = Eigen::VectorXd::NullaryExpr(size, [&](){
         return mNorm(gen);
     });
+    Eigen::MatrixXd metric = mHamiltonian->GetMetric();
+    Eigen::VectorXd p = n * metric.cwiseSqrt();
 
-    return v;
+    return p;
 }
 
 
