@@ -14,10 +14,11 @@ public:
 
     const Eigen::VectorXd& GetX() const { return mX; };
     const Eigen::VectorXd& GetP() const { return mP; };
-    const double GetLikelihood() const { return mCurrentLikelihood; };
+    const double GetEnergy() const {return mEnergy; };
+    const double GetLikelihood() const { return mLogLikelihood; };
 
     void SetHamiltonian(const Eigen::VectorXd& x, const Eigen::VectorXd& p, double likelihoodConstraint);
-    void Evolve(int steps);
+    void Evolve();
 
 private:
     Eigen::VectorXd ReflectP(const Eigen::VectorXd& incidentP, const Eigen::VectorXd& normal);
@@ -25,12 +26,13 @@ private:
     ILikelihood& mLikelihood;
     LeapfrogIntegrator mIntegrator;
 
-    Eigen::VectorXd mForce;
-    double mCurrentLikelihood;
+    Eigen::VectorXd mGradient;
+    double mLogLikelihood;
     double mLikelihoodConstraint;
 
     Eigen::VectorXd mX;
     Eigen::VectorXd mP;
+    double mEnergy;
 };
 
 

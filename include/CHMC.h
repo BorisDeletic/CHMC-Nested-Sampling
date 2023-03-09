@@ -23,6 +23,7 @@ private:
     std::unique_ptr<Hamiltonian> mHamiltonian;
 
     std::normal_distribution<double> mNorm;
+    std::uniform_real_distribution<double> mUniform;
     std::random_device rd;
     std::mt19937 gen;
 

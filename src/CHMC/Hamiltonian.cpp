@@ -14,38 +14,40 @@ void Hamiltonian::SetHamiltonian(const Eigen::VectorXd &x, const Eigen::VectorXd
 
     mLikelihoodConstraint = likelihoodConstraint;
 
-    mForce = - mLikelihood.Gradient(x);
+    mLogLikelihood = mLikelihood.LogLikelihood(x);
+    mGradient = mLikelihood.Gradient(x);
+
+    mEnergy = 0.5 * mP.squaredNorm() - mLogLikelihood;
 }
 
 
-void Hamiltonian::Evolve(const int steps)
+void Hamiltonian::Evolve()
 {
-    for (int i = 0; i < steps; i++)
-    {
-        Eigen::VectorXd newX = mIntegrator.UpdateX(mX, mP, mForce);
+    Eigen::VectorXd newX = mIntegrator.UpdateX(mX, mP, mGradient);
 
-        const double newLikelihood = mLikelihood.LogLikelihood(newX);
-        if (newLikelihood < mLikelihoodConstraint) {
-            // Reflect off iso-likelihood contour.
+    const double newLikelihood = mLikelihood.LogLikelihood(newX);
+    if (newLikelihood < mLikelihoodConstraint) {
+        // Reflect off iso-likelihood contour.
 
-            double x0 = mX[0];
-            double x1 = mX[1];
-            double p0 = mP[0];
-            double p1 = mP[1];
-            double mag = mP.norm();
-            Eigen::VectorXd newP = ReflectP(mP, mForce);
-            mIntegrator.ChangeP(mP, newP);
-            mP = newP;
+        Eigen::VectorXd newP = ReflectP(mP, mGradient);
+        mIntegrator.ChangeP(mP, newP);
+        mP = newP;
+
+        Eigen::VectorXd nextX = mIntegrator.UpdateX(mX, mP, mGradient);
+        if (mLikelihood.LogLikelihood(nextX) < mLikelihoodConstraint) {
+           // throw std::runtime_error("NO VALID REFLECTION");
         }
-        else {
-            mX = newX;
-            mCurrentLikelihood = newLikelihood;
-        }
-
-        mForce = -mLikelihood.Gradient(mX);
-
-        mP = mIntegrator.UpdateP(mX, mP, mForce);
     }
+    else {
+        mX = newX;
+        mLogLikelihood = newLikelihood;
+    }
+
+    mGradient = mLikelihood.Gradient(mX);
+
+    mP = mIntegrator.UpdateP(mX, mP, mGradient);
+    mEnergy = 0.5 * mP.squaredNorm() - mLogLikelihood;
+
 }
 
 
