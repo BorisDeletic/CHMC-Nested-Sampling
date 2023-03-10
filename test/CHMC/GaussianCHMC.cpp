@@ -65,7 +65,12 @@ protected:
 
 
 TEST_F(GaussianCHMCTest, GaussianDistributionNoConstraint) {
-    Eigen::Vector2d boundary {{0.6, 0.1}};
+    mCHMC.WarmupAdapt(initPoint);
+   // mCHMC.WarmupAdapt(initPoint);
+
+    std::cerr << mCHMC.GetMetric() << std::endl;
+
+    Eigen::Vector2d boundary {{100.6, 0.1}};
     double likelihoodConstraint = gaussianLikelihood.LogLikelihood(boundary);
 
     int numSamples = 5000;
@@ -84,6 +89,7 @@ TEST_F(GaussianCHMCTest, GaussianDistributionNoConstraint) {
         histY[std::round(newPoint.theta[1] * 10) / 10]++;
     }
 
+    LogHist(histX);
 
     int tolerance = 10 * sqrt(numSamples);
     //EXPECT_NEAR(cumError, 0, tolerance);
@@ -115,7 +121,7 @@ TEST_F(GaussianCHMCTest, SamplesDontViolateConstraint) {
 }
 
 
-TEST_F(GaussianCHMCTest, Gaussian1DWithConstraint) {
+TEST_F(GaussianCHMCTest, OneDWithConstraint) {
     int numSamples = 1000;
     Eigen::Matrix<double, 1, 1> boundary {{0.7}};
     double likelihoodConstraint = gaussian1DLikelihood.LogLikelihood(boundary);
@@ -144,4 +150,10 @@ TEST_F(GaussianCHMCTest, Gaussian1DWithConstraint) {
     LogHist(histX);
     int tolerance = 10 * sqrt(numSamples);
     // EXPECT_NEAR(cumError, 0, tolerance);
+}
+
+
+TEST_F(GaussianCHMCTest, WarmupAdaption) {
+    mCHMC.WarmupAdapt(initPoint);
+    mCHMC.WarmupAdapt(initPoint);
 }

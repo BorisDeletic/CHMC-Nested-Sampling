@@ -15,9 +15,13 @@ public:
     CHMC(ILikelihood&, double epsilon, int pathLength);
     ~CHMC();
 
+    const Eigen::VectorXd& GetMetric();
+
+    bool WarmupAdapt(const MCPoint& init);
     const MCPoint SamplePoint(const MCPoint& old, double likelihoodConstraint);
 private:
-    Eigen::VectorXd SampleMomentum(int size);
+    Eigen::VectorXd SampleP(int size);
+    Eigen::VectorXd CalculateVar(const Eigen::MatrixXd& samples);
 
     ILikelihood& mLikelihood;
     std::unique_ptr<Hamiltonian> mHamiltonian;
@@ -28,6 +32,8 @@ private:
     std::mt19937 gen;
 
     const int mPathLength;
+    const int mWarmupSteps = 75;
+    const double inf = 1e100;
 };
 
 #endif //CHMC_NESTED_SAMPLING_CHMC_H

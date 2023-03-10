@@ -13,16 +13,19 @@ public:
 
     const Eigen::VectorXd& GetX() const { return mX; };
     const Eigen::VectorXd& GetP() const { return mP; };
-    const Eigen::MatrixXd& GetMetric() const { return mMetric; };
-    const double GetEnergy();
+    const Eigen::VectorXd& GetMetric() const { return mMetric; };
+    const double GetEpsilon() const { return mIntegrator.GetEpsilon(); };
     const double GetLikelihood() const { return mLogLikelihood; };
+    const double GetEnergy() const;
 
     void SetHamiltonian(const Eigen::VectorXd& x, const Eigen::VectorXd& p, double likelihoodConstraint);
-    void SetMetric(const Eigen::MatrixXd& metric) { mMetric = metric; };
+    void SetMetric(const Eigen::VectorXd metric) { mMetric = metric; };
+    void SetEpsilon(const double epsilon) { mIntegrator.SetEpsilon(epsilon); };
+
     void Evolve();
 
 private:
-    Eigen::VectorXd ReflectP(const Eigen::VectorXd& incidentP, const Eigen::VectorXd& normal);
+    void ReflectP(const Eigen::VectorXd& normal);
 
     ILikelihood& mLikelihood;
     LeapfrogIntegrator mIntegrator;
@@ -34,7 +37,7 @@ private:
 
     Eigen::VectorXd mX;
     Eigen::VectorXd mP;
-    Eigen::MatrixXd mMetric;
+    Eigen::VectorXd mMetric;
 };
 
 

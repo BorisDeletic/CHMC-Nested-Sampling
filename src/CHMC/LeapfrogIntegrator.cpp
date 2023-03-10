@@ -11,9 +11,9 @@ LeapfrogIntegrator::LeapfrogIntegrator(const double epsilon)
 
 
 Eigen::VectorXd
-LeapfrogIntegrator::UpdateX(const Eigen::VectorXd &x, const Eigen::VectorXd &p, const Eigen::VectorXd &a) {
+LeapfrogIntegrator::UpdateX(const Eigen::VectorXd &x, const Eigen::VectorXd &p, const Eigen::VectorXd &a, const Eigen::VectorXd& metric) {
     mHalfstepP = p + 0.5 * mEpsilon * a;
-    Eigen::VectorXd newX = x + mEpsilon * mHalfstepP;
+    Eigen::VectorXd newX = x + mEpsilon * metric.cwiseInverse().asDiagonal() * mHalfstepP;
 
     mXUpdatedBeforeP = true;
 
@@ -22,7 +22,7 @@ LeapfrogIntegrator::UpdateX(const Eigen::VectorXd &x, const Eigen::VectorXd &p, 
 
 // mHalfstepP must be calculated using previous position for correctness.
 Eigen::VectorXd
-LeapfrogIntegrator::UpdateP(const Eigen::VectorXd &x, const Eigen::VectorXd &p, const Eigen::VectorXd &a) {
+LeapfrogIntegrator::UpdateP(const Eigen::VectorXd &a) {
     if (!mXUpdatedBeforeP) {
         throw std::runtime_error("LEAPFROG_INTEGRATOR: Position X was not updated before Momentum P.");
     }

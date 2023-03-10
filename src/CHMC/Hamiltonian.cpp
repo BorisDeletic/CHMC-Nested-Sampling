@@ -7,7 +7,7 @@ Hamiltonian::Hamiltonian(ILikelihood& likelihood, const double epsilon)
         mIntegrator(epsilon),
         mDimension(likelihood.GetDimension())
 {
-    mMetric = Eigen::MatrixXd::Identity(mDimension, mDimension);
+    mMetric = Eigen::VectorXd::Ones( mDimension);
 }
 
 void Hamiltonian::SetHamiltonian(const Eigen::VectorXd &x, const Eigen::VectorXd &p, const double likelihoodConstraint) {
@@ -23,17 +23,15 @@ void Hamiltonian::SetHamiltonian(const Eigen::VectorXd &x, const Eigen::VectorXd
 
 void Hamiltonian::Evolve()
 {
-    Eigen::VectorXd newX = mIntegrator.UpdateX(mX, mP, mGradient);
+    Eigen::VectorXd newX = mIntegrator.UpdateX(mX, mP, mGradient, mMetric);
 
     const double newLikelihood = mLikelihood.LogLikelihood(newX);
     if (newLikelihood < mLikelihoodConstraint) {
         // Reflect off iso-likelihood contour.
 
-        Eigen::VectorXd newP = ReflectP(mP, mGradient);
-        mIntegrator.ChangeP(mP, newP);
-        mP = newP;
+        ReflectP(mGradient);
 
-        Eigen::VectorXd nextX = mIntegrator.UpdateX(mX, mP, mGradient);
+        Eigen::VectorXd nextX = mIntegrator.UpdateX(mX, mP, mGradient, mMetric);
         if (mLikelihood.LogLikelihood(nextX) < mLikelihoodConstraint) {
            // throw std::runtime_error("NO VALID REFLECTION");
         }
@@ -45,22 +43,24 @@ void Hamiltonian::Evolve()
 
     mGradient = mLikelihood.Gradient(mX);
 
-    mP = mIntegrator.UpdateP(mX, mP, mGradient);
+    mP = mIntegrator.UpdateP( mGradient);
 }
 
 
 //incident momentum and normal vector to reflection boundary
-Eigen::VectorXd
-Hamiltonian::ReflectP(const Eigen::VectorXd &incidentP, const Eigen::VectorXd &normal) {
+void Hamiltonian::ReflectP(const Eigen::VectorXd &normal) {
     Eigen::VectorXd nHat = normal.normalized();
 
-    Eigen::VectorXd reflectedP = incidentP - 2 * incidentP.dot(nHat) * nHat;
+    Eigen::VectorXd reflectedP = mP - 2 * mP.dot(nHat) * nHat;
 
-    return reflectedP;
+    mIntegrator.ChangeP(mP, reflectedP);
+    mP = reflectedP;
 }
 
-const double Hamiltonian::GetEnergy() {
-    return 0.5 * mP.transpose() * mMetric.inverse() * mP - mLogLikelihood;
+
+const double Hamiltonian::GetEnergy() const {
+    double energy = 0.5 * mP.dot(mMetric.asDiagonal() * mP) - mLogLikelihood;
+    return energy;
 }
 
 
