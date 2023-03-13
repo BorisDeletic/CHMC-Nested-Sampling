@@ -41,9 +41,9 @@ protected:
 
     Eigen::Vector2d zero {{0, 0}};
     Eigen::Array2d mean {{0.1, 0.1}};
-    Eigen::Array2d var {{0.5, 0.5}};
+    Eigen::Array2d var {{0.2, 1.0}};
     Eigen::Array<double, 1, 1> mean1 {{0}};
-    Eigen::Array<double, 1, 1> var1 {{1.0}};
+    Eigen::Array<double, 1, 1> var1 {{1.5}};
 
     GaussianLikelihood gaussianLikelihood = GaussianLikelihood(mean, var);
     GaussianLikelihood gaussian1DLikelihood = GaussianLikelihood(mean1, var1);
@@ -55,8 +55,8 @@ protected:
     };
 
     const double inf = 1e9;
-    const double epsilon = 0.001;
-    const int pathLength = 50;
+    const double epsilon = 0.01;
+    const int pathLength = 100;
     std::pair<double, double> noBound {-inf, inf};
 
 
@@ -66,12 +66,14 @@ protected:
 
 TEST_F(GaussianCHMCTest, GaussianDistributionNoConstraint) {
     mCHMC.WarmupAdapt(initPoint);
+    std::cerr << "metric = " << mCHMC.GetMetric() << std::endl;
+    mCHMC.WarmupAdapt(initPoint);
+    std::cerr << "metric = " << mCHMC.GetMetric() << std::endl;
    // mCHMC.WarmupAdapt(initPoint);
-
-    std::cerr << mCHMC.GetMetric() << std::endl;
 
     Eigen::Vector2d boundary {{100.6, 0.1}};
     double likelihoodConstraint = gaussianLikelihood.LogLikelihood(boundary);
+    likelihoodConstraint = -1e39;
 
     int numSamples = 5000;
 
@@ -122,17 +124,22 @@ TEST_F(GaussianCHMCTest, SamplesDontViolateConstraint) {
 
 
 TEST_F(GaussianCHMCTest, OneDWithConstraint) {
-    int numSamples = 1000;
-    Eigen::Matrix<double, 1, 1> boundary {{0.7}};
+    int numSamples = 5000;
+    Eigen::Matrix<double, 1, 1> boundary {{100.7}};
     double likelihoodConstraint = gaussian1DLikelihood.LogLikelihood(boundary);
 
-    CHMC chmc = CHMC(gaussian1DLikelihood, 0.1, 100);
+    CHMC chmc = CHMC(gaussian1DLikelihood, 0.01, 100);
 
     MCPoint first = {
             mean1,
             gaussian1DLikelihood.LogLikelihood(mean1),
             likelihoodConstraint
     };
+
+    chmc.WarmupAdapt(first);
+    std::cerr << "metric = " << chmc.GetMetric() << std::endl;
+    chmc.WarmupAdapt(first);
+    std::cerr << "metric = " << chmc.GetMetric() << std::endl;
 
     std::map<double, int> histX;
 
@@ -145,7 +152,7 @@ TEST_F(GaussianCHMCTest, OneDWithConstraint) {
         histX[std::round(newPoint.theta[0] * 10) / 10]++;
     }
 
-    std::cerr << "error = " << CalculateError(histX, mean1[0], var1[0], noBound);
+    std::cerr << "error = " << CalculateError(histX, mean1[0], var1[0], noBound) << std::endl;
 
     LogHist(histX);
     int tolerance = 10 * sqrt(numSamples);

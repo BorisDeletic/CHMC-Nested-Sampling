@@ -59,7 +59,7 @@ void Hamiltonian::ReflectP(const Eigen::VectorXd &normal) {
 
 
 const double Hamiltonian::GetEnergy() const {
-    double energy = 0.5 * mP.dot(mMetric.asDiagonal() * mP) - mLogLikelihood;
+    double energy = 0.5 * mP.dot(mMetric.cwiseInverse().asDiagonal() * mP) - mLogLikelihood;
     return energy;
 }
 

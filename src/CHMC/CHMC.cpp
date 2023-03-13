@@ -17,7 +17,8 @@ CHMC::CHMC(ILikelihood& likelihood, double epsilon, int pathLength)
 CHMC::~CHMC() = default;
 
 
-bool CHMC::WarmupAdapt(const MCPoint &init) {
+bool CHMC::WarmupAdapt(const MCPoint &init)
+{
     int dim = init.theta.size();
     Eigen::MatrixXd samples( mWarmupSteps, dim);
 
