@@ -6,9 +6,14 @@
 
 class MockLikelihood : public ILikelihood {
 public:
+    MockLikelihood(int dim) : mDim(dim) {
+        ON_CALL(*this, GetDimension()).WillByDefault(::testing::Return(mDim));
+    }
     MOCK_METHOD(const double, LogLikelihood, (const Eigen::VectorXd&), (override));
     MOCK_METHOD(const Eigen::VectorXd, Gradient, (const Eigen::VectorXd&), (override));
     MOCK_METHOD(const int, GetDimension, (), (override));
+private:
+    const int mDim;
 };
 
 

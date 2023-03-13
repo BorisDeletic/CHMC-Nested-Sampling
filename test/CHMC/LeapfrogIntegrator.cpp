@@ -14,10 +14,10 @@ protected:
     }
 
     Eigen::Vector2d ones {{1, 1}};
+    Eigen::Vector2d zero {{0, 0}};
     Eigen::Vector2d xi {{1.0, 1.0}};
     Eigen::Vector2d pi {{-1.0, 2.0}};
     Eigen::Vector2d a {{-1.0, -1.0}};
-    Eigen::Vector2d zero {{0, 0}};
 
     LeapfrogIntegrator l_integrator = LeapfrogIntegrator(0.1);
 };

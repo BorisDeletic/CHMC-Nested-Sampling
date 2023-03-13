@@ -10,19 +10,24 @@ using ::testing::Return;
 class HamiltonianTest : public ::testing::Test {
 protected:
     void SetUp() override {
+        EXPECT_CALL(likelihood, LogLikelihood(_))
+                .WillOnce(Return(0));
+
         EXPECT_CALL(likelihood, Gradient(_))
             .WillOnce(Return(zero));
 
         hamiltonian.SetHamiltonian(x, p, likelihoodConstraint);
+        hamiltonian.SetMetric(ones);
     }
 
     Eigen::Vector2d x {{1.0, 1.0}};
     Eigen::Vector2d p {{-1.0, 2.0}};
     Eigen::Vector2d zero {{0, 0}};
+    Eigen::Vector2d ones {{1, 1}};
 
     const double likelihoodConstraint = -2;
 
-    MockLikelihood likelihood;
+    MockLikelihood likelihood = MockLikelihood(2);
     Hamiltonian hamiltonian = Hamiltonian(likelihood, 0.1);
 };
 
@@ -75,13 +80,13 @@ TEST_F(HamiltonianTest, CircularMotionEvolve) {
     int steps = 50;
 
     EXPECT_CALL(likelihood, LogLikelihood(_))
-            .Times(steps)
+            .Times(steps + 1)
             .WillRepeatedly(Return(0));
 
     EXPECT_CALL(likelihood, Gradient(_))
             .Times(steps + 1)
             .WillRepeatedly([k] (const Eigen::VectorXd& x) {
-                return k * x / pow(x.norm(), 1.5);
+                return - k * x / pow(x.norm(), 1.5);
             });
 
     //set init conditions
@@ -109,13 +114,15 @@ TEST_F(HamiltonianTest, ReflectPerpendicularIncident) {
     Eigen::Vector2d grad {{-0.5, 0.0}};
 
     EXPECT_CALL(likelihood, LogLikelihood(_))
-            .Times(steps)
+            .Times(steps + 2)
             .WillOnce(Return(-10))
+            .WillOnce(Return(-10))
+            .WillOnce(Return(0))
             .WillOnce(Return(0));
 
     EXPECT_CALL(likelihood, Gradient(_))
             .Times(steps + 1)
-            .WillRepeatedly(Return(-grad));
+            .WillRepeatedly(Return(grad));
 
     hamiltonian.SetHamiltonian(xi, pi, likelihoodConstraint);
     for (int i = 0; i < steps; i++) {
@@ -137,13 +144,15 @@ TEST_F(HamiltonianTest, Reflect45Degrees) {
     Eigen::Vector2d grad {{-0.5, 0.0}};
 
     EXPECT_CALL(likelihood, LogLikelihood(_))
-            .Times(steps)
+            .Times(steps + 2)
             .WillOnce(Return(-10))
+            .WillOnce(Return(-10))
+            .WillOnce(Return(0))
             .WillOnce(Return(0));
 
     EXPECT_CALL(likelihood, Gradient(_))
             .Times(steps + 1)
-            .WillRepeatedly(Return(-grad));
+            .WillRepeatedly(Return(grad));
 
     hamiltonian.SetHamiltonian(xi, pi, likelihoodConstraint);
 
@@ -168,8 +177,4 @@ TEST_F(GaussianHamiltonianTest, HardReflectionOffBoundary) {
     for (int i = 0; i < steps; i++) {
         mHamiltonian.Evolve();
     }
-
-    std::cerr << mHamiltonian.GetLikelihood() << ", "
-                << mHamiltonian.GetX()[0] << ", "
-                << mHamiltonian.GetX()[1] << std::endl;
 }

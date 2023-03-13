@@ -13,6 +13,7 @@ LeapfrogIntegrator::LeapfrogIntegrator(const double epsilon)
 Eigen::VectorXd
 LeapfrogIntegrator::UpdateX(const Eigen::VectorXd &x, const Eigen::VectorXd &p, const Eigen::VectorXd &a, const Eigen::VectorXd& metric) {
     mHalfstepP = p + 0.5 * mEpsilon * a;
+
     Eigen::VectorXd newX = x + mEpsilon * metric.cwiseInverse().asDiagonal() * mHalfstepP;
 
     mXUpdatedBeforeP = true;

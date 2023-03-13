@@ -29,6 +29,7 @@ private:
 
     ILikelihood& mLikelihood;
     LeapfrogIntegrator mIntegrator;
+    Eigen::VectorXd mMetric;
 
     Eigen::VectorXd mGradient;
     double mLogLikelihood;
@@ -37,7 +38,6 @@ private:
 
     Eigen::VectorXd mX;
     Eigen::VectorXd mP;
-    Eigen::VectorXd mMetric;
 };
 
 
