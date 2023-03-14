@@ -22,6 +22,9 @@ int main() {
     GaussianPrior prior = GaussianPrior(mean.size());
 
     RejectionSampler sampler = RejectionSampler(likelihood, epsilon);
+    const double epsilon = 0.01;
+    const int pathLength = 100;
+   // CHMC sampler = CHMC(likelihood, );
     Logger logger = Logger("Gaussian");
 
     NSConfig config = {

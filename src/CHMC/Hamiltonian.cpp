@@ -33,7 +33,7 @@ void Hamiltonian::Evolve()
 
         Eigen::VectorXd nextX = mIntegrator.UpdateX(mX, mP, mGradient, mMetric);
         if (mLikelihood.LogLikelihood(nextX) < mLikelihoodConstraint) {
-           // throw std::runtime_error("NO VALID REFLECTION");
+           throw std::runtime_error("NO VALID REFLECTION");
         }
     }
     else {
@@ -49,9 +49,9 @@ void Hamiltonian::Evolve()
 
 //incident momentum and normal vector to reflection boundary
 void Hamiltonian::ReflectP(const Eigen::VectorXd &normal) {
-    Eigen::VectorXd nHat = normal.normalized();
+    Eigen::VectorXd nRot = mMetric.cwiseInverse().asDiagonal() * normal;
 
-    Eigen::VectorXd reflectedP = mP - 2 * mP.dot(nHat) * nHat;
+    Eigen::VectorXd reflectedP = mP - 2 * mP.dot(nRot) / normal.dot(nRot) * normal;
 
     mIntegrator.ChangeP(mP, reflectedP);
     mP = reflectedP;

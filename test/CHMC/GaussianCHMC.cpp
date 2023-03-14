@@ -23,8 +23,11 @@ double CalculateError(std::map<double, int>& hist, double mean, double var, std:
     int samples  = 0;
     for (const auto [x, num] : hist) { samples += num; }
 
+    double boundsNormalization = 1.0 - 0.5 * erfc((mean - bounds.first) * M_SQRT1_2 / var);
+    boundsNormalization -= 0.5 * erfc((bounds.second - mean) * M_SQRT1_2 / var);
+
     for (const auto [x, num] : hist) {
-        const double expectedFreq = 0.1 * samples * Gaussian(x, mean, var);
+        const double expectedFreq = 0.1 * samples * Gaussian(x, mean, var) / boundsNormalization;
         cumError += abs(num - expectedFreq);
     }
 
@@ -42,11 +45,8 @@ protected:
     Eigen::Vector2d zero {{0, 0}};
     Eigen::Array2d mean {{0.1, 0.1}};
     Eigen::Array2d var {{0.2, 1.0}};
-    Eigen::Array<double, 1, 1> mean1 {{0}};
-    Eigen::Array<double, 1, 1> var1 {{1.5}};
 
     GaussianLikelihood gaussianLikelihood = GaussianLikelihood(mean, var);
-    GaussianLikelihood gaussian1DLikelihood = GaussianLikelihood(mean1, var1);
 
     MCPoint initPoint = {
             zero,
@@ -54,11 +54,9 @@ protected:
             1e30
     };
 
-    const double inf = 1e9;
     const double epsilon = 0.01;
     const int pathLength = 100;
-    std::pair<double, double> noBound {-inf, inf};
-
+    std::pair<double, double> noBound {-DBL_MAX, DBL_MAX};
 
     CHMC mCHMC = CHMC(gaussianLikelihood, epsilon, pathLength);
 };
@@ -66,14 +64,58 @@ protected:
 
 TEST_F(GaussianCHMCTest, GaussianDistributionNoConstraint) {
     mCHMC.WarmupAdapt(initPoint);
-    std::cerr << "metric = " << mCHMC.GetMetric() << std::endl;
     mCHMC.WarmupAdapt(initPoint);
-    std::cerr << "metric = " << mCHMC.GetMetric() << std::endl;
-   // mCHMC.WarmupAdapt(initPoint);
 
-    Eigen::Vector2d boundary {{100.6, 0.1}};
+    int numSamples = 5000;
+
+    std::map<double, int> histX;
+    std::map<double, int> histY;
+
+    std::vector<MCPoint> samples;
+    samples.push_back(initPoint);
+
+    for (int i = 0; i < numSamples; i++) {
+        MCPoint newPoint = mCHMC.SamplePoint(samples.back(), -DBL_MAX);
+        samples.push_back(newPoint);
+
+        histX[std::round(newPoint.theta[0] * 10) / 10]++;
+        histY[std::round(newPoint.theta[1] * 10) / 10]++;
+    }
+
+  //  LogHist(histX);
+    const double errX = CalculateError(histX, mean[0], var[0], noBound);
+    const double errY = CalculateError(histY, mean[1], var[1], noBound);
+
+    EXPECT_LE(errX, 0.1);
+    EXPECT_LE(errY, 0.1);
+}
+
+
+TEST_F(GaussianCHMCTest, SamplesDontViolateConstraint) {
+    Eigen::Vector2d boundary {{0.5, 0.5}};
     double likelihoodConstraint = gaussianLikelihood.LogLikelihood(boundary);
-    likelihoodConstraint = -1e39;
+
+    const int numSamples = 500;
+    std::vector<MCPoint> samples;
+    samples.push_back(initPoint);
+
+    for (int i = 0; i < numSamples; i++) {
+        MCPoint newPoint = mCHMC.SamplePoint(samples.back(), likelihoodConstraint);
+        samples.push_back(newPoint);
+    }
+
+    for (auto& point : samples) {
+        EXPECT_GE(point.likelihood, likelihoodConstraint);
+    }
+}
+
+
+TEST_F(GaussianCHMCTest, CorrectDistributionWithConstraint) {
+    mCHMC.WarmupAdapt(initPoint);
+    mCHMC.WarmupAdapt(initPoint);
+
+    Eigen::Vector2d bound{{0.5, 0.1}};
+    const double likelihoodConstraint = gaussianLikelihood.LogLikelihood(bound);
 
     int numSamples = 5000;
 
@@ -91,76 +133,11 @@ TEST_F(GaussianCHMCTest, GaussianDistributionNoConstraint) {
         histY[std::round(newPoint.theta[1] * 10) / 10]++;
     }
 
-    LogHist(histX);
+   // LogHist(histY);
+    const double errX = CalculateError(histX, mean[0], var[0], {-0.3, 0.5});
+    const double errY = CalculateError(histY, mean[1], var[1], {-1.9, 2.0});
 
-    int tolerance = 10 * sqrt(numSamples);
-    //EXPECT_NEAR(cumError, 0, tolerance);
-}
+    EXPECT_LE(errX, 0.1);
+    EXPECT_LE(errY, 0.1);
 
-
-
-TEST_F(GaussianCHMCTest, SamplesDontViolateConstraint) {
-    Eigen::Vector2d boundary {{0.6, 0.1}};
-    double likelihoodConstraint = gaussianLikelihood.LogLikelihood(boundary);
-
-    std::cerr << likelihoodConstraint << std::endl;
-
-    const int numSamples = 500;
-    std::vector<MCPoint> samples;
-    samples.push_back(initPoint);
-
-    for (int i = 0; i < numSamples; i++) {
-        MCPoint newPoint = mCHMC.SamplePoint(samples.back(), likelihoodConstraint);
-        samples.push_back(newPoint);
-        std::cerr << newPoint.likelihood << ", "
-            << newPoint.theta[0] << ", "
-            << newPoint.theta[1] << std::endl ;
-    }
-
-    for (auto& point : samples) {
-        EXPECT_GE(point.likelihood, likelihoodConstraint);
-    }
-}
-
-
-TEST_F(GaussianCHMCTest, OneDWithConstraint) {
-    int numSamples = 5000;
-    Eigen::Matrix<double, 1, 1> boundary {{100.7}};
-    double likelihoodConstraint = gaussian1DLikelihood.LogLikelihood(boundary);
-
-    CHMC chmc = CHMC(gaussian1DLikelihood, 0.01, 100);
-
-    MCPoint first = {
-            mean1,
-            gaussian1DLikelihood.LogLikelihood(mean1),
-            likelihoodConstraint
-    };
-
-    chmc.WarmupAdapt(first);
-    std::cerr << "metric = " << chmc.GetMetric() << std::endl;
-    chmc.WarmupAdapt(first);
-    std::cerr << "metric = " << chmc.GetMetric() << std::endl;
-
-    std::map<double, int> histX;
-
-    std::vector<MCPoint> samples;
-    samples.push_back(first);
-
-    for (int i = 0; i < numSamples; i++) {
-        MCPoint newPoint = chmc.SamplePoint(samples.back(), likelihoodConstraint);
-        samples.push_back(newPoint);
-        histX[std::round(newPoint.theta[0] * 10) / 10]++;
-    }
-
-    std::cerr << "error = " << CalculateError(histX, mean1[0], var1[0], noBound) << std::endl;
-
-    LogHist(histX);
-    int tolerance = 10 * sqrt(numSamples);
-    // EXPECT_NEAR(cumError, 0, tolerance);
-}
-
-
-TEST_F(GaussianCHMCTest, WarmupAdaption) {
-    mCHMC.WarmupAdapt(initPoint);
-    mCHMC.WarmupAdapt(initPoint);
 }

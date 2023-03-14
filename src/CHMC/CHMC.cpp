@@ -2,6 +2,7 @@
 #include "Hamiltonian.h"
 #include <memory>
 #include <iostream>
+#include <cfloat>
 
 CHMC::CHMC(ILikelihood& likelihood, double epsilon, int pathLength)
     :
@@ -30,7 +31,7 @@ bool CHMC::WarmupAdapt(const MCPoint &init)
                 samples.row(i-1),
                 0,
                 0};
-        MCPoint next = SamplePoint(last, -1e30);
+        MCPoint next = SamplePoint(last, -DBL_MAX);
         samples.row(i) = next.theta;
     }
 
@@ -78,7 +79,7 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
 
     } else
     {
-     //   std::cerr << "REJECT POINT";
+      //  std::cerr << "REJECT POINT ";
         return old;
     }
 }
