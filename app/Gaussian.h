@@ -23,13 +23,14 @@ private:
 
 class GaussianPrior : public IPrior {
 public:
-    inline GaussianPrior(int dims) : mDims(dims) {}
+    inline GaussianPrior(int dims, double width) : mDims(dims), mWidth(width) {}
 
     const Eigen::VectorXd PriorTransform(const Eigen::VectorXd& cube);
     const int GetDimension() { return mDims; };
 
 private:
     const int mDims;
+    const double mWidth;
 };
 
 

@@ -10,7 +10,7 @@ Logger::Logger(std::string name)
 }
 
 
-void Logger::WriteDeadPoint(const MCPoint& point) {
+void Logger::WritePoint(const MCPoint& point) {
     if (!mDeadFile.is_open()) {
         mDeadFile.open(mDeadFilename, std::ios::app);
     }

@@ -34,6 +34,7 @@ void NestedSampler::Initialise() {
     for (int i = mLivePoints.size(); i < mConfig.numLive; i++) {
         MCPoint newPoint = SampleFromPrior();
         mLivePoints.insert(newPoint);
+        mLogger.WritePoint(newPoint);
     }
 
     mLogZ = -DBL_MAX; // Z = 0 initially
@@ -66,10 +67,10 @@ void NestedSampler::NestedSamplingStep() {
     const double likelihoodConstraint = deadPoint.likelihood;
 
     // Analysis on dead point
-    mLogger.WriteDeadPoint(deadPoint);
     UpdateLogEvidence(deadPoint.likelihood);
 
     const MCPoint newPoint = mSampler.SamplePoint(deadPoint, likelihoodConstraint);
+    mLogger.WritePoint(newPoint);
 
     mLivePoints.erase(lowestIt);
     mLivePoints.insert(newPoint);

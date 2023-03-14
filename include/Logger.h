@@ -9,7 +9,7 @@ class Logger {
 public:
     Logger(std::string name);
 
-    virtual void WriteDeadPoint(const MCPoint&);
+    virtual void WritePoint(const MCPoint&);
     virtual void WriteSummary(const NSSummary&);
   //  void WriteLivePoints();
   //  void ReadLivePoints();
