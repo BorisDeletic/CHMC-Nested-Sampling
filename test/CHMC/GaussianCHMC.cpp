@@ -29,6 +29,7 @@ double CalculateError(std::map<double, int>& hist, double mean, double var, std:
     for (const auto [x, num] : hist) {
         const double expectedFreq = 0.1 * samples * Gaussian(x, mean, var) / boundsNormalization;
         cumError += abs(num - expectedFreq);
+//        std::cerr << abs(num - expectedFreq) << std::endl;
     }
 
     return (float)cumError / samples;
@@ -117,7 +118,7 @@ TEST_F(GaussianCHMCTest, CorrectDistributionWithConstraint) {
     Eigen::Vector2d bound{{0.5, 0.1}};
     const double likelihoodConstraint = gaussianLikelihood.LogLikelihood(bound);
 
-    int numSamples = 5000;
+    int numSamples = 10000;
 
     std::map<double, int> histX;
     std::map<double, int> histY;
@@ -133,7 +134,7 @@ TEST_F(GaussianCHMCTest, CorrectDistributionWithConstraint) {
         histY[std::round(newPoint.theta[1] * 10) / 10]++;
     }
 
-   // LogHist(histY);
+    //LogHist(histX);
     const double errX = CalculateError(histX, mean[0], var[0], {-0.3, 0.5});
     const double errY = CalculateError(histY, mean[1], var[1], {-1.9, 2.0});
 

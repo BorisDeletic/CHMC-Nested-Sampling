@@ -2,36 +2,25 @@
 #define CHMC_NESTED_SAMPLING_GAUSSIAN_H
 
 #include "ILikelihood.h"
-#include "IPrior.h"
 #include "CHMC.h"
 
 
 class GaussianLikelihood : public ILikelihood {
 public:
-    inline GaussianLikelihood(const Eigen::VectorXd mean, const Eigen::VectorXd var)
-        : mean(mean.array()), var(var.array()) {}
+    inline GaussianLikelihood(const Eigen::VectorXd mean, const Eigen::VectorXd var, const double width)
+        : mean(mean.array()), var(var.array()), priorWidth(width) {}
 
-    const double LogLikelihood(const Eigen::VectorXd& theta);
-    const Eigen::VectorXd Gradient(const Eigen::VectorXd& theta);
-    const int GetDimension() { return mean.size(); };
+    const Eigen::VectorXd PriorTransform(const Eigen::VectorXd& cube) override;
+    const double LogLikelihood(const Eigen::VectorXd& theta) override;
+    const Eigen::VectorXd Gradient(const Eigen::VectorXd& theta) override;
+    const int GetDimension() override { return mean.size(); };
 
 private:
     const Eigen::ArrayXd mean;
     const Eigen::ArrayXd var;
+    const double priorWidth;
 };
 
-
-class GaussianPrior : public IPrior {
-public:
-    inline GaussianPrior(int dims, double width) : mDims(dims), mWidth(width) {}
-
-    const Eigen::VectorXd PriorTransform(const Eigen::VectorXd& cube);
-    const int GetDimension() { return mDims; };
-
-private:
-    const int mDims;
-    const double mWidth;
-};
 
 
 #endif //CHMC_NESTED_SAMPLING_GAUSSIAN_H

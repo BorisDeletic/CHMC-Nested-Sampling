@@ -3,7 +3,6 @@
 
 #include "ISampler.h"
 #include "ILikelihood.h"
-#include "IPrior.h"
 #include "types.h"
 #include <random>
 #include <memory>
@@ -14,7 +13,7 @@ class Logger;
 
 class NestedSampler {
 public:
-    NestedSampler(ISampler&, IPrior&, ILikelihood&, Logger&, NSConfig config);
+    NestedSampler(ISampler&, ILikelihood&, Logger&, NSConfig config);
     ~NestedSampler();
 
     void Initialise();
@@ -31,7 +30,6 @@ private:
     const double logAdd(const Eigen::ArrayXd& logV);
 
     ISampler& mSampler;
-    IPrior& mPrior;
     ILikelihood& mLikelihood;
     Logger& mLogger;
     NSConfig mConfig;

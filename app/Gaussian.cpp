@@ -16,7 +16,7 @@ const Eigen::VectorXd GaussianLikelihood::Gradient(const Eigen::VectorXd& theta)
 };
 
 
-const Eigen::VectorXd GaussianPrior::PriorTransform(const Eigen::VectorXd &cube)
+const Eigen::VectorXd GaussianLikelihood::PriorTransform(const Eigen::VectorXd &cube)
 {
-    return cube.array() * mWidth - mWidth / 2;
+    return cube.array() * priorWidth - priorWidth / 2;
 }

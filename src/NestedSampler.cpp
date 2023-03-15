@@ -1,15 +1,13 @@
 #include "NestedSampler.h"
 #include "Logger.h"
-#include <stdexcept>
 #include <iostream>
 #include <cfloat>
 
 
-NestedSampler::NestedSampler(ISampler& sampler, IPrior& prior, ILikelihood& likelihood, Logger& logger,
+NestedSampler::NestedSampler(ISampler& sampler, ILikelihood& likelihood, Logger& logger,
                              NSConfig config)
     :
     mSampler(sampler),
-    mPrior(prior),
     mLikelihood(likelihood),
     mLogger(logger),
     mConfig(config),
@@ -18,10 +16,6 @@ NestedSampler::NestedSampler(ISampler& sampler, IPrior& prior, ILikelihood& like
     mUniform(0,1),
     initialLogWeight(log(exp(1/mConfig.numLive - 1)))
 {
-    if (mDimension != mPrior.GetDimension()) {
-        throw std::runtime_error("LIKELIHOOD AND PRIOR HAVE DIFFERENT DIMENSIONS");
-    }
-
 }
 
 NestedSampler::~NestedSampler() = default;
@@ -81,7 +75,7 @@ const MCPoint NestedSampler::SampleFromPrior() {
     Eigen::VectorXd cube = Eigen::VectorXd::NullaryExpr(mDimension, [&](){
         return mUniform(gen);
     });
-    Eigen::VectorXd theta = mPrior.PriorTransform(cube);
+    Eigen::VectorXd theta = mLikelihood.PriorTransform(cube);
 
     MCPoint pointFromPrior = {
             theta,

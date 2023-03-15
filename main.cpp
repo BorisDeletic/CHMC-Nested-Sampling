@@ -7,8 +7,8 @@
 #include "types.h"
 #include <Eigen/Dense>
 
-const Eigen::Vector2d mean {{-0.3, 0.4}};
-const Eigen::Vector2d var {{1.0, 0.5}};
+const Eigen::Matrix<double, 6, 1> mean {{-0.3, 0.4, 0, 0,0,0}};
+const Eigen::Matrix<double, 6, 1> var {{1.0, 0.5, 1, 1, 1, 1}};
 const double priorWidth = 15;
 
 const double epsilon = 0.01;
@@ -19,8 +19,7 @@ const int maxIters = 20000;
 const double precisionCriterion = 1e-3;
 
 int main() {
-    GaussianLikelihood likelihood = GaussianLikelihood(mean, var);
-    GaussianPrior prior = GaussianPrior(mean.size(), priorWidth);
+    GaussianLikelihood likelihood = GaussianLikelihood(mean, var, priorWidth);
 
    // RejectionSampler sampler = RejectionSampler(likelihood, epsilon);
     CHMC sampler = CHMC(likelihood, epsilon, pathLength);
@@ -32,7 +31,7 @@ int main() {
             precisionCriterion,
     };
 
-    NestedSampler NS = NestedSampler(sampler, prior, likelihood, logger, config);
+    NestedSampler NS = NestedSampler(sampler, likelihood, logger, config);
 
 
     NS.Initialise();

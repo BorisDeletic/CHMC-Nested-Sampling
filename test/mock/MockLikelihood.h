@@ -6,14 +6,10 @@
 
 class MockLikelihood : public ILikelihood {
 public:
-    MockLikelihood(int dim) : mDim(dim) {
-        ON_CALL(*this, GetDimension()).WillByDefault(::testing::Return(mDim));
-    }
+    MOCK_METHOD(const Eigen::VectorXd, PriorTransform, (const Eigen::VectorXd&), (override));
     MOCK_METHOD(const double, LogLikelihood, (const Eigen::VectorXd&), (override));
     MOCK_METHOD(const Eigen::VectorXd, Gradient, (const Eigen::VectorXd&), (override));
     MOCK_METHOD(const int, GetDimension, (), (override));
-private:
-    const int mDim;
 };
 
 
@@ -22,20 +18,21 @@ public:
     inline GaussianLikelihood(const Eigen::ArrayXd& mean, const Eigen::ArrayXd& var) :
         mean(mean), var(var) {};
 
+    const Eigen::VectorXd PriorTransform(const Eigen::VectorXd& cube) override { return cube; };
 
-    const double LogLikelihood(const Eigen::VectorXd& theta)
+    const double LogLikelihood(const Eigen::VectorXd& theta) override
     {
      //   double loglikelihood = - var.log().sum() - var.size() * std::log(2 * M_PI) / 2;
         double loglikelihood = - ((theta.array() - mean) / var).pow(2).sum() / 2;
         return loglikelihood;
     };
 
-    const Eigen::VectorXd Gradient(const Eigen::VectorXd& theta)
+    const Eigen::VectorXd Gradient(const Eigen::VectorXd& theta) override
     {
         return - ((theta.array() - mean) / var.pow(2)).matrix();
     };
 
-    const int GetDimension() { return mean.size(); };
+    const int GetDimension() override { return mean.size(); };
 
 private:
     const Eigen::ArrayXd mean;

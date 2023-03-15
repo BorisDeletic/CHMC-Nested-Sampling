@@ -43,6 +43,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
 add_executable(CHMC_Nested_Sampling
         main.cpp
         app/Gaussian.cpp app/Gaussian.h
+        app/Phi4LFT.cpp app/Phi4LFT.h
         )
 
 add_subdirectory(src)

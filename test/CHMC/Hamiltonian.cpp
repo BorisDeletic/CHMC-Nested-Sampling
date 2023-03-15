@@ -10,14 +10,18 @@ using ::testing::Return;
 class HamiltonianTest : public ::testing::Test {
 protected:
     void SetUp() override {
+        EXPECT_CALL(likelihood, GetDimension())
+                .WillOnce(Return(x.size()));
         EXPECT_CALL(likelihood, LogLikelihood(_))
                 .WillOnce(Return(0));
 
         EXPECT_CALL(likelihood, Gradient(_))
             .WillOnce(Return(zero));
 
-        hamiltonian.SetHamiltonian(x, p, likelihoodConstraint);
-        hamiltonian.SetMetric(ones);
+        hamiltonian = std::make_unique<Hamiltonian>(likelihood, epsilon);
+
+        hamiltonian->SetHamiltonian(x, p, likelihoodConstraint);
+        hamiltonian->SetMetric(ones);
     }
 
     Eigen::Vector2d x {{1.0, 1.0}};
@@ -26,9 +30,10 @@ protected:
     Eigen::Vector2d ones {{1, 1}};
 
     const double likelihoodConstraint = -2;
+    const double epsilon = 0.1;
 
-    MockLikelihood likelihood = MockLikelihood(2);
-    Hamiltonian hamiltonian = Hamiltonian(likelihood, 0.1);
+    MockLikelihood likelihood;
+    std::unique_ptr<Hamiltonian> hamiltonian;
 };
 
 
@@ -64,10 +69,10 @@ TEST_F(HamiltonianTest, ZeroGradientEvolve) {
             .WillRepeatedly(Return(zero));
 
     for (int i = 0; i < steps; i++) {
-        hamiltonian.Evolve();
+        hamiltonian->Evolve();
     }
 
-    const Eigen::VectorXd& xf = hamiltonian.GetX();
+    const Eigen::VectorXd& xf = hamiltonian->GetX();
 
     EXPECT_DOUBLE_EQ(xf[0], -0.5);
     EXPECT_DOUBLE_EQ(xf[1], 4.0);
@@ -92,13 +97,13 @@ TEST_F(HamiltonianTest, CircularMotionEvolve) {
     //set init conditions
     Eigen::Vector2d x {{0.0, 1.0}};
     Eigen::Vector2d p {{sqrt(k), 0.0}};
-    hamiltonian.SetHamiltonian(x, p, likelihoodConstraint);
+    hamiltonian->SetHamiltonian(x, p, likelihoodConstraint);
 
     for (int i = 0; i < steps; i++) {
-        hamiltonian.Evolve();
+        hamiltonian->Evolve();
     }
 
-    const Eigen::VectorXd& xf = hamiltonian.GetX();
+    const Eigen::VectorXd& xf = hamiltonian->GetX();
 
     EXPECT_NEAR(xf.norm(), 1.0, tolerance);
     EXPECT_NEAR(xf[0], 1.0, 0.1);
@@ -124,12 +129,12 @@ TEST_F(HamiltonianTest, ReflectPerpendicularIncident) {
             .Times(steps + 1)
             .WillRepeatedly(Return(grad));
 
-    hamiltonian.SetHamiltonian(xi, pi, likelihoodConstraint);
+    hamiltonian->SetHamiltonian(xi, pi, likelihoodConstraint);
     for (int i = 0; i < steps; i++) {
-        hamiltonian.Evolve();
+        hamiltonian->Evolve();
     }
 
-    const Eigen::VectorXd& pf = hamiltonian.GetP();
+    const Eigen::VectorXd& pf = hamiltonian->GetP();
 
     EXPECT_DOUBLE_EQ(pf[0], -1.1);
     EXPECT_DOUBLE_EQ(pf[1], 0.0);
@@ -154,12 +159,12 @@ TEST_F(HamiltonianTest, Reflect45Degrees) {
             .Times(steps + 1)
             .WillRepeatedly(Return(grad));
 
-    hamiltonian.SetHamiltonian(xi, pi, likelihoodConstraint);
+    hamiltonian->SetHamiltonian(xi, pi, likelihoodConstraint);
 
     for (int i = 0; i < steps; i++) {
-        hamiltonian.Evolve();
+        hamiltonian->Evolve();
     }
-    const Eigen::VectorXd& pf = hamiltonian.GetP();
+    const Eigen::VectorXd& pf = hamiltonian->GetP();
 
     EXPECT_DOUBLE_EQ(pf[0], -0.6);
     EXPECT_DOUBLE_EQ(pf[1], 0.5);
