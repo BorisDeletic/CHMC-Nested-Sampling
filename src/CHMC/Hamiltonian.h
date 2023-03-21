@@ -26,6 +26,7 @@ public:
 
 private:
     void ReflectP(const Eigen::VectorXd& normal);
+    void ReflectX();
 
     ILikelihood& mLikelihood;
     LeapfrogIntegrator mIntegrator;
@@ -35,6 +36,9 @@ private:
     double mLogLikelihood;
     double mLikelihoodConstraint;
     const int mDimension;
+
+    const int mEpsilonReflectionLimit = 15; // Number of times Epsilon can be halved.
+    int mFailedReflections = 0;
 
     Eigen::VectorXd mX;
     Eigen::VectorXd mP;

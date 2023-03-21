@@ -11,7 +11,7 @@ const Eigen::Matrix<double, 6, 1> mean {{-0.3, 0.4, 0, 0,0,0}};
 const Eigen::Matrix<double, 6, 1> var {{1.0, 0.5, 1, 1, 1, 1}};
 const double priorWidth = 15;
 
-const double epsilon = 0.01;
+const double epsilon = 0.1;
 const int pathLength = 500;
 
 const int numLive = 1000;
@@ -32,7 +32,6 @@ int main() {
     };
 
     NestedSampler NS = NestedSampler(sampler, likelihood, logger, config);
-
 
     NS.Initialise();
     NS.Run();

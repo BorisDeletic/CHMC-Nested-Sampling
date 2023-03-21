@@ -1,8 +1,8 @@
 #include "CHMC.h"
 #include "Hamiltonian.h"
 #include <memory>
-#include <iostream>
 #include <cfloat>
+#include <iostream>
 
 CHMC::CHMC(ILikelihood& likelihood, double epsilon, int pathLength)
     :
@@ -16,6 +16,16 @@ CHMC::CHMC(ILikelihood& likelihood, double epsilon, int pathLength)
 }
 
 CHMC::~CHMC() = default;
+
+void CHMC::Initialise(const MCPoint &init) {
+    mIters = 0;
+    mRejections = 0;
+
+   // WarmupAdapt(init);
+   // WarmupAdapt(init);
+
+    std::cout << GetMetric() << std::endl;
+}
 
 
 bool CHMC::WarmupAdapt(const MCPoint &init)
@@ -31,6 +41,7 @@ bool CHMC::WarmupAdapt(const MCPoint &init)
                 samples.row(i-1),
                 0,
                 0};
+
         MCPoint next = SamplePoint(last, -DBL_MAX);
         samples.row(i) = next.theta;
     }
@@ -39,6 +50,7 @@ bool CHMC::WarmupAdapt(const MCPoint &init)
    // std::cerr << std::endl << newMetric << std::endl;
 
     mHamiltonian->SetMetric(newMetric);
+
     return true;
 }
 
@@ -55,8 +67,9 @@ Eigen::VectorXd CHMC::SampleP(const int size) {
     return p;
 }
 
-
 const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint) {
+    mIters++;
+
     const Eigen::VectorXd p = SampleP(old.theta.size());
 
     mHamiltonian->SetHamiltonian(old.theta, p, likelihoodConstraint);
@@ -77,12 +90,21 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
         };
         return newPoint;
 
-    } else
+    }
+    else
     {
-      //  std::cerr << "REJECT POINT ";
-        return old;
+        mRejections++;
+        std::cout << "REJECT POINT ";
+        MCPoint rejectedPoint = {
+                Eigen::VectorXd::Zero(mLikelihood.GetDimension()),
+                0,
+                0,
+                true
+        };
+        return rejectedPoint;
     }
 }
+
 
 Eigen::VectorXd CHMC::CalculateVar(const Eigen::MatrixXd& samples) {
     Eigen::MatrixXd centered = samples.rowwise() - samples.colwise().mean();
@@ -94,5 +116,15 @@ Eigen::VectorXd CHMC::CalculateVar(const Eigen::MatrixXd& samples) {
 
 const Eigen::VectorXd& CHMC::GetMetric() {
     return mHamiltonian->GetMetric();
+}
+
+
+const SamplerSummary CHMC::GetSummary() {
+    double rejectRatio = (float)mRejections / mIters;
+    SamplerSummary summary = {
+            rejectRatio
+    };
+
+    return summary;
 }
 

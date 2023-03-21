@@ -8,6 +8,7 @@ typedef struct MCPoint {
     const Eigen::VectorXd theta;
     const double likelihood;
     const double birthLikelihood;
+    bool rejected = false;
 } MCPoint;
 
 inline bool operator<(const MCPoint& a, const MCPoint& b) {
@@ -25,5 +26,10 @@ typedef struct NSConfig {
 typedef struct NSSummary {
     const double logZ;
 } NSSummary;
+
+
+typedef struct SamplerSummary {
+    double rejectRatio = 0;
+} SamplerSummary;
 
 #endif //CHMC_NESTED_SAMPLING_TYPES_H

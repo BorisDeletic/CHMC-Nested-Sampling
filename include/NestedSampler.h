@@ -47,6 +47,7 @@ private:
     const double minLikelihood = -1e30;
     const double initialLogWeight;
     const int mDimension;
+    const int mSampleRetries = 5;
 };
 
 #endif //CHMC_NESTED_SAMPLING_NESTEDSAMPLING_H

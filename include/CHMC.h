@@ -15,11 +15,14 @@ public:
     CHMC(ILikelihood&, double epsilon, int pathLength);
     ~CHMC();
 
+    void Initialise(const MCPoint& init);
+    const MCPoint SamplePoint(const MCPoint& old, double likelihoodConstraint) override;
+    const SamplerSummary GetSummary() override;
+
     const Eigen::VectorXd& GetMetric();
 
-    bool WarmupAdapt(const MCPoint& init);
-    const MCPoint SamplePoint(const MCPoint& old, double likelihoodConstraint);
 private:
+    bool WarmupAdapt(const MCPoint& init);
     Eigen::VectorXd SampleP(int size);
     Eigen::VectorXd CalculateVar(const Eigen::MatrixXd& samples);
 
@@ -34,6 +37,10 @@ private:
     const int mPathLength;
     const int mWarmupSteps = 75;
     const double inf = 1e100;
+
+    int mIters = 0;
+    int mRejections = 0;
+
 };
 
 #endif //CHMC_NESTED_SAMPLING_CHMC_H

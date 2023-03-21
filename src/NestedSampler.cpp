@@ -25,6 +25,8 @@ void NestedSampler::Initialise() {
     mIter = 0;
     mLivePoints.clear();
 
+    mSampler.Initialise(SampleFromPrior());
+
     for (int i = mLivePoints.size(); i < mConfig.numLive; i++) {
         MCPoint newPoint = SampleFromPrior();
         mLivePoints.insert(newPoint);
@@ -38,7 +40,8 @@ void NestedSampler::Initialise() {
 void NestedSampler::Run() {
     bool terminationCondition = false;
     while (!terminationCondition) {
-        std::cout << "NS Step: " << mIter << std::endl;
+        std::cout << "NS Step: " << mIter;
+        std::cout << ", Reject Ratio = " << mSampler.GetSummary().rejectRatio << std::endl;
         NestedSamplingStep();
         mIter++;
 
@@ -48,10 +51,12 @@ void NestedSampler::Run() {
     }
 
     NSSummary summary = {
-            mLogZ
+            mLogZ,
     };
 
-    mLogger.WriteSummary(summary);
+    SamplerSummary samplerStats = mSampler.GetSummary();
+
+    mLogger.WriteSummary(summary, samplerStats);
 }
 
 
@@ -63,11 +68,25 @@ void NestedSampler::NestedSamplingStep() {
     // Analysis on dead point
     UpdateLogEvidence(deadPoint.likelihood);
 
-    const MCPoint newPoint = mSampler.SamplePoint(deadPoint, likelihoodConstraint);
-    mLogger.WritePoint(newPoint);
+    // Generate new point
+    for (int i = 0; i < mSampleRetries; i++) {
+        const MCPoint newPoint = mSampler.SamplePoint(deadPoint, likelihoodConstraint);
 
+        if (!newPoint.rejected) {
+            // sampled valid new point
+            mLivePoints.insert(newPoint);
+            mLogger.WritePoint(newPoint);
+
+            if (mLivePoints.size() >= mConfig.numLive) {
+                mLivePoints.erase(lowestIt);
+                return;
+            }
+        }
+    }
+
+    // no valid sample generated, kill point.
     mLivePoints.erase(lowestIt);
-    mLivePoints.insert(newPoint);
+
 }
 
 
@@ -115,7 +134,8 @@ const double NestedSampler::EstimateLogEvidenceRemaining() {
 
 
 const bool NestedSampler::TerminateSampling() {
-    if (EstimateLogEvidenceRemaining() < mLogZ + log(mConfig.precisionCriterion)) {
+    double remainingEvidence = EstimateLogEvidenceRemaining();
+    if (remainingEvidence < mLogZ + log(mConfig.precisionCriterion)) {
         return true;
     }
 

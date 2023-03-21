@@ -23,10 +23,14 @@ void Logger::WritePoint(const MCPoint& point) {
 }
 
 
-void Logger::WriteSummary(const NSSummary& summary) {
+void Logger::WriteSummary(const NSSummary& summary, const SamplerSummary &samplerSummary) {
     mSummaryFile.open(mSummaryFilename);
 
     mSummaryFile << "Log (Z) = " << summary.logZ << std::endl;
+
+    if (samplerSummary.rejectRatio != 0) {
+        mSummaryFile << "Rejection Ratio = " << samplerSummary.rejectRatio << std::endl;
+    }
 
     mSummaryFile.close();
 }
