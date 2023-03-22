@@ -52,6 +52,7 @@ void NestedSampler::Run() {
 
     NSSummary summary = {
             mLogZ,
+            EstimateLogEvidenceRemaining()
     };
 
     SamplerSummary samplerStats = mSampler.GetSummary();

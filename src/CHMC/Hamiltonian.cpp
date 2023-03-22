@@ -31,7 +31,7 @@ void Hamiltonian::Evolve()
         // Reflect off iso-likelihood contour.
 
         ReflectP(mGradient);
-        ReflectX();
+        ReflectX(mGradient);
     }
     else
     {
@@ -58,7 +58,7 @@ void Hamiltonian::ReflectP(const Eigen::VectorXd &normal) {
 }
 
 
-void Hamiltonian::ReflectX() {
+void Hamiltonian::ReflectX(const Eigen::VectorXd &normal) {
     const double oldEpsilon = mIntegrator.GetEpsilon();
 
     for (int i = 0; i < mEpsilonReflectionLimit; i++) {
@@ -77,10 +77,11 @@ void Hamiltonian::ReflectX() {
 
             mIntegrator.SetEpsilon(oldEpsilon);
             return;
-        } else {
-            std::cout <<"lowering epsl" << std::endl;
         }
-
+        if (i == 10) {
+            std::cout <<"epsilon small";
+        }
+        ReflectP(normal);
     }
 
     throw std::runtime_error("NO VALID REFLECTION");

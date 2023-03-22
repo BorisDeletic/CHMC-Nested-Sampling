@@ -26,7 +26,7 @@ public:
 
 private:
     void ReflectP(const Eigen::VectorXd& normal);
-    void ReflectX();
+    void ReflectX(const Eigen::VectorXd& normal);
 
     ILikelihood& mLikelihood;
     LeapfrogIntegrator mIntegrator;

@@ -25,6 +25,7 @@ typedef struct NSConfig {
 
 typedef struct NSSummary {
     const double logZ;
+    const double logZRemaining;
 } NSSummary;
 
 

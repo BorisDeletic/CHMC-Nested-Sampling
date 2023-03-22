@@ -11,11 +11,11 @@ const Eigen::Matrix<double, 6, 1> mean {{-0.3, 0.4, 0, 0,0,0}};
 const Eigen::Matrix<double, 6, 1> var {{1.0, 0.5, 1, 1, 1, 1}};
 const double priorWidth = 15;
 
-const double epsilon = 0.1;
-const int pathLength = 500;
+const double epsilon = 0.5;
+const int pathLength = 100;
 
 const int numLive = 1000;
-const int maxIters = 20000;
+const int maxIters = 10000;
 const double precisionCriterion = 1e-3;
 
 int main() {

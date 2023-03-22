@@ -21,8 +21,8 @@ void CHMC::Initialise(const MCPoint &init) {
     mIters = 0;
     mRejections = 0;
 
-   // WarmupAdapt(init);
-   // WarmupAdapt(init);
+    WarmupAdapt(init);
+    WarmupAdapt(init);
 
     std::cout << GetMetric() << std::endl;
 }
