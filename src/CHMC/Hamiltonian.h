@@ -17,6 +17,7 @@ public:
     const double GetEpsilon() const { return mIntegrator.GetEpsilon(); };
     const double GetLikelihood() const { return mLogLikelihood; };
     const double GetEnergy() const;
+    const bool GetRejected() const { return mRejected; };
 
     void SetHamiltonian(const Eigen::VectorXd& x, const Eigen::VectorXd& p, double likelihoodConstraint);
     void SetMetric(const Eigen::VectorXd metric) { mMetric = metric; };
@@ -39,6 +40,7 @@ private:
 
     const int mEpsilonReflectionLimit = 15; // Number of times Epsilon can be halved.
     int mFailedReflections = 0;
+    bool mRejected = false;
 
     Eigen::VectorXd mX;
     Eigen::VectorXd mP;

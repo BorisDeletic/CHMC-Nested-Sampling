@@ -136,7 +136,7 @@ const double NestedSampler::EstimateLogEvidenceRemaining() {
 
 const bool NestedSampler::TerminateSampling() {
     double remainingEvidence = EstimateLogEvidenceRemaining();
-    if (remainingEvidence < mLogZ + log(mConfig.precisionCriterion)) {
+    if (remainingEvidence < mLogZ + log10(mConfig.precisionCriterion)) {
         return true;
     }
 

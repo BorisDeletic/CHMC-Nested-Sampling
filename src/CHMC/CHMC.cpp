@@ -81,7 +81,7 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
 
     const double acceptProb = exp(initEnergy - mHamiltonian->GetEnergy());
     const double r = mUniform(gen);
-    if (acceptProb > r)
+    if ((acceptProb > r) && (!mHamiltonian->GetRejected()))
     {
         MCPoint newPoint = {
                 mHamiltonian->GetX(),

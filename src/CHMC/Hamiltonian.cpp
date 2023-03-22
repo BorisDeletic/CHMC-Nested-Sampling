@@ -14,6 +14,7 @@ Hamiltonian::Hamiltonian(ILikelihood& likelihood, const double epsilon)
 void Hamiltonian::SetHamiltonian(const Eigen::VectorXd &x, const Eigen::VectorXd &p, const double likelihoodConstraint) {
     mX = x;
     mP = p;
+    mRejected = false;
 
     mLikelihoodConstraint = likelihoodConstraint;
 
@@ -78,13 +79,10 @@ void Hamiltonian::ReflectX(const Eigen::VectorXd &normal) {
             mIntegrator.SetEpsilon(oldEpsilon);
             return;
         }
-        if (i == 10) {
-            std::cout <<"epsilon small";
-        }
         ReflectP(normal);
     }
-
-    throw std::runtime_error("NO VALID REFLECTION");
+    mRejected = true;
+  //  throw std::runtime_error("NO VALID REFLECTION");
 }
 
 
