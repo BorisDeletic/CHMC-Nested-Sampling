@@ -41,6 +41,7 @@ void NestedSampler::Run() {
     bool terminationCondition = false;
     while (!terminationCondition) {
         std::cout << "NS Step: " << mIter;
+        std::cout << ", Num Live = " << mLivePoints.size();
         std::cout << ", Reject Ratio = " << mSampler.GetSummary().rejectRatio << std::endl;
         NestedSamplingStep();
         mIter++;

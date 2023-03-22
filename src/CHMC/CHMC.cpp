@@ -18,11 +18,12 @@ CHMC::CHMC(ILikelihood& likelihood, double epsilon, int pathLength)
 CHMC::~CHMC() = default;
 
 void CHMC::Initialise(const MCPoint &init) {
+
+//    WarmupAdapt(init);
+ //   WarmupAdapt(init);
+
     mIters = 0;
     mRejections = 0;
-
-    WarmupAdapt(init);
-    WarmupAdapt(init);
 
     std::cout << GetMetric() << std::endl;
 }
@@ -75,11 +76,16 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
     mHamiltonian->SetHamiltonian(old.theta, p, likelihoodConstraint);
     const double initEnergy = mHamiltonian->GetEnergy();
 
+    double energy=initEnergy;
     for (int i = 0; i < mPathLength; i++) {
         mHamiltonian->Evolve();
+        energy = mHamiltonian->GetEnergy();
     }
 
-    const double acceptProb = exp(initEnergy - mHamiltonian->GetEnergy());
+ //   std::cout << energy;
+    const double newEnergy = mHamiltonian->GetEnergy();
+
+    const double acceptProb = exp(initEnergy - newEnergy);
     const double r = mUniform(gen);
     if ((acceptProb > r) && (!mHamiltonian->GetRejected()))
     {
@@ -94,7 +100,11 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
     else
     {
         mRejections++;
-        std::cout << "REJECT POINT ";
+        if (mHamiltonian->GetRejected()) {
+            std::cout << " !REFLECT! ";
+        } else {
+            std::cout << " !ENERGY! ";
+        }
         MCPoint rejectedPoint = {
                 Eigen::VectorXd::Zero(mLikelihood.GetDimension()),
                 0,
