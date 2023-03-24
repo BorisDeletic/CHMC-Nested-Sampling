@@ -51,6 +51,7 @@ add_subdirectory(likelihood)
 
 target_include_directories(CHMC_Nested_Sampling PUBLIC
         include
+        include/CHMC
         likelihood)
 
 target_link_libraries(CHMC_Nested_Sampling

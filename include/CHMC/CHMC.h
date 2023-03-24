@@ -3,6 +3,7 @@
 
 #include "ISampler.h"
 #include "ILikelihood.h"
+#include "Hamiltonian.h"
 #include "types.h"
 #include <Eigen/Dense>
 #include <random>
@@ -13,9 +14,8 @@ class Hamiltonian;
 class CHMC : public ISampler {
 public:
     CHMC(ILikelihood&, double epsilon, int pathLength);
-    ~CHMC();
 
-    void Initialise(const MCPoint& init);
+    void Initialise(const MCPoint& init) override;
     const MCPoint SamplePoint(const MCPoint& old, double likelihoodConstraint) override;
     const SamplerSummary GetSummary() override;
 
@@ -27,7 +27,7 @@ private:
     Eigen::VectorXd CalculateVar(const Eigen::MatrixXd& samples);
 
     ILikelihood& mLikelihood;
-    std::unique_ptr<Hamiltonian> mHamiltonian;
+    Hamiltonian mHamiltonian;
 
     std::normal_distribution<double> mNorm;
     std::uniform_real_distribution<double> mUniform;

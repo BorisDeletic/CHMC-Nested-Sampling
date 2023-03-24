@@ -11,7 +11,7 @@ add_executable(CHMC_Test
 
 target_include_directories(CHMC_Test PRIVATE
         ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR}/src/CHMC
+        ${PROJECT_SOURCE_DIR}/include/CHMC
         ${PROJECT_SOURCE_DIR}/test/mock
         )
 

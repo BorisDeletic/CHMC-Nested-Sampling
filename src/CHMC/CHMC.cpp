@@ -7,15 +7,14 @@
 CHMC::CHMC(ILikelihood& likelihood, double epsilon, int pathLength)
     :
     mLikelihood(likelihood),
+    mHamiltonian(likelihood, epsilon),
     mPathLength(pathLength),
     gen(rd()),
     mNorm(0, 1),
     mUniform(0, 1)
 {
-    mHamiltonian = std::make_unique<Hamiltonian>(likelihood, epsilon);
 }
 
-CHMC::~CHMC() = default;
 
 void CHMC::Initialise(const MCPoint &init) {
 
@@ -50,7 +49,7 @@ bool CHMC::WarmupAdapt(const MCPoint &init)
     Eigen::VectorXd newMetric = CalculateVar(samples).cwiseInverse();
    // std::cerr << std::endl << newMetric << std::endl;
 
-    mHamiltonian->SetMetric(newMetric);
+    mHamiltonian.SetMetric(newMetric);
 
     return true;
 }
@@ -59,7 +58,7 @@ bool CHMC::WarmupAdapt(const MCPoint &init)
 Eigen::VectorXd CHMC::SampleP(const int size) {
     Eigen::VectorXd p(size);
 
-    Eigen::VectorXd sqrtMetric = mHamiltonian->GetMetric().cwiseSqrt();
+    Eigen::VectorXd sqrtMetric = mHamiltonian.GetMetric().cwiseSqrt();
 
     for (int i = 0; i < size; i++) {
         p(i) = mNorm(gen) * sqrtMetric(i);
@@ -73,25 +72,25 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
 
     const Eigen::VectorXd p = SampleP(old.theta.size());
 
-    mHamiltonian->SetHamiltonian(old.theta, p, likelihoodConstraint);
-    const double initEnergy = mHamiltonian->GetEnergy();
+    mHamiltonian.SetHamiltonian(old.theta, p, likelihoodConstraint);
+    const double initEnergy = mHamiltonian.GetEnergy();
 
     double energy=initEnergy;
     for (int i = 0; i < mPathLength; i++) {
-        mHamiltonian->Evolve();
-        energy = mHamiltonian->GetEnergy();
+        mHamiltonian.Evolve();
+        energy = mHamiltonian.GetEnergy();
     }
 
  //   std::cout << energy;
-    const double newEnergy = mHamiltonian->GetEnergy();
+    const double newEnergy = mHamiltonian.GetEnergy();
 
     const double acceptProb = exp(initEnergy - newEnergy);
     const double r = mUniform(gen);
-    if ((acceptProb > r) && (!mHamiltonian->GetRejected()))
+    if ((acceptProb > r) && (!mHamiltonian.GetRejected()))
     {
         MCPoint newPoint = {
-                mHamiltonian->GetX(),
-                mHamiltonian->GetLikelihood(),
+                mHamiltonian.GetX(),
+                mHamiltonian.GetLikelihood(),
                 likelihoodConstraint
         };
         return newPoint;
@@ -100,7 +99,7 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
     else
     {
         mRejections++;
-        if (mHamiltonian->GetRejected()) {
+        if (mHamiltonian.GetRejected()) {
             std::cout << " !REFLECT! ";
         } else {
             std::cout << " !ENERGY! ";
@@ -125,7 +124,7 @@ Eigen::VectorXd CHMC::CalculateVar(const Eigen::MatrixXd& samples) {
 }
 
 const Eigen::VectorXd& CHMC::GetMetric() {
-    return mHamiltonian->GetMetric();
+    return mHamiltonian.GetMetric();
 }
 
 

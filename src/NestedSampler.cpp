@@ -18,8 +18,6 @@ NestedSampler::NestedSampler(ISampler& sampler, ILikelihood& likelihood, Logger&
 {
 }
 
-NestedSampler::~NestedSampler() = default;
-
 
 void NestedSampler::Initialise() {
     mIter = 0;

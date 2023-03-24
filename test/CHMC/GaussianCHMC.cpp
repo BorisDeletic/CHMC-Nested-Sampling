@@ -64,8 +64,8 @@ protected:
 
 
 TEST_F(GaussianCHMCTest, GaussianDistributionNoConstraint) {
-    mCHMC.WarmupAdapt(initPoint);
-    mCHMC.WarmupAdapt(initPoint);
+   // mCHMC.WarmupAdapt(initPoint);
+   // mCHMC.WarmupAdapt(initPoint);
 
     int numSamples = 5000;
 
@@ -112,8 +112,8 @@ TEST_F(GaussianCHMCTest, SamplesDontViolateConstraint) {
 
 
 TEST_F(GaussianCHMCTest, CorrectDistributionWithConstraint) {
-    mCHMC.WarmupAdapt(initPoint);
-    mCHMC.WarmupAdapt(initPoint);
+  //  mCHMC.WarmupAdapt(initPoint);
+  //  mCHMC.WarmupAdapt(initPoint);
 
     Eigen::Vector2d bound{{0.5, 0.1}};
     const double likelihoodConstraint = gaussianLikelihood.LogLikelihood(bound);

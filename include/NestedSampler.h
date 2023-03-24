@@ -14,10 +14,10 @@ class Logger;
 class NestedSampler {
 public:
     NestedSampler(ISampler&, ILikelihood&, Logger&, NSConfig config);
-    ~NestedSampler();
 
     void Initialise();
     void Run();
+
 private:
     void NestedSamplingStep();
     const MCPoint SampleFromPrior();
