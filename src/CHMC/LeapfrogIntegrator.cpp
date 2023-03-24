@@ -2,19 +2,22 @@
 #include <stdexcept>
 
 
-LeapfrogIntegrator::LeapfrogIntegrator(const double epsilon)
+LeapfrogIntegrator::LeapfrogIntegrator(IParams& params)
     :
-    mEpsilon(epsilon),
+    mParams(params),
     mXUpdatedBeforeP(false)
 {
 }
 
 
 Eigen::VectorXd
-LeapfrogIntegrator::UpdateX(const Eigen::VectorXd &x, const Eigen::VectorXd &p, const Eigen::VectorXd &a, const Eigen::VectorXd& metric) {
-    mHalfstepP = p + 0.5 * mEpsilon * a;
+LeapfrogIntegrator::UpdateX(const Eigen::VectorXd &x, const Eigen::VectorXd &p, const Eigen::VectorXd &a) {
+    const double epsilon = mParams.GetEpsilon();
+    const Eigen::VectorXd& metric = mParams.GetMetric();
 
-    Eigen::VectorXd newX = x + mEpsilon * metric.cwiseInverse().asDiagonal() * mHalfstepP;
+    mHalfstepP = p + 0.5 * epsilon * a;
+
+    Eigen::VectorXd newX = x + epsilon * metric.cwiseInverse().asDiagonal() * mHalfstepP;
 
     mXUpdatedBeforeP = true;
 
@@ -28,7 +31,7 @@ LeapfrogIntegrator::UpdateP(const Eigen::VectorXd &a) {
         throw std::runtime_error("LEAPFROG_INTEGRATOR: Position X was not updated before Momentum P.");
     }
 
-    Eigen::VectorXd newP = mHalfstepP + 0.5 * mEpsilon * a;
+    Eigen::VectorXd newP = mHalfstepP + 0.5 * mParams.GetEpsilon() * a;
 
     mXUpdatedBeforeP = false;
 

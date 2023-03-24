@@ -1,3 +1,7 @@
+#ifndef CHMC_NESTED_SAMPLING_LEAPFROGINTEGRATOR_H
+#define CHMC_NESTED_SAMPLING_LEAPFROGINTEGRATOR_H
+
+#include "IParams.h"
 #include <Eigen/Dense>
 
 
@@ -6,21 +10,20 @@
 class LeapfrogIntegrator
 {
 public:
-    LeapfrogIntegrator(double epsilon);
+    LeapfrogIntegrator(IParams&);
 
     // Must update x first with a(x) and then p using a(x_new).
-    Eigen::VectorXd UpdateX(const Eigen::VectorXd& x, const Eigen::VectorXd& p, const Eigen::VectorXd& a, const Eigen::VectorXd& metric);
+    Eigen::VectorXd UpdateX(const Eigen::VectorXd& x, const Eigen::VectorXd& p, const Eigen::VectorXd& a);
     Eigen::VectorXd UpdateP(const Eigen::VectorXd& a);
 
     void ChangeP(const Eigen::VectorXd& oldP, const Eigen::VectorXd& newP);
 
-    void SetEpsilon(const double epsilon) { mEpsilon = epsilon; };
-    const double GetEpsilon() const { return mEpsilon; };
-
 private:
+    IParams& mParams;
     Eigen::VectorXd mHalfstepP;
 
-    double mEpsilon;
     bool mXUpdatedBeforeP;
 };
 
+
+#endif //CHMC_NESTED_SAMPLING_LEAPFROGINTEGRATOR_H

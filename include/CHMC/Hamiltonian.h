@@ -3,25 +3,22 @@
 
 #include "LeapfrogIntegrator.h"
 #include "ILikelihood.h"
+#include "IParams.h"
 #include <Eigen/Dense>
 #include <functional>
 
 // Constrained Hamiltonian class. Trajectory reflects off likelihood constraint boundary.
 class Hamiltonian {
 public:
-    Hamiltonian(ILikelihood& likelihood, double epsilon);
+    Hamiltonian(ILikelihood&, IParams&);
 
     const Eigen::VectorXd& GetX() const { return mX; };
     const Eigen::VectorXd& GetP() const { return mP; };
-    const Eigen::VectorXd& GetMetric() const { return mMetric; };
-    const double GetEpsilon() const { return mIntegrator.GetEpsilon(); };
     const double GetLikelihood() const { return mLogLikelihood; };
     const double GetEnergy() const;
     const bool GetRejected() const { return mRejected; };
 
     void SetHamiltonian(const Eigen::VectorXd& x, const Eigen::VectorXd& p, double likelihoodConstraint);
-    void SetMetric(const Eigen::VectorXd metric) { mMetric = metric; };
-    void SetEpsilon(const double epsilon) { mIntegrator.SetEpsilon(epsilon); };
 
     void Evolve();
 
@@ -30,8 +27,8 @@ private:
     void ReflectX(const Eigen::VectorXd& normal);
 
     ILikelihood& mLikelihood;
+    IParams& mParams;
     LeapfrogIntegrator mIntegrator;
-    Eigen::VectorXd mMetric;
 
     Eigen::VectorXd mGradient;
     double mLogLikelihood;

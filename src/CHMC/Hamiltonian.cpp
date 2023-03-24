@@ -2,13 +2,13 @@
 #include "Hamiltonian.h"
 
 
-Hamiltonian::Hamiltonian(ILikelihood& likelihood, const double epsilon)
+Hamiltonian::Hamiltonian(ILikelihood& likelihood, IParams& params)
     :
         mLikelihood(likelihood),
-        mIntegrator(epsilon),
+        mParams(params),
+        mIntegrator(mParams),
         mDimension(likelihood.GetDimension())
 {
-    mMetric = Eigen::VectorXd::Ones( mDimension);
 }
 
 void Hamiltonian::SetHamiltonian(const Eigen::VectorXd &x, const Eigen::VectorXd &p, const double likelihoodConstraint) {
@@ -25,7 +25,7 @@ void Hamiltonian::SetHamiltonian(const Eigen::VectorXd &x, const Eigen::VectorXd
 
 void Hamiltonian::Evolve()
 {
-    Eigen::VectorXd newX = mIntegrator.UpdateX(mX, mP, mGradient, mMetric);
+    Eigen::VectorXd newX = mIntegrator.UpdateX(mX, mP, mGradient);
     const double newLikelihood = mLikelihood.LogLikelihood(newX);
 
     if (newLikelihood <= mLikelihoodConstraint) {
@@ -48,7 +48,9 @@ void Hamiltonian::Evolve()
 
 //incident momentum and normal vector to reflection boundary
 void Hamiltonian::ReflectP(const Eigen::VectorXd &normal) {
-    Eigen::VectorXd nRot = mMetric.cwiseInverse().asDiagonal() * normal;
+    const Eigen::VectorXd invMetric = mParams.GetMetric().cwiseInverse();
+
+    Eigen::VectorXd nRot = invMetric.asDiagonal() * normal;
  //   Eigen::VectorXd nHat = normal.normalized();
 
     Eigen::VectorXd reflectedP = mP - 2 * mP.dot(nRot) / normal.dot(nRot) * normal;
@@ -89,7 +91,9 @@ void Hamiltonian::ReflectX(const Eigen::VectorXd &normal) {
 
 
 const double Hamiltonian::GetEnergy() const {
-    double energy = 0.5 * mP.dot(mMetric.cwiseInverse().asDiagonal() * mP) - mLogLikelihood;
+    const Eigen::VectorXd invMetric = mParams.GetMetric().cwiseInverse();
+
+    const double energy = 0.5 * mP.dot(invMetric.asDiagonal() * mP) - mLogLikelihood;
     return energy;
 }
 
