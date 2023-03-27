@@ -10,7 +10,7 @@ public:
     Logger(std::string name);
 
     virtual void WritePoint(const MCPoint&);
-    virtual void WriteSummary(const NSSummary&, const SamplerSummary&);
+    virtual void WriteSummary(const NSSummary&);
   //  void WriteLivePoints();
   //  void ReadLivePoints();
 

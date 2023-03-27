@@ -13,7 +13,7 @@ public:
     LeapfrogIntegrator(IParams&);
 
     // Must update x first with a(x) and then p using a(x_new).
-    Eigen::VectorXd UpdateX(const Eigen::VectorXd& x, const Eigen::VectorXd& p, const Eigen::VectorXd& a);
+    Eigen::VectorXd UpdateX(const Eigen::VectorXd& x, const Eigen::VectorXd& p, const Eigen::VectorXd& a, double epsilonFactor = 1);
     Eigen::VectorXd UpdateP(const Eigen::VectorXd& a);
 
     void ChangeP(const Eigen::VectorXd& oldP, const Eigen::VectorXd& newP);
@@ -22,6 +22,7 @@ private:
     IParams& mParams;
     Eigen::VectorXd mHalfstepP;
 
+    double mLastEpsilon;
     bool mXUpdatedBeforeP;
 };
 

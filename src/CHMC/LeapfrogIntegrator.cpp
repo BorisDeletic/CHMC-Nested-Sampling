@@ -9,15 +9,16 @@ LeapfrogIntegrator::LeapfrogIntegrator(IParams& params)
 {
 }
 
-
+// Epsilon factor allows integrator to use scaled epsilon e' = m*e for one integration step.
+// Used for reflections.
 Eigen::VectorXd
-LeapfrogIntegrator::UpdateX(const Eigen::VectorXd &x, const Eigen::VectorXd &p, const Eigen::VectorXd &a) {
-    const double epsilon = mParams.GetEpsilon();
-    const Eigen::VectorXd& metric = mParams.GetMetric();
+LeapfrogIntegrator::UpdateX(const Eigen::VectorXd &x, const Eigen::VectorXd &p, const Eigen::VectorXd &a, double epsilonFactor) {
+    const Eigen::VectorXd& invMetric = mParams.GetMetric().cwiseInverse();
+    mLastEpsilon = mParams.GetEpsilon() * epsilonFactor;
 
-    mHalfstepP = p + 0.5 * epsilon * a;
+    mHalfstepP = p + 0.5 * mLastEpsilon * a;
 
-    Eigen::VectorXd newX = x + epsilon * metric.cwiseInverse().asDiagonal() * mHalfstepP;
+    Eigen::VectorXd newX = x + mLastEpsilon * invMetric.asDiagonal() * mHalfstepP;
 
     mXUpdatedBeforeP = true;
 
@@ -30,10 +31,9 @@ LeapfrogIntegrator::UpdateP(const Eigen::VectorXd &a) {
     if (!mXUpdatedBeforeP) {
         throw std::runtime_error("LEAPFROG_INTEGRATOR: Position X was not updated before Momentum P.");
     }
-
-    Eigen::VectorXd newP = mHalfstepP + 0.5 * mParams.GetEpsilon() * a;
-
     mXUpdatedBeforeP = false;
+
+    Eigen::VectorXd newP = mHalfstepP + 0.5 * mLastEpsilon * a;
 
     return newP;
 }
@@ -41,6 +41,5 @@ LeapfrogIntegrator::UpdateP(const Eigen::VectorXd &a) {
 void LeapfrogIntegrator::ChangeP(const Eigen::VectorXd& oldP, const Eigen::VectorXd& newP) {
     mHalfstepP.resize(oldP.size()); // no operation if halfstep == p
     mHalfstepP = mHalfstepP - oldP + newP; // change halfstepP to be retroactively calcuted with new p.
-
 }
 

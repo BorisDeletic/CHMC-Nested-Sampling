@@ -23,8 +23,6 @@ void NestedSampler::Initialise() {
     mIter = 0;
     mLivePoints.clear();
 
-    mSampler.Initialise(SampleFromPrior());
-
     for (int i = mLivePoints.size(); i < mConfig.numLive; i++) {
         MCPoint newPoint = SampleFromPrior();
         mLivePoints.insert(newPoint);
@@ -39,8 +37,8 @@ void NestedSampler::Run() {
     bool terminationCondition = false;
     while (!terminationCondition) {
         std::cout << "NS Step: " << mIter;
-        std::cout << ", Num Live = " << mLivePoints.size();
-        std::cout << ", Reject Ratio = " << mSampler.GetSummary().rejectRatio << std::endl;
+        std::cout << ", Num Live = " << mLivePoints.size() << std::endl;
+     //   std::cout << ", Reject Ratio = " << mSampler.GetSummary().rejectRatio << std::endl;
         NestedSamplingStep();
         mIter++;
 
@@ -54,9 +52,9 @@ void NestedSampler::Run() {
             EstimateLogEvidenceRemaining()
     };
 
-    SamplerSummary samplerStats = mSampler.GetSummary();
+  //  SamplerSummary samplerStats = mSampler.GetSummary();
 
-    mLogger.WriteSummary(summary, samplerStats);
+    mLogger.WriteSummary(summary);
 }
 
 

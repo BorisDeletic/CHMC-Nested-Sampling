@@ -62,29 +62,24 @@ void Hamiltonian::ReflectP(const Eigen::VectorXd &normal) {
 
 
 void Hamiltonian::ReflectX(const Eigen::VectorXd &normal) {
-    const double oldEpsilon = mIntegrator.GetEpsilon();
 
     for (int i = 0; i < mEpsilonReflectionLimit; i++) {
-        const double newEpsilon = oldEpsilon / (pow(2, i));
-        mIntegrator.SetEpsilon(newEpsilon);
+        const double epsilonFactor = 1.0 / pow(2, i);
 
-        Eigen::VectorXd nextX = mIntegrator.UpdateX(mX, mP, mGradient, mMetric);
+        Eigen::VectorXd nextX = mIntegrator.UpdateX(mX, mP, mGradient, epsilonFactor);
         const double nextLikelihood = mLikelihood.LogLikelihood(nextX);
 
         if (nextLikelihood > mLikelihoodConstraint) {
             // found valid reflection
-            mFailedReflections += i;
 
             mX = nextX;
             mLogLikelihood = nextLikelihood;
 
-            mIntegrator.SetEpsilon(oldEpsilon);
             return;
         }
         ReflectP(normal);
     }
 
-    mIntegrator.SetEpsilon(oldEpsilon);
     mRejected = true;
   //  throw std::runtime_error("NO VALID REFLECTION");
 }

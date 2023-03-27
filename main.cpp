@@ -16,7 +16,7 @@ const Eigen::Matrix<double, 6, 1> mean {{-0.3, 0.4, 0, 0,0,0}};
 const Eigen::Matrix<double, 6, 1> var {{1.0, 0.5, 1, 1, 1, 1}};
 const double priorWidth = 6;
 
-const double epsilon = 0.001;
+const double epsilon = 0.01;
 const int pathLength = 100;
 
 const int numLive = 500;
@@ -30,11 +30,26 @@ NSConfig config = {
 };
 
 
+class StaticParams : public IParams {
+public:
+    StaticParams(int dims) : mMetric(Eigen::VectorXd::Ones(dims)) {}
+
+    double GetEpsilon() override { return epsilon; };
+    int GetPathLength() override { return pathLength; };
+    const Eigen::VectorXd & GetMetric() override { return mMetric; };
+
+private:
+    const Eigen::VectorXd mMetric;
+};
+StaticParams params = StaticParams(n*n);
+
+
 void runPhi4()
 {
     Phi4Likelihood likelihood = Phi4Likelihood(n, kappa, lambda, priorWidth);
 
-    CHMC sampler = CHMC(likelihood, epsilon, pathLength);
+    CHMC sampler = CHMC(likelihood, params);
+    //RejectionSampler sampler = RejectionSampler(likelihood, epsilon);
     Logger logger = Logger("Phi4");
 
     NestedSampler NS = NestedSampler(sampler, likelihood, logger, config);
@@ -47,8 +62,8 @@ void runPhi4()
 void runGaussian() {
     GaussianLikelihood likelihood = GaussianLikelihood(mean, var, priorWidth);
 
-    // RejectionSampler sampler = RejectionSampler(likelihood, epsilon);
-    CHMC sampler = CHMC(likelihood, epsilon, pathLength);
+    RejectionSampler sampler = RejectionSampler(likelihood, epsilon);
+ //   CHMC sampler = CHMC(likelihood, epsilon, pathLength);
     Logger logger = Logger("Gaussian");
 
     NestedSampler NS = NestedSampler(sampler, likelihood, logger, config);

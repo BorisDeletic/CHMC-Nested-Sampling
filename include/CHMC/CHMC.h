@@ -13,20 +13,16 @@ class Hamiltonian;
 // Constrained HMC
 class CHMC : public ISampler {
 public:
-    CHMC(ILikelihood&, double epsilon, int pathLength);
+    CHMC(ILikelihood&, IParams&);
 
-    void Initialise(const MCPoint& init) override;
     const MCPoint SamplePoint(const MCPoint& old, double likelihoodConstraint) override;
-    const SamplerSummary GetSummary() override;
-
-    const Eigen::VectorXd& GetMetric();
+    const Rejections GetRejections();
 
 private:
-    bool WarmupAdapt(const MCPoint& init);
     Eigen::VectorXd SampleP(int size);
-    Eigen::VectorXd CalculateVar(const Eigen::MatrixXd& samples);
 
     ILikelihood& mLikelihood;
+    IParams& mParams;
     Hamiltonian mHamiltonian;
 
     std::normal_distribution<double> mNorm;
@@ -34,13 +30,12 @@ private:
     std::random_device rd;
     std::mt19937 gen;
 
-    const int mPathLength;
     const int mWarmupSteps = 75;
     const double inf = 1e100;
 
+    int mReflectRejections = 0;
+    int mEnergyRejections = 0;
     int mIters = 0;
-    int mRejections = 0;
-
 };
 
 #endif //CHMC_NESTED_SAMPLING_CHMC_H

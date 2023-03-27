@@ -29,8 +29,10 @@ typedef struct NSSummary {
 } NSSummary;
 
 
-typedef struct SamplerSummary {
-    double rejectRatio = 0;
-} SamplerSummary;
+typedef struct Rejections {
+    int reflectionRejections;
+    int energyRejections;
+    int mIters;
+} Rejections;
 
 #endif //CHMC_NESTED_SAMPLING_TYPES_H
