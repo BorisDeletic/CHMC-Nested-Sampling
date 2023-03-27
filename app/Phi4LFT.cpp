@@ -33,7 +33,7 @@ const double Phi4Likelihood::LogLikelihood(const Eigen::VectorXd &theta) {
 
 
 const Eigen::VectorXd Phi4Likelihood::Gradient(const Eigen::VectorXd &theta) {
-    Eigen::VectorXd grad = (4 * mKappa - 4 * mLambda + 2) * theta;
+    Eigen::VectorXd grad = (4 * mKappa - 4 * mLambda - 2) * theta;
 
     grad += 4 * mLambda * theta.cwisePow(3);
 

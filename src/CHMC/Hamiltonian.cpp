@@ -65,6 +65,7 @@ void Hamiltonian::ReflectX(const Eigen::VectorXd &normal) {
 
     for (int i = 0; i < mEpsilonReflectionLimit; i++) {
         const double epsilonFactor = 1.0 / pow(2, i);
+       // const double epsilonFactor = 1.0;
 
         Eigen::VectorXd nextX = mIntegrator.UpdateX(mX, mP, mGradient, epsilonFactor);
         const double nextLikelihood = mLikelihood.LogLikelihood(nextX);
