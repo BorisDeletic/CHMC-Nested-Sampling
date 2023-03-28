@@ -1,4 +1,5 @@
 #include "CHMC.h"
+#include "MockParams.h"
 #include "MockLikelihood.h"
 #include <gtest/gtest.h>
 
@@ -43,6 +44,10 @@ protected:
 
     }
 
+    const double epsilon = 0.01;
+    const int pathLength = 100;
+    StaticParams params = StaticParams(epsilon, pathLength, 2);
+
     Eigen::Vector2d zero {{0, 0}};
     Eigen::Array2d mean {{0.1, 0.1}};
     Eigen::Array2d var {{0.2, 1.0}};
@@ -55,11 +60,9 @@ protected:
             1e30
     };
 
-    const double epsilon = 0.01;
-    const int pathLength = 100;
     std::pair<double, double> noBound {-DBL_MAX, DBL_MAX};
 
-    CHMC mCHMC = CHMC(gaussianLikelihood, epsilon, pathLength);
+    CHMC mCHMC = CHMC(gaussianLikelihood, params);
 };
 
 
@@ -141,4 +144,35 @@ TEST_F(GaussianCHMCTest, CorrectDistributionWithConstraint) {
     EXPECT_LE(errX, 0.1);
     EXPECT_LE(errY, 0.1);
 
+}
+
+
+TEST_F(GaussianCHMCTest, AcceptanceProbability) {
+    const int steps = 100;
+    const int dim = 100;
+    const double epsilon = 0.1;
+    const int pathLength = 50;
+
+    StaticParams params = StaticParams(epsilon, pathLength, dim);
+
+    Eigen::VectorXd zeros = Eigen::VectorXd::Zero(dim);
+    Eigen::VectorXd ones = Eigen::VectorXd::Ones(dim);
+
+    GaussianLikelihood gaussianLikelihood = GaussianLikelihood(zeros.array(), ones.array());
+
+    MCPoint initPoint = {
+            zeros,
+            gaussianLikelihood.LogLikelihood(zeros),
+            1e30
+    };
+
+    CHMC chmc = CHMC(gaussianLikelihood, params);
+
+    std::vector<MCPoint> samples = {initPoint};
+
+    for (int i = 0; i < steps; i++) {
+        MCPoint newPoint = chmc.SamplePoint(samples.back(), -DBL_MAX);
+        samples.push_back(newPoint);
+        std::cout << newPoint.acceptProbability << std::endl;
+    }
 }

@@ -8,6 +8,7 @@ typedef struct MCPoint {
     const Eigen::VectorXd theta;
     const double likelihood;
     const double birthLikelihood;
+    const double acceptProbability;
     bool rejected = false;
 } MCPoint;
 

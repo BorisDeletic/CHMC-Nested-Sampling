@@ -1,4 +1,5 @@
 #include "LeapfrogIntegrator.h"
+#include "MockParams.h"
 #include <gtest/gtest.h>
 #include <Eigen/Dense>
 #include <stdexcept>
@@ -19,21 +20,23 @@ protected:
     Eigen::Vector2d pi {{-1.0, 2.0}};
     Eigen::Vector2d a {{-1.0, -1.0}};
 
-    LeapfrogIntegrator l_integrator = LeapfrogIntegrator(0.1);
+    StaticParams params = StaticParams(0.1, 50, 2);
+
+    LeapfrogIntegrator l_integrator = LeapfrogIntegrator(params);
 };
 
 TEST_F(LeapfrogTest, UpdateIncorrectOrder) {
-    l_integrator.UpdateX(xi, pi, a, ones);
+    l_integrator.UpdateX(xi, pi, a);
     l_integrator.UpdateP(a);
 
     EXPECT_THROW({
                      l_integrator.UpdateP(a);
-                     l_integrator.UpdateX(xi, pi, a, ones);
+                     l_integrator.UpdateX(xi, pi, a);
     }, std::runtime_error);
 }
 
 TEST_F(LeapfrogTest, OneStepNoAcceleration) {
-    Eigen::Vector2d xf = l_integrator.UpdateX(xi, pi, zero, ones);
+    Eigen::Vector2d xf = l_integrator.UpdateX(xi, pi, zero);
     Eigen::Vector2d pf = l_integrator.UpdateP(zero);
 
     //
@@ -46,7 +49,7 @@ TEST_F(LeapfrogTest, OneStepNoAcceleration) {
 
 
 TEST_F(LeapfrogTest, OneStepConstAcceleration) {
-    Eigen::Vector2d xf = l_integrator.UpdateX(xi, pi, a, ones);
+    Eigen::Vector2d xf = l_integrator.UpdateX(xi, pi, a);
     Eigen::Vector2d pf = l_integrator.UpdateP(a);
 
     EXPECT_DOUBLE_EQ(xf[0], 0.895);
@@ -64,7 +67,7 @@ TEST_F(LeapfrogTest, TimeReversabilityConstAcceleration) {
     Eigen::VectorXd p = pi;
 
     for (int i = 0; i < steps; i++) {
-        x = l_integrator.UpdateX(x, p, a, ones);
+        x = l_integrator.UpdateX(x, p, a);
         p = l_integrator.UpdateP(a);
     }
 
@@ -73,7 +76,7 @@ TEST_F(LeapfrogTest, TimeReversabilityConstAcceleration) {
     p = -p;
 
     for (int i = 0; i < steps; i++) {
-        x = l_integrator.UpdateX(x, p, a, ones);
+        x = l_integrator.UpdateX(x, p, a);
         p = l_integrator.UpdateP(a);
     }
 
@@ -92,7 +95,7 @@ TEST_F(LeapfrogTest, SolveOneSHMStep) {
     Eigen::VectorXd p = pi;
 
     acc = SHM(k, x);
-    x = l_integrator.UpdateX(x, p, acc, ones);
+    x = l_integrator.UpdateX(x, p, acc);
     acc = SHM(k, x);
     p = l_integrator.UpdateP(acc);
 
@@ -117,7 +120,7 @@ TEST_F(LeapfrogTest, SolveSHM) {
     acc = SHM(k, x);
 
     for (int i = 0; i < steps; i++) {
-        x = l_integrator.UpdateX(x, p, acc, ones);
+        x = l_integrator.UpdateX(x, p, acc);
         acc = SHM(k, x);
         p = l_integrator.UpdateP(acc);
     }

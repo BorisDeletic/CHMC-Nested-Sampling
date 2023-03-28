@@ -1,12 +1,36 @@
 #include "Adapter.h"
 
-Adapter::Adapter(CHMC& chmc, double initEpsilon, int initPathLength, const Eigen::VectorXd metric)
+Adapter::Adapter(double initEpsilon, int initPathLength, const Eigen::VectorXd metric)
     :
-    mCHMC(chmc),
     mEpsilon(initEpsilon),
     mPathLength(initPathLength),
     mMetric(metric)
 {
+    mMu = log(10 * initEpsilon);
+}
+
+void Adapter::Restart() {
+    mIter = 0;
+    mSBar = 0;
+    mXBar = 0;
+}
+
+void Adapter::AdaptEpsilon(double acceptProb) {
+    mIter++;
+
+    acceptProb = acceptProb > 1 ? 1 : acceptProb;
+
+    // Nesterov Dual-Averaging of log(epsilon)
+    const double eta = 1.0 / (mIter + mT0);
+
+    mSBar = (1.0 - eta) * mSBar + eta * (mDelta - acceptProb);
+
+    const double x = mMu - mSBar * std::sqrt(mIter) / mGamma;
+    const double x_eta = std::pow(mIter, -mKappa);
+
+    mXBar = (1.0 - x_eta) * mXBar + x_eta * x;
+
+    mEpsilon = std::exp(x);
 }
 
 /*

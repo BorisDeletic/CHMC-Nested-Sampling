@@ -1,5 +1,6 @@
 #include "Hamiltonian.h"
 #include "MockLikelihood.h"
+#include "MockParams.h"
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <Eigen/Dense>
@@ -18,10 +19,9 @@ protected:
         EXPECT_CALL(likelihood, Gradient(_))
             .WillOnce(Return(zero));
 
-        hamiltonian = std::make_unique<Hamiltonian>(likelihood, epsilon);
+        hamiltonian = std::make_unique<Hamiltonian>(likelihood, params);
 
         hamiltonian->SetHamiltonian(x, p, likelihoodConstraint);
-        hamiltonian->SetMetric(ones);
     }
 
     Eigen::Vector2d x {{1.0, 1.0}};
@@ -34,6 +34,8 @@ protected:
 
     MockLikelihood likelihood;
     std::unique_ptr<Hamiltonian> hamiltonian;
+
+    StaticParams params = StaticParams(epsilon, 50, 2);
 };
 
 
@@ -50,9 +52,10 @@ protected:
 
     const double epsilon = 0.05;
     const double steps = 500;
+    StaticParams params = StaticParams(epsilon, steps, 2);
 
     GaussianLikelihood mGaussianLikelihood = GaussianLikelihood(mean, var);
-    Hamiltonian mHamiltonian = Hamiltonian(mGaussianLikelihood, epsilon);
+    Hamiltonian mHamiltonian = Hamiltonian(mGaussianLikelihood, params);
 };
 
 

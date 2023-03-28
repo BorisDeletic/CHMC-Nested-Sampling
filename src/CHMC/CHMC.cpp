@@ -43,31 +43,36 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
     }
 
     const double newEnergy = mHamiltonian.GetEnergy();
+    double acceptProb = exp(initEnergy - newEnergy);
 
-    const double acceptProb = exp(initEnergy - newEnergy);
+    std::cout << "e=" << mParams.GetEpsilon() << ", prob=" << acceptProb << ", ";
+
     const double r = mUniform(gen);
     if ((acceptProb > r) && (!mHamiltonian.GetRejected()))
     {
         MCPoint newPoint = {
                 mHamiltonian.GetX(),
                 mHamiltonian.GetLikelihood(),
-                likelihoodConstraint
+                likelihoodConstraint,
+                acceptProb
         };
         return newPoint;
     }
     else
     {
         if (mHamiltonian.GetRejected()) {
+            acceptProb = 0.8;
             mReflectRejections++;
-            std::cout << " !REFLECT! ";
+        //    std::cout << " !REFLECT! ";
         } else {
             mEnergyRejections++;
-            std::cout << " !ENERGY! ";
+         //   std::cout << " !ENERGY! ";
         }
         MCPoint rejectedPoint = {
                 Eigen::VectorXd::Zero(mLikelihood.GetDimension()),
                 0,
                 0,
+                acceptProb,
                 true
         };
         return rejectedPoint;

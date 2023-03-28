@@ -1,4 +1,3 @@
-// test.c
 #include "app/Gaussian.h"
 #include "app/Phi4LFT.h"
 #include "Logger.h"
@@ -8,16 +7,18 @@
 #include "types.h"
 #include <Eigen/Dense>
 
-const int n = 30;
+const int n = 5;
 const double kappa = 2.0; // k = 2 is below transition temp
 const double lambda = 1.5;
 
-const Eigen::Matrix<double, 6, 1> mean {{-0.3, 0.4, 0, 0,0,0}};
-const Eigen::Matrix<double, 6, 1> var {{1.0, 0.5, 1, 1, 1, 1}};
+const int d = 100;
+const Eigen::VectorXd ones = Eigen::VectorXd::Ones(n*n);
+const Eigen::VectorXd mean = Eigen::VectorXd::Zero(d);
+const Eigen::VectorXd var  = Eigen::VectorXd::Ones(d);
 const double priorWidth = 6;
 
 const double epsilon = 0.1;
-const int pathLength = 100;
+const int pathLength = 50;
 
 const int numLive = 500;
 const int maxIters = 20000;
@@ -36,7 +37,7 @@ public:
 
     double GetEpsilon() override { return epsilon; };
     int GetPathLength() override { return pathLength; };
-    const Eigen::VectorXd & GetMetric() override { return mMetric; };
+    const Eigen::VectorXd& GetMetric() override { return mMetric; };
 
 private:
     const Eigen::VectorXd mMetric;
@@ -45,30 +46,36 @@ private:
 
 void runPhi4()
 {
+    Logger logger = Logger("Phi4");
     Phi4Likelihood likelihood = Phi4Likelihood(n, kappa, lambda, priorWidth);
 
-    StaticParams params = StaticParams(n*n);
-    CHMC sampler = CHMC(likelihood, params);
+    //StaticParams params = StaticParams(n*n);
+    Adapter adaptiveParams = Adapter(epsilon, pathLength, ones);
+
+    CHMC sampler = CHMC(likelihood, adaptiveParams);
     //RejectionSampler sampler = RejectionSampler(likelihood, epsilon);
-    Logger logger = Logger("Phi4");
 
     NestedSampler NS = NestedSampler(sampler, likelihood, logger, config);
 
+    NS.SetAdaption(&adaptiveParams);
     NS.Initialise();
     NS.Run();
 }
 
 
 void runGaussian() {
+    Logger logger = Logger("Gaussian");
     GaussianLikelihood likelihood = GaussianLikelihood(mean, var, priorWidth);
 
-    StaticParams params = StaticParams(likelihood.GetDimension());
+   // StaticParams params = StaticParams(likelihood.GetDimension());
+    Adapter params = Adapter(epsilon, pathLength, Eigen::VectorXd::Ones(likelihood.GetDimension()));
+
     //RejectionSampler sampler = RejectionSampler(likelihood, epsilon);
     CHMC sampler = CHMC(likelihood, params);
-    Logger logger = Logger("Gaussian");
 
     NestedSampler NS = NestedSampler(sampler, likelihood, logger, config);
 
+    NS.SetAdaption(&params);
     NS.Initialise();
     NS.Run();
 
@@ -76,8 +83,8 @@ void runGaussian() {
 
 
 int main() {
-    runPhi4();
-//    runGaussian();
+//    runPhi4();
+    runGaussian();
 }
 
 

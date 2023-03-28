@@ -1,5 +1,6 @@
 #include "LeapfrogIntegrator.h"
 #include <stdexcept>
+#include <iostream>
 
 
 LeapfrogIntegrator::LeapfrogIntegrator(IParams& params)

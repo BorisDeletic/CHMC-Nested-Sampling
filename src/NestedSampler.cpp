@@ -33,6 +33,12 @@ void NestedSampler::Initialise() {
 }
 
 
+void NestedSampler::SetAdaption(Adapter* adapter) {
+    mAdapter = adapter;
+}
+
+
+
 void NestedSampler::Run() {
     bool terminationCondition = false;
     while (!terminationCondition) {
@@ -61,30 +67,42 @@ void NestedSampler::Run() {
 void NestedSampler::NestedSamplingStep() {
     auto lowestIt = mLivePoints.begin();
     const MCPoint& deadPoint = *lowestIt;
-    const double likelihoodConstraint = deadPoint.likelihood;
 
     // Analysis on dead point
     UpdateLogEvidence(deadPoint.likelihood);
 
-    // Generate new point
-    for (int i = 0; i < mSampleRetries; i++) {
-        const MCPoint newPoint = mSampler.SamplePoint(deadPoint, likelihoodConstraint);
+    // Generate new point(s)
+    SampleNewPoint(deadPoint);
 
-        if (!newPoint.rejected) {
+    //kill point.
+    mLivePoints.erase(lowestIt);
+}
+
+
+void NestedSampler::SampleNewPoint(const MCPoint& deadPoint) {
+    const double likelihoodConstraint = deadPoint.likelihood;
+
+    for (int i = 0; i < mSampleRetries; i++) {
+        const MCPoint newPoint = mSampler.SamplePoint(deadPoint, -DBL_MAX);
+
+        if (mAdapter != nullptr)
+        {
+            std::cout << "e=" << mAdapter->GetEpsilon() << ", prob=" << newPoint.acceptProbability << ", ";
+            mAdapter->AdaptEpsilon(newPoint.acceptProbability);
+        }
+
+        if (!newPoint.rejected)
+        {
             // sampled valid new point
             mLivePoints.insert(newPoint);
             mLogger.WritePoint(newPoint);
 
-            if (mLivePoints.size() >= mConfig.numLive) {
-                mLivePoints.erase(lowestIt);
+            if (mLivePoints.size() > mConfig.numLive)
+            {
                 return;
             }
         }
     }
-
-    // no valid sample generated, kill point.
-    mLivePoints.erase(lowestIt);
-
 }
 
 
@@ -132,6 +150,10 @@ const double NestedSampler::EstimateLogEvidenceRemaining() {
 
 
 const bool NestedSampler::TerminateSampling() {
+    if (mAdapter != nullptr) {
+        mAdapter->Restart();
+    }
+
     double remainingEvidence = EstimateLogEvidenceRemaining();
     if (remainingEvidence < mLogZ + log10(mConfig.precisionCriterion)) {
         return true;
@@ -160,4 +182,6 @@ const double NestedSampler::logAdd(const Eigen::ArrayXd &logV) {
 
     return maxLogV + log(1 + (logV - maxLogV).exp().sum());
 }
+
+
 
