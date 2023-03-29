@@ -56,11 +56,16 @@ void Hamiltonian::Evolve()
 void Hamiltonian::ReflectP(const Eigen::VectorXd &normal) {
     const Eigen::VectorXd invMetric = mParams.GetMetric().cwiseInverse();
 
-    Eigen::VectorXd nRot = invMetric.asDiagonal() * normal;
- //   Eigen::VectorXd nHat = normal.normalized();
+  //  Eigen::VectorXd nRot = invMetric.asDiagonal() * normal;
+    Eigen::VectorXd nHat = normal.normalized();
 
-    Eigen::VectorXd reflectedP = mP - 2 * mP.dot(nRot) / normal.dot(nRot) * normal;
-  //  Eigen::VectorXd reflectedP = mP - 2 * mP.dot(nHat) * nHat;
+  //  Eigen::VectorXd reflectedP = mP - 2 * mP.dot(nRot) / normal.dot(nRot) * normal;
+
+    double pdotn = mP.dot(nHat);
+    double nMag = normal.norm();
+    double pMag = mP.norm();
+
+    Eigen::VectorXd reflectedP = mP - 2 * mP.dot(nHat) * nHat;
 
     mIntegrator.ChangeP(mP, reflectedP);
     mP = reflectedP;
@@ -84,9 +89,9 @@ void Hamiltonian::ReflectX(const Eigen::VectorXd &normal) {
 
             return;
         }
-        ReflectP(normal);
+      //  ReflectP(normal);
     }
-
+    std::cout<<"NOREFLECTIONS" << std::endl;
     mRejected = true;
 
   //  throw std::runtime_error("NO VALID REFLECTION");

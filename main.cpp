@@ -11,7 +11,7 @@ const int n = 10;
 const double kappa = 2.0; // k = 2 is below transition temp
 const double lambda = 1.5;
 
-const int d = 100;
+const int d = 50;
 const Eigen::VectorXd ones = Eigen::VectorXd::Ones(n*n);
 const Eigen::VectorXd mean = Eigen::VectorXd::Zero(d);
 const Eigen::VectorXd var  = Eigen::VectorXd::Ones(d);

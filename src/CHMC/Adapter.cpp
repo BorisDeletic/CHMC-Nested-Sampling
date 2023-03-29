@@ -7,6 +7,9 @@ Adapter::Adapter(double initEpsilon, int initPathLength, const Eigen::VectorXd m
     mMetric(metric)
 {
     mMu = log(initEpsilon);
+    mIter = 0;
+    mSBar = 0;
+    mXBar = 0;
 }
 
 void Adapter::Restart() {
