@@ -7,7 +7,7 @@
 #include "types.h"
 #include <Eigen/Dense>
 
-const int n = 5;
+const int n = 10;
 const double kappa = 2.0; // k = 2 is below transition temp
 const double lambda = 1.5;
 
@@ -18,7 +18,7 @@ const Eigen::VectorXd var  = Eigen::VectorXd::Ones(d);
 const double priorWidth = 6;
 
 const double epsilon = 0.1;
-const int pathLength = 50;
+const int pathLength = 100;
 
 const int numLive = 500;
 const int maxIters = 20000;
@@ -83,8 +83,8 @@ void runGaussian() {
 
 
 int main() {
-//    runPhi4();
-    runGaussian();
+    runPhi4();
+//    runGaussian();
 }
 
 

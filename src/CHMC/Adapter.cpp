@@ -6,7 +6,7 @@ Adapter::Adapter(double initEpsilon, int initPathLength, const Eigen::VectorXd m
     mPathLength(initPathLength),
     mMetric(metric)
 {
-    mMu = log(10 * initEpsilon);
+    mMu = log(initEpsilon);
 }
 
 void Adapter::Restart() {
@@ -20,10 +20,13 @@ void Adapter::AdaptEpsilon(double acceptProb) {
 
     acceptProb = acceptProb > 1 ? 1 : acceptProb;
 
+    printf("e=%.10f, reflectrate=%.1f, iter=%d\n", mEpsilon, acceptProb*100, mIter);
+//    std::cout << "e=" << mEpsilon << ", reflectionrate=" << acceptProb << ", iter=" << mIter << std::endl;
+
     // Nesterov Dual-Averaging of log(epsilon)
     const double eta = 1.0 / (mIter + mT0);
 
-    mSBar = (1.0 - eta) * mSBar + eta * (mDelta - acceptProb);
+    mSBar = (1.0 - eta) * mSBar + eta * (-mDelta + acceptProb);
 
     const double x = mMu - mSBar * std::sqrt(mIter) / mGamma;
     const double x_eta = std::pow(mIter, -mKappa);

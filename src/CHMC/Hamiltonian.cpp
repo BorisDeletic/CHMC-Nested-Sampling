@@ -15,6 +15,8 @@ void Hamiltonian::SetHamiltonian(const Eigen::VectorXd &x, const Eigen::VectorXd
     mX = x;
     mP = p;
     mRejected = false;
+    mReflections = 0;
+    mIters = 0;
 
     mLikelihoodConstraint = likelihoodConstraint;
 
@@ -25,11 +27,15 @@ void Hamiltonian::SetHamiltonian(const Eigen::VectorXd &x, const Eigen::VectorXd
 
 void Hamiltonian::Evolve()
 {
+    if (mRejected) return;
+    mIters++;
+
     Eigen::VectorXd newX = mIntegrator.UpdateX(mX, mP, mGradient);
     const double newLikelihood = mLikelihood.LogLikelihood(newX);
 
     if (newLikelihood <= mLikelihoodConstraint) {
         // Reflect off iso-likelihood contour.
+        mReflections++;
 
         ReflectP(mGradient);
         ReflectX(mGradient);
@@ -82,6 +88,7 @@ void Hamiltonian::ReflectX(const Eigen::VectorXd &normal) {
     }
 
     mRejected = true;
+
   //  throw std::runtime_error("NO VALID REFLECTION");
 }
 

@@ -17,6 +17,7 @@ public:
     const double GetLikelihood() const { return mLogLikelihood; };
     const double GetEnergy() const;
     const bool GetRejected() const { return mRejected; };
+    const double GetReflectionRate() const { return (double)mReflections / mIters; };
 
     void SetHamiltonian(const Eigen::VectorXd& x, const Eigen::VectorXd& p, double likelihoodConstraint);
 
@@ -33,13 +34,16 @@ private:
     Eigen::VectorXd mGradient;
     double mLogLikelihood;
     double mLikelihoodConstraint;
-    const int mDimension;
 
-    const int mEpsilonReflectionLimit = 15; // Number of times Epsilon can be halved.
     bool mRejected = false;
+    int mReflections;
+    int mIters;
 
     Eigen::VectorXd mX;
     Eigen::VectorXd mP;
+
+    const int mDimension;
+    const int mEpsilonReflectionLimit = 15; // Number of times Epsilon can be halved.
 };
 
 

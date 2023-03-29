@@ -42,8 +42,6 @@ void NestedSampler::SetAdaption(Adapter* adapter) {
 void NestedSampler::Run() {
     bool terminationCondition = false;
     while (!terminationCondition) {
-        std::cout << "NS Step: " << mIter;
-        std::cout << ", Num Live = " << mLivePoints.size() << std::endl;
      //   std::cout << ", Reject Ratio = " << mSampler.GetSummary().rejectRatio << std::endl;
         NestedSamplingStep();
         mIter++;
@@ -76,6 +74,16 @@ void NestedSampler::NestedSamplingStep() {
 
     //kill point.
     mLivePoints.erase(lowestIt);
+
+    if ((mAdapter != nullptr) && (mIter % 50 == 0)) {
+      //  std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << reflectionRate << ", iter=" << mIter << std::endl;
+        mAdapter->AdaptEpsilon(mReflectionRate / 50);
+
+        mReflectionRate = 0;
+        std::cout << "NS Step: " << mIter;
+        std::cout << ", Num Live = " << mLivePoints.size() << std::endl;
+
+    }
 }
 
 
@@ -83,12 +91,20 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint) {
     const double likelihoodConstraint = deadPoint.likelihood;
 
     for (int i = 0; i < mSampleRetries; i++) {
-        const MCPoint newPoint = mSampler.SamplePoint(deadPoint, -DBL_MAX);
+        const MCPoint newPoint = mSampler.SamplePoint(deadPoint, likelihoodConstraint);
+
+        if (mLivePoints.size() < 400) {
+            std::cout << "acceptProb = " << newPoint.acceptProbability << ", rejected = " << newPoint.rejected
+            << std::endl;
+        }
 
         if (mAdapter != nullptr)
         {
-            std::cout << "e=" << mAdapter->GetEpsilon() << ", prob=" << newPoint.acceptProbability << ", ";
-            mAdapter->AdaptEpsilon(newPoint.acceptProbability);
+          //  const double reflectionRatio = (double)newPoint.reflections / mAdapter->GetPathLength();
+          //  mAdapter->AdaptEpsilon(reflectionRatio);
+          //  std::cout << "e=" << mAdapter->GetEpsilon() << ", reflections=" << newPoint.reflections << ", " << std::endl
+
+            mReflectionRate += newPoint.reflectionRate;
         }
 
         if (!newPoint.rejected)
@@ -150,10 +166,6 @@ const double NestedSampler::EstimateLogEvidenceRemaining() {
 
 
 const bool NestedSampler::TerminateSampling() {
-    if (mAdapter != nullptr) {
-        mAdapter->Restart();
-    }
-
     double remainingEvidence = EstimateLogEvidenceRemaining();
     if (remainingEvidence < mLogZ + log10(mConfig.precisionCriterion)) {
         return true;

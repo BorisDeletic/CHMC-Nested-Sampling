@@ -24,13 +24,13 @@ private:
     int mPathLength;
     Eigen::VectorXd mMetric;
 
-    double mIter;  // Adaptation iteration
+    int mIter;  // Adaptation iteration
     double mSBar;    // Moving average statistic
     double mXBar;    // Moving average parameter
     double mMu;       // Asymptotic mean of parameter
-    double mDelta = 0.90;    // Target value of statistic
+    double mDelta = 0.05;    // Target value of statistic
     double mGamma = 0.05;    // Adaptation scaling
-    double mKappa = 0.75;    // Adaptation shrinkage
+    double mKappa = 0.55;    // Adaptation shrinkage
     double mT0 = 10;       // Effective starting iteration
 };
 
