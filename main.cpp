@@ -57,7 +57,7 @@ void runPhi4()
 
     NestedSampler NS = NestedSampler(sampler, likelihood, logger, config);
 
-  //  NS.SetAdaption(&params);
+    NS.SetAdaption(&params);
     NS.Initialise();
     NS.Run();
 }

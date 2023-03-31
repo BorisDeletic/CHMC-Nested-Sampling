@@ -23,7 +23,7 @@ void Adapter::AdaptEpsilon(double acceptProb) {
 
     acceptProb = acceptProb > 1 ? 1 : acceptProb;
 
-    printf("e=%.10f, reflectrate=%.1f, iter=%d\n", mEpsilon, acceptProb*100, mIter);
+   // printf("e=%.10f, reflectrate=%.1f, iter=%d\n", mEpsilon, acceptProb*100, mIter);
 //    std::cout << "e=" << mEpsilon << ", reflectionrate=" << acceptProb << ", iter=" << mIter << std::endl;
 
     // Nesterov Dual-Averaging of log(epsilon)
