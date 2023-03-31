@@ -61,10 +61,6 @@ void Hamiltonian::ReflectP(const Eigen::VectorXd &normal) {
 
   //  Eigen::VectorXd reflectedP = mP - 2 * mP.dot(nRot) / normal.dot(nRot) * normal;
 
-    double pdotn = mP.dot(nHat);
-    double nMag = normal.norm();
-    double pMag = mP.norm();
-
     Eigen::VectorXd reflectedP = mP - 2 * mP.dot(nHat) * nHat;
 
     mIntegrator.ChangeP(mP, reflectedP);
@@ -91,7 +87,8 @@ void Hamiltonian::ReflectX(const Eigen::VectorXd &normal) {
         }
       //  ReflectP(normal);
     }
-    std::cout<<"NOREFLECTIONS" << std::endl;
+  //  std::cout<<"NOREFLECTIONS" << std::endl;
+  //  mP = normal.normalized();
     mRejected = true;
 
   //  throw std::runtime_error("NO VALID REFLECTION");

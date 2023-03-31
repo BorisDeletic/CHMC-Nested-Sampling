@@ -57,7 +57,8 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
             mHamiltonian.GetX(),
             mHamiltonian.GetLikelihood(),
             likelihoodConstraint,
-            mHamiltonian.GetReflectionRate(),
+            mHamiltonian.GetReflections(),
+            mHamiltonian.GetIntegrationSteps(),
             acceptProb,
             rejected
     };

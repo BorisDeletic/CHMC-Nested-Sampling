@@ -44,7 +44,8 @@ private:
 //    double mLogZRemaining; // estimate of evidence remaining in live points
 
     int mIter;
-    double mReflectionRate;
+    int mReflections;
+    int mIntegrationSteps;
 
     const double minLikelihood = -1e30;
     const double initialLogWeight;
