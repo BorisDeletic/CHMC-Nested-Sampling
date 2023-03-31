@@ -7,7 +7,7 @@
 #include "types.h"
 #include <Eigen/Dense>
 
-const int n = 10;
+const int n = 15;
 const double kappa = 2.0; // k = 2 is below transition temp
 const double lambda = 3.5;
 

@@ -84,9 +84,9 @@ void NestedSampler::NestedSamplingStep() {
     mLivePoints.erase(lowestIt);
 
     if ((mAdapter != nullptr) && (mIter % 50 == 0)) {
-    //    mAdapter->AdaptEpsilon((double)mReflections / mIntegrationSteps);
-     //   const double reflectionRate = (double)mReflections / mIntegrationSteps;
-     //   std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << reflectionRate << ", iter=" << mIter << std::endl;
+      //  mAdapter->AdaptEpsilon((double)mReflections / mIntegrationSteps);
+        const double reflectionRate = (double)mReflections / mIntegrationSteps * 100;
+        std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << reflectionRate << ", iter=" << mIter << std::endl;
 
         mReflections = 0;
         mIntegrationSteps=0;
@@ -105,7 +105,7 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint) {
 
         if (mAdapter != nullptr)
         {
-       //     mAdapter->AdaptEpsilon(newPoint.acceptProbability);
+            mAdapter->AdaptEpsilon(newPoint.acceptProbability);
             mReflections += newPoint.reflections;
             mIntegrationSteps += newPoint.steps;
         }
