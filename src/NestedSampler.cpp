@@ -45,11 +45,17 @@ void NestedSampler::Run() {
     bool terminationCondition = false;
     while (!terminationCondition) {
      //   std::cout << ", Reject Ratio = " << mSampler.GetSummary().rejectRatio << std::endl;
+
         NestedSamplingStep();
         mIter++;
 
         if (mIter % mConfig.numLive == 0) {
             terminationCondition = TerminateSampling();
+        }
+
+        if (mIter % 50 == 0) {
+            std::cout << "NS Step: " << mIter;
+            std::cout << ", Num Live = " << mLivePoints.size() << std::endl;
         }
     }
 
@@ -96,20 +102,8 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint) {
     for (int i = 0; i < mSampleRetries; i++) {
         const MCPoint newPoint = mSampler.SamplePoint(deadPoint, likelihoodConstraint);
 
-//        std::cout << newPoint.rejected << "likelihood - constraint = " << newPoint.likelihood - newPoint.birthLikelihood << std::endl;
-
-
-    /*    if (mLivePoints.size() < 400) {
-            std::cout << "acceptProb = " << newPoint.acceptProbability << ", rejected = " << newPoint.rejected
-            << std::endl;
-        } */
-
         if (mAdapter != nullptr)
         {
-          //  const double reflectionRatio = (double)newPoint.reflections / mAdapter->GetPathLength();
-          //  mAdapter->AdaptEpsilon(reflectionRatio);
-          //  std::cout << "e=" << mAdapter->GetEpsilon() << ", reflections=" << newPoint.reflections << ", " << std::endl
-
             mReflections += newPoint.reflections;
             mIntegrationSteps += newPoint.steps;
         }

@@ -7,7 +7,7 @@
 #include "types.h"
 #include <Eigen/Dense>
 
-const int n = 5;
+const int n = 10;
 const double kappa = 2.0; // k = 2 is below transition temp
 const double lambda = 3.5;
 
@@ -17,7 +17,7 @@ const Eigen::VectorXd mean = Eigen::VectorXd::Zero(d);
 const Eigen::VectorXd var  = Eigen::VectorXd::Ones(d);
 const double priorWidth = 6;
 
-const double epsilon = 0.1;
+const double epsilon = 0.01;
 const int pathLength = 100;
 
 const int numLive = 500;
@@ -50,14 +50,14 @@ void runPhi4()
     Phi4Likelihood likelihood = Phi4Likelihood(n, kappa, lambda, priorWidth);
 
     //StaticParams params = StaticParams(n*n);
-    Adapter adaptiveParams = Adapter(epsilon, pathLength, 10*ones);
+    Adapter params = Adapter(epsilon, pathLength, ones);
 
-    CHMC sampler = CHMC(likelihood, adaptiveParams);
+    CHMC sampler = CHMC(likelihood, params);
     //RejectionSampler sampler = RejectionSampler(likelihood, epsilon);
 
     NestedSampler NS = NestedSampler(sampler, likelihood, logger, config);
 
-    NS.SetAdaption(&adaptiveParams);
+  //  NS.SetAdaption(&params);
     NS.Initialise();
     NS.Run();
 }
@@ -65,7 +65,7 @@ void runPhi4()
 
 void runGaussian() {
     Logger logger = Logger("Gaussian");
-    GaussianLikelihood likelihood = GaussianLikelihood(mean, 0.02*var, priorWidth);
+    GaussianLikelihood likelihood = GaussianLikelihood(mean, var, priorWidth);
 
    // StaticParams params = StaticParams(likelihood.GetDimension());
     Adapter params = Adapter(epsilon, pathLength, Eigen::VectorXd::Ones(likelihood.GetDimension()));
@@ -82,7 +82,7 @@ void runGaussian() {
 }
 
 
-void generateContours(std::pair<int, int>& xran, std::pair<int, int>& yran) {
+void generateContours(std::pair<float, float>& xran, std::pair<float, float>& yran) {
     std::ofstream file;
     file.open("isocontours.dat");
 
@@ -95,7 +95,6 @@ void generateContours(std::pair<int, int>& xran, std::pair<int, int>& yran) {
             file << std::setprecision(3) << std::fixed << i << " " << j << " " <<
                  std::setprecision(4) << std::fixed << like << std::endl;
  //           file << (int)(i*10) << " " << (int)(j*10) << " " << like << std::endl;
-
         }
         file << std::endl;
     }
@@ -104,15 +103,15 @@ void generateContours(std::pair<int, int>& xran, std::pair<int, int>& yran) {
 }
 
 
-void generateGradientField(std::pair<int, int>& xran, std::pair<int, int>& yran) {
+void generateGradientField(std::pair<float, float>& xran, std::pair<float, float>& yran) {
     std::ofstream file;
     file.open("gradient.dat");
 
     Phi4Likelihood likelihood = Phi4Likelihood(2, kappa, lambda, priorWidth);
-    for (double i = xran.first; i < xran.second; i += 0.1) {
-        for (double j = yran.first; j < yran.second; j += 0.1) {
+    for (double i = xran.first; i < xran.second; i += 0.2) {
+        for (double j = yran.first; j < yran.second; j += 0.2) {
             Eigen::Vector4d theta {{i, j, 0, 0}};
-            Eigen::Vector4d grad = likelihood.Gradient(theta).normalized() / 5;
+            Eigen::Vector4d grad = likelihood.Gradient(theta).normalized() / 10;
          //   Eigen::Vector4d grad = likelihood.Gradient(theta) / 500;
 
             file << std::setprecision(3) << std::fixed << i << " " << j << " " <<
@@ -128,15 +127,15 @@ void generateGradientField(std::pair<int, int>& xran, std::pair<int, int>& yran)
 
 
 void generateLikelihoodPlot() {
-    std::pair<int, int> xran = {1.6, 2.1};
-    std::pair<int, int> yran = {1.6, 2.1};
+    std::pair<float, float> xran = {-2.3, 2.3};
+    std::pair<float, float> yran = {-2.3, 2.3};
     generateContours(xran, yran);
     generateGradientField(xran, yran);
 }
 
 int main() {
-    generateLikelihoodPlot();
-   // runPhi4();
+  //  generateLikelihoodPlot();
+    runPhi4();
  //   runGaussian();
 }
 

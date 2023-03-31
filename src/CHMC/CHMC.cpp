@@ -53,6 +53,10 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
         rejected = true;
     }
 
+    if (rejected) {
+        std::cout << acceptProb << std::endl;
+    }
+
     MCPoint newPoint = {
             mHamiltonian.GetX(),
             mHamiltonian.GetLikelihood(),

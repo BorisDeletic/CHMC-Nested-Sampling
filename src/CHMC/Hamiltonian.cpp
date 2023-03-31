@@ -6,8 +6,7 @@ Hamiltonian::Hamiltonian(ILikelihood& likelihood, IParams& params)
     :
         mLikelihood(likelihood),
         mParams(params),
-        mIntegrator(mParams),
-        mDimension(likelihood.GetDimension())
+        mIntegrator(mParams)
 {
 }
 
@@ -60,7 +59,6 @@ void Hamiltonian::ReflectP(const Eigen::VectorXd &normal) {
     Eigen::VectorXd nHat = normal.normalized();
 
   //  Eigen::VectorXd reflectedP = mP - 2 * mP.dot(nRot) / normal.dot(nRot) * normal;
-
     Eigen::VectorXd reflectedP = mP - 2 * mP.dot(nHat) * nHat;
 
     mIntegrator.ChangeP(mP, reflectedP);
@@ -72,7 +70,6 @@ void Hamiltonian::ReflectX(const Eigen::VectorXd &normal) {
 
     for (int i = 0; i < mEpsilonReflectionLimit; i++) {
         const double epsilonFactor = 1.0 / pow(2, i);
-       // const double epsilonFactor = 1.0;
 
         Eigen::VectorXd nextX = mIntegrator.UpdateX(mX, mP, mGradient, epsilonFactor);
         const double nextLikelihood = mLikelihood.LogLikelihood(nextX);
@@ -85,12 +82,10 @@ void Hamiltonian::ReflectX(const Eigen::VectorXd &normal) {
 
             return;
         }
-      //  ReflectP(normal);
+        ReflectP(normal);
     }
-  //  std::cout<<"NOREFLECTIONS" << std::endl;
-  //  mP = normal.normalized();
-    mRejected = true;
 
+    mRejected = true;
   //  throw std::runtime_error("NO VALID REFLECTION");
 }
 

@@ -43,7 +43,6 @@ private:
     Eigen::VectorXd mX;
     Eigen::VectorXd mP;
 
-    const int mDimension;
     const int mEpsilonReflectionLimit = 15; // Number of times Epsilon can be halved.
 };
 

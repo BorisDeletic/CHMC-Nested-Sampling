@@ -55,7 +55,7 @@ double Phi4Likelihood::Potential(double field)
 // lambda = 1.5 is appropriate for some phase transition properties
 
 //    double V = mLambda * pow(field * field - 1, 2) + field * field;
-    double V = mLambda * pow(field * field - 1, 2);
+    double V = mLambda * pow(field * field - 1, 2) + field*field;
 
     return V;
 }

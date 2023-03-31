@@ -1,11 +1,11 @@
 set terminal pngcairo enhanced font "arial,10" fontscale 1.0 size 1000, 800
 set output 'contours.20.png'
 set view map
-set title "Isolikelihood contours"
+set title "Isolikelihood contours (Phi4 Theory)"
 unset surface
 set contour
 #set cntrparam levels incr -120,50,0
-set cntrparam levels disc -40,-30,-20,-10,-14,-15,-16,0,10,12,13,14,15,16,17,17.5,18,19
+set cntrparam levels disc -40,-30,-20,-14,-10,-2,4,10,14
 
 $data << EOD
 0 0 0 2 2 0
