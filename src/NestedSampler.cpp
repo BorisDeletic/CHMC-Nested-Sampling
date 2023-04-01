@@ -78,14 +78,18 @@ void NestedSampler::NestedSamplingStep() {
     UpdateLogEvidence(deadPoint.likelihood);
 
     // Generate new point(s)
-    //  const MCPoint& randPoint = GetRandomPoint();
-    SampleNewPoint(deadPoint, deadPoint.likelihood);
+    if ((double)deadPoint.reflections / deadPoint.steps > 0.9) {
+        const MCPoint& randPoint = GetRandomPoint();
+        SampleNewPoint(randPoint, deadPoint.likelihood);
+    } else {
+        SampleNewPoint(deadPoint, deadPoint.likelihood);
+    }
 
     //kill point.
     mLivePoints.erase(lowestIt);
 
     if ((mAdapter != nullptr) && (mIter % 50 == 0)) {
-        //  mAdapter->AdaptEpsilon((double)mReflections / mIntegrationSteps);
+        //mAdapter->AdaptEpsilon((double)mReflections / mIntegrationSteps);
         const double reflectionRate = (double) mReflections / mIntegrationSteps * 100;
         std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << reflectionRate << ", iter=" << mIter
                   << std::endl;
@@ -95,10 +99,6 @@ void NestedSampler::NestedSamplingStep() {
         std::cout << "NS Step: " << mIter;
         std::cout << ", Num Live = " << mLivePoints.size() << std::endl;
 
-    }
-
-    if ((mAdapter != nullptr) && (mIter % 1000 == 999)) {
-        mAdapter->AdaptMetric(mLivePoints);
     }
 }
 
@@ -198,7 +198,11 @@ void NestedSampler::PrintEnergies()
 }
 
 const bool NestedSampler::TerminateSampling() {
-   // PrintEnergies();
+    if (mAdapter != nullptr) {
+        mAdapter->AdaptMetric(mLivePoints);
+    }
+
+    // PrintEnergies();
     double remainingEvidence = EstimateLogEvidenceRemaining();
     if (remainingEvidence < mLogZ + log10(mConfig.precisionCriterion)) {
         return true;

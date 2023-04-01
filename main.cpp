@@ -1,5 +1,6 @@
 #include "app/Gaussian.h"
 #include "app/Phi4LFT.h"
+#include "app/TopologicalTrap.h"
 #include "Logger.h"
 #include "RejectionSampler.h"
 #include "CHMC.h"
@@ -7,7 +8,7 @@
 #include "types.h"
 #include <Eigen/Dense>
 
-const int n = 7;
+const int n = 20;
 const double kappa = 2.0; // k = 2 is below transition temp
 const double lambda = 3.5;
 
@@ -82,14 +83,33 @@ void runGaussian() {
 }
 
 
-void generateContours(std::pair<float, float>& xran, std::pair<float, float>& yran) {
+void runTopoTrap() {
+    int d = 4;
+    Logger logger = Logger("TopoTrap");
+    TopologicalTrap likelihood = TopologicalTrap(d);
+
+    // StaticParams params = StaticParams(likelihood.GetDimension());
+    Adapter params = Adapter(epsilon, pathLength, likelihood.GetDimension());
+
+    //RejectionSampler sampler = RejectionSampler(likelihood, epsilon);
+    CHMC sampler = CHMC(likelihood, params);
+
+    NestedSampler NS = NestedSampler(sampler, likelihood, logger, config);
+
+    NS.SetAdaption(&params);
+    NS.Initialise();
+    NS.Run();
+}
+
+
+
+void generateContours(ILikelihood& likelihood, std::pair<float, float>& xran, std::pair<float, float>& yran) {
     std::ofstream file;
     file.open("isocontours.dat");
 
-    Phi4Likelihood likelihood = Phi4Likelihood(2, kappa, lambda, priorWidth);
-    for (double i = xran.first; i < xran.second; i += 0.01) {
-        for (double j = yran.first; j < yran.second; j += 0.01) {
-            Eigen::Vector4d theta {{i, j, 0, 0}};
+    for (double i = xran.first; i < xran.second; i += 0.05) {
+        for (double j = yran.first; j < yran.second; j += 0.05) {
+            Eigen::Vector2d theta {{i, j}};
             const double like = likelihood.LogLikelihood(theta);
 
             file << std::setprecision(3) << std::fixed << i << " " << j << " " <<
@@ -103,15 +123,14 @@ void generateContours(std::pair<float, float>& xran, std::pair<float, float>& yr
 }
 
 
-void generateGradientField(std::pair<float, float>& xran, std::pair<float, float>& yran) {
+void generateGradientField(ILikelihood& likelihood, std::pair<float, float>& xran, std::pair<float, float>& yran) {
     std::ofstream file;
     file.open("gradient.dat");
 
-    Phi4Likelihood likelihood = Phi4Likelihood(2, kappa, lambda, priorWidth);
-    for (double i = xran.first; i < xran.second; i += 0.2) {
-        for (double j = yran.first; j < yran.second; j += 0.2) {
-            Eigen::Vector4d theta {{i, j, 0, 0}};
-            Eigen::Vector4d grad = likelihood.Gradient(theta).normalized() / 10;
+    for (double i = xran.first; i < xran.second; i += 0.4) {
+        for (double j = yran.first; j < yran.second; j += 0.4) {
+            Eigen::Vector2d theta {{i, j}};
+            Eigen::Vector2d grad = likelihood.Gradient(theta).normalized() / 6;
          //   Eigen::Vector4d grad = likelihood.Gradient(theta) / 500;
 
             file << std::setprecision(3) << std::fixed << i << " " << j << " " <<
@@ -127,16 +146,20 @@ void generateGradientField(std::pair<float, float>& xran, std::pair<float, float
 
 
 void generateLikelihoodPlot() {
-    std::pair<float, float> xran = {-2.3, 2.3};
-    std::pair<float, float> yran = {-2.3, 2.3};
-    generateContours(xran, yran);
-    generateGradientField(xran, yran);
+//    Phi4Likelihood phiLikelihood = Phi4Likelihood(2, kappa, lambda, priorWidth);
+    TopologicalTrap topoLikelihood = TopologicalTrap(2);
+
+    std::pair<float, float> xran = {-4, 6};
+    std::pair<float, float> yran = {-4, 6};
+    generateContours(topoLikelihood, xran, yran);
+    generateGradientField(topoLikelihood, xran, yran);
 }
 
 int main() {
-  //  generateLikelihoodPlot();
-    runPhi4();
+    generateLikelihoodPlot();
+  //  runPhi4();
  //   runGaussian();
+ //   runTopoTrap();
 }
 
 

@@ -43,15 +43,18 @@ void Adapter::AdaptEpsilon(double acceptProb) {
 void Adapter::AdaptMetric(const std::multiset<MCPoint> &livePoints) {
 
     const int size = livePoints.size();
-    Eigen::ArrayXd likelihoods(size);
+    //   Eigen::ArrayXd energies(size);
+    Eigen::ArrayXd likelihood(size);
 
     int i = 0;
     for (const auto& point : livePoints) {
-        likelihoods[i] = point.likelihood;
+        //      energies[i] = point.energy;
+        likelihood[i] = point.likelihood;
         i++;
     }
 
-    Eigen::ArrayXd centered = likelihoods - likelihoods.mean();
+    Eigen::ArrayXd centered = likelihood - likelihood.mean();
+//    Eigen::ArrayXd centered = energies - energies.mean();
 
     for (int i = 0; i < centered.size(); i++) {
         std::cout << centered[i] << std::endl;
@@ -60,9 +63,9 @@ void Adapter::AdaptMetric(const std::multiset<MCPoint> &livePoints) {
     const double var = centered.pow(2).sum() / size;
 
     // Scale metric alpha.
-    mAlpha = 2 * sqrt(var) / mDimension;
+    mAlpha = sqrt(2 * var) / mDimension;
 
-    mMetric = mAlpha * mMetric;
+    mMetric = mAlpha * Eigen::VectorXd::Ones(mDimension);
     std::cout << "var = " << var << std::endl;
 
     std::cout << "alpha = " << mAlpha << std::endl;
