@@ -22,8 +22,9 @@ public:
 
 private:
     void NestedSamplingStep();
-    void SampleNewPoint(const MCPoint& deadPoint);
+    void SampleNewPoint(const MCPoint& deadPoint, const double likelihoodConstraint);
     const MCPoint SampleFromPrior();
+    const MCPoint& GetRandomPoint();
 
     void UpdateLogEvidence(double logLikelihood);
     const double EstimateLogEvidenceRemaining();
@@ -31,6 +32,8 @@ private:
     const bool TerminateSampling();
     const double logAdd(double logA, double logB);
     const double logAdd(const Eigen::ArrayXd& logV);
+
+    void PrintEnergies();
 
     ISampler& mSampler;
     ILikelihood& mLikelihood;
@@ -50,7 +53,7 @@ private:
     const double minLikelihood = -1e30;
     const double initialLogWeight;
     const int mDimension;
-    const int mSampleRetries = 5;
+    const int mSampleRetries = 2;
 
     std::random_device rd;
     std::mt19937 gen;

@@ -72,33 +72,38 @@ void NestedSampler::Run() {
 
 void NestedSampler::NestedSamplingStep() {
     auto lowestIt = mLivePoints.begin();
-    const MCPoint& deadPoint = *lowestIt;
+    const MCPoint &deadPoint = *lowestIt; // lowest likelihood point
 
     // Analysis on dead point
     UpdateLogEvidence(deadPoint.likelihood);
 
     // Generate new point(s)
-    SampleNewPoint(deadPoint);
+    //  const MCPoint& randPoint = GetRandomPoint();
+    SampleNewPoint(deadPoint, deadPoint.likelihood);
 
     //kill point.
     mLivePoints.erase(lowestIt);
 
     if ((mAdapter != nullptr) && (mIter % 50 == 0)) {
-      //  mAdapter->AdaptEpsilon((double)mReflections / mIntegrationSteps);
-        const double reflectionRate = (double)mReflections / mIntegrationSteps * 100;
-        std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << reflectionRate << ", iter=" << mIter << std::endl;
+        //  mAdapter->AdaptEpsilon((double)mReflections / mIntegrationSteps);
+        const double reflectionRate = (double) mReflections / mIntegrationSteps * 100;
+        std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << reflectionRate << ", iter=" << mIter
+                  << std::endl;
 
         mReflections = 0;
-        mIntegrationSteps=0;
+        mIntegrationSteps = 0;
         std::cout << "NS Step: " << mIter;
         std::cout << ", Num Live = " << mLivePoints.size() << std::endl;
 
     }
+
+    if ((mAdapter != nullptr) && (mIter % 1000 == 999)) {
+        mAdapter->AdaptMetric(mLivePoints);
+    }
 }
 
 
-void NestedSampler::SampleNewPoint(const MCPoint& deadPoint) {
-    const double likelihoodConstraint = deadPoint.likelihood;
+void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likelihoodConstraint) {
 
     for (int i = 0; i < mSampleRetries; i++) {
         const MCPoint newPoint = mSampler.SamplePoint(deadPoint, likelihoodConstraint);
@@ -109,6 +114,10 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint) {
             mReflections += newPoint.reflections;
             mIntegrationSteps += newPoint.steps;
         }
+
+       // if ((double)newPoint.reflections / newPoint.steps > 0.5) {
+       //     return;
+       // }
 
         if (!newPoint.rejected)
         {
@@ -141,6 +150,17 @@ const MCPoint NestedSampler::SampleFromPrior() {
 }
 
 
+const MCPoint& NestedSampler::GetRandomPoint() {
+    const int randomIndex = std::floor(mUniform(gen) * mLivePoints.size());
+
+    auto It = mLivePoints.begin();
+    std::advance(It, randomIndex);
+
+    return *It;
+}
+
+
+
 void NestedSampler::UpdateLogEvidence(const double logLikelihood) {
     double logWeight = initialLogWeight - (float)mIter / mConfig.numLive;
 
@@ -168,7 +188,17 @@ const double NestedSampler::EstimateLogEvidenceRemaining() {
 }
 
 
+void NestedSampler::PrintEnergies()
+{
+    for (auto& point : mLivePoints) {
+        std::cout << point.energy << std::endl;
+    }
+
+    std::cout << std::endl;
+}
+
 const bool NestedSampler::TerminateSampling() {
+   // PrintEnergies();
     double remainingEvidence = EstimateLogEvidenceRemaining();
     if (remainingEvidence < mLogZ + log10(mConfig.precisionCriterion)) {
         return true;

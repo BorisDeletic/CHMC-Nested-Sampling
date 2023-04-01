@@ -5,10 +5,11 @@
 #include "CHMC.h"
 #include <Eigen/Dense>
 #include <iostream>
+#include <set>
 
 class Adapter : public IParams {
 public:
-    Adapter(double initEpsilon, int initPathLength, const Eigen::VectorXd metric);
+    Adapter(double initEpsilon, int initPathLength, int dimension);
 
     double GetEpsilon() override { return mEpsilon; };
     int GetPathLength() override { return mPathLength; };
@@ -18,10 +19,13 @@ public:
     void SetMu(double m) { mMu = m; };
 
     void AdaptEpsilon(double acceptProb);
+    void AdaptMetric(const std::multiset<MCPoint>& livePoints);
 
 private:
+
     double mEpsilon;
     int mPathLength;
+    int mDimension;
     Eigen::VectorXd mMetric;
 
     int mIter;  // Adaptation iteration
@@ -32,6 +36,8 @@ private:
     double mGamma = 0.05;    // Adaptation scaling
     double mKappa = 0.75;    // Adaptation shrinkage
     double mT0 = 10;       // Effective starting iteration
+
+    double mAlpha = 1;
 };
 
 #endif //CHMC_NESTED_SAMPLING_ADAPTER_H

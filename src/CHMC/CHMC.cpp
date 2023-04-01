@@ -17,14 +17,14 @@ CHMC::CHMC(ILikelihood& likelihood, IParams& params)
 
 
 
-
+// P ~ N(0, M)
 Eigen::VectorXd CHMC::SampleP(const int size) {
     Eigen::VectorXd p(size);
 
-    Eigen::VectorXd sqrtMetric = mParams.GetMetric().cwiseSqrt();
+    Eigen::VectorXd metric = mParams.GetMetric();
 
     for (int i = 0; i < size; i++) {
-        p(i) = mNorm(gen) * sqrtMetric(i);
+        p(i) = mNorm(gen) * metric(i);
     }
 
     return p;
@@ -53,8 +53,10 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
         rejected = true;
     }
 
-    if (acceptProb < 1e-4) {
-        int a = 0;
+    const double reflectionRate = (double)mHamiltonian.GetReflections() / mHamiltonian.GetIntegrationSteps();
+    if (reflectionRate > 0.9) {
+     //   rejected = true;
+    //    std::cout << "!reflect" << std::endl;
     }
 
     MCPoint newPoint = {
@@ -64,7 +66,8 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
             mHamiltonian.GetReflections(),
             mHamiltonian.GetIntegrationSteps(),
             acceptProb,
-            rejected
+            rejected,
+            newEnergy
     };
 
     return newPoint;

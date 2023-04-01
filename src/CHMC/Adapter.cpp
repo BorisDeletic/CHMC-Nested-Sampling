@@ -1,10 +1,11 @@
 #include "Adapter.h"
 
-Adapter::Adapter(double initEpsilon, int initPathLength, const Eigen::VectorXd metric)
+Adapter::Adapter(double initEpsilon, int initPathLength, const int dimension)
     :
     mEpsilon(initEpsilon),
     mPathLength(initPathLength),
-    mMetric(metric)
+    mDimension(dimension),
+    mMetric(Eigen::VectorXd::Ones(mDimension))
 {
     mMu = log(initEpsilon);
     mIter = 0;
@@ -23,7 +24,7 @@ void Adapter::AdaptEpsilon(double acceptProb) {
 
     acceptProb = acceptProb > 1 ? 1 : acceptProb;
 
-  //  printf("e=%.5f, p=%.1f, iter=%d\n", mEpsilon, acceptProb*100, mIter);
+//    printf("e=%.5f, p=%.1f\n", mEpsilon, acceptProb*100);
 //    std::cout << "e=" << mEpsilon << ", reflectionrate=" << acceptProb << ", iter=" << mIter << std::endl;
 
     // Nesterov Dual-Averaging of log(epsilon)
@@ -38,6 +39,36 @@ void Adapter::AdaptEpsilon(double acceptProb) {
 
     mEpsilon = std::exp(x);
 }
+
+void Adapter::AdaptMetric(const std::multiset<MCPoint> &livePoints) {
+
+    const int size = livePoints.size();
+    Eigen::ArrayXd likelihoods(size);
+
+    int i = 0;
+    for (const auto& point : livePoints) {
+        likelihoods[i] = point.likelihood;
+        i++;
+    }
+
+    Eigen::ArrayXd centered = likelihoods - likelihoods.mean();
+
+    for (int i = 0; i < centered.size(); i++) {
+        std::cout << centered[i] << std::endl;
+    }
+
+    const double var = centered.pow(2).sum() / size;
+
+    // Scale metric alpha.
+    mAlpha = 2 * sqrt(var) / mDimension;
+
+    mMetric = mAlpha * mMetric;
+    std::cout << "var = " << var << std::endl;
+
+    std::cout << "alpha = " << mAlpha << std::endl;
+
+}
+
 
 /*
 bool CHMC::WarmupAdapt(const MCPoint &init)

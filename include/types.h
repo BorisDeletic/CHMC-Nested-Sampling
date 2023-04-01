@@ -12,6 +12,7 @@ typedef struct MCPoint {
     const int steps = 0;
     const double acceptProbability = 1;
     bool rejected = false;
+    double energy = 0;
 } MCPoint;
 
 inline bool operator<(const MCPoint& a, const MCPoint& b) {

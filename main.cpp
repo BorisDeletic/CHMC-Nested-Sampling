@@ -7,7 +7,7 @@
 #include "types.h"
 #include <Eigen/Dense>
 
-const int n = 15;
+const int n = 7;
 const double kappa = 2.0; // k = 2 is below transition temp
 const double lambda = 3.5;
 
@@ -17,12 +17,12 @@ const Eigen::VectorXd mean = Eigen::VectorXd::Zero(d);
 const Eigen::VectorXd var  = Eigen::VectorXd::Ones(d);
 const double priorWidth = 6;
 
-const double epsilon = 0.01;
+const double epsilon = 0.1;
 const int pathLength = 100;
 
 const int numLive = 500;
 const int maxIters = 20000;
-const double precisionCriterion = 1e-3;
+const double precisionCriterion = 1e-2;
 
 NSConfig config = {
         numLive,
@@ -50,7 +50,7 @@ void runPhi4()
     Phi4Likelihood likelihood = Phi4Likelihood(n, kappa, lambda, priorWidth);
 
     //StaticParams params = StaticParams(n*n);
-    Adapter params = Adapter(epsilon, pathLength, ones);
+    Adapter params = Adapter(epsilon, pathLength, n*n);
 
     CHMC sampler = CHMC(likelihood, params);
     //RejectionSampler sampler = RejectionSampler(likelihood, epsilon);
@@ -68,7 +68,7 @@ void runGaussian() {
     GaussianLikelihood likelihood = GaussianLikelihood(mean, var, priorWidth);
 
    // StaticParams params = StaticParams(likelihood.GetDimension());
-    Adapter params = Adapter(epsilon, pathLength, Eigen::VectorXd::Ones(likelihood.GetDimension()));
+    Adapter params = Adapter(epsilon, pathLength, likelihood.GetDimension());
 
     //RejectionSampler sampler = RejectionSampler(likelihood, epsilon);
     CHMC sampler = CHMC(likelihood, params);
