@@ -1,0 +1,56 @@
+%! Author = borisdeletic
+%! Date = 02/04/2023
+
+% Preamble
+\documentclass[11pt]{article}
+
+% Packages
+\usepackage{amsmath}
+\usepackage{biblatex}
+
+\addbibresource{../bib/references.bib}
+% Document
+\begin{document}
+
+    \section{Introduction}
+    \subsection{Motivations (LFT)}
+    Lattice field theory can be interpreted as a Bayesian sampling problem.
+    Often very difficult due to multimodal likelihoods with deep topological traps.
+    Topological freezing is a significant challenge which Nested Sampling helps to overcome.
+
+    \subsection{Hamiltonian Monte Carlo (classical for LFT)}
+    Describe classical HMC algorithm. \autocite{betancourt2018conceptual}
+
+    \subsection{Bayesian Inference}
+    Introduction to bayesian inference.
+
+    \subsection{Nested Sampling}
+    Sampling with Hard Likelihood constraint.
+
+    \section{Constrained HMC for Nested Sampling}
+    \subsection{Reflections}
+    Compression of posterior as we shrink the isolikelihood contour.
+    Cannot pick a static value for epsilon and metric which is effective for sampling
+    from large posterior space and also the compressed space.
+    This necessitates a dynamic adaption of our HMC parameters (epsilon, metric).
+
+    \section{Parameter Adaption}
+    \subsection{Epsilon Dual Averaging}
+    \subsection{Metric Scaling using Energy}
+    \subsection{Reflection Rates for local minima}
+
+    \section{Results}
+    \subsection{Phi4}
+    \subsection{Topological Trap}
+    \subsection{Performance}
+
+
+    \appendix
+    \section{Code Design}
+    \subsection{Interfaces}
+    \subsection{Dependency Injection}
+    \subsection{Unit Tests}
+    \subsection{Autodiff}
+
+\printbibliography
+\end{document}

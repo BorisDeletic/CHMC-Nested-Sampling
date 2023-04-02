@@ -21,12 +21,6 @@ const double Phi4Likelihood::LogLikelihood(const Eigen::VectorXd &theta) {
         fieldAction += Potential(theta[i]);
     }
 
-//    for (int i = 0; i < n; i++) {
-//        for (int j = 0; j < n; j++) {
-//            fieldAction += Potential(theta[i * n + j]);
-//        }
-//    }
-
     //lagrangian becomes to T + V after wick rotation
 
     //lambda=inf gives V(|1|)=0 else inf, so only phi=|1| has non infinite action (non-zero prob)
