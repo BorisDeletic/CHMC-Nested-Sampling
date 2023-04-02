@@ -1,8 +1,0 @@
-Log (Z) = 31.7525
-Log (Z) Remaining = 29.5021
-
-chains generated with:
-dim = 4, a = 100, mu = 4, var = 2
-
-contour generated with:
-dim = 2, a = 50, mu = 4, var = 0.8

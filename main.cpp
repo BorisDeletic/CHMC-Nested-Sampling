@@ -10,7 +10,7 @@
 
 const int n = 20;
 const double kappa = 2.0; // k = 2 is below transition temp
-const double lambda = 3.5;
+const double lambda = 1.5;
 
 const int d = 50;
 const Eigen::VectorXd ones = Eigen::VectorXd::Ones(n*n);
@@ -31,18 +31,6 @@ NSConfig config = {
         precisionCriterion,
 };
 
-
-class StaticParams : public IParams {
-public:
-    StaticParams(int dims) : mMetric(Eigen::VectorXd::Ones(dims)) {}
-
-    double GetEpsilon() override { return epsilon; };
-    int GetPathLength() override { return pathLength; };
-    const Eigen::VectorXd& GetMetric() override { return mMetric; };
-
-private:
-    const Eigen::VectorXd mMetric;
-};
 
 
 void runPhi4()
@@ -156,8 +144,8 @@ void generateLikelihoodPlot() {
 }
 
 int main() {
-    generateLikelihoodPlot();
-  //  runPhi4();
+  //  generateLikelihoodPlot();
+    runPhi4();
  //   runGaussian();
  //   runTopoTrap();
 }

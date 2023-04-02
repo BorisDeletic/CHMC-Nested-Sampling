@@ -1,7 +1,5 @@
 #include "CHMC.h"
 #include "Hamiltonian.h"
-#include <memory>
-#include <cfloat>
 #include <iostream>
 
 CHMC::CHMC(ILikelihood& likelihood, IParams& params)
@@ -17,17 +15,14 @@ CHMC::CHMC(ILikelihood& likelihood, IParams& params)
 
 
 
-// P ~ N(0, M)
+// P ~ N(0, sigma=M)
 Eigen::VectorXd CHMC::SampleP(const int size) {
     Eigen::VectorXd p(size);
 
     Eigen::VectorXd metric = mParams.GetMetric();
 
     for (int i = 0; i < size; i++) {
-        std::normal_distribution<double> normalDistribution(0, metric(i));
-
-       // p(i) = mNorm(gen) * metric(i);
-        p(i) = normalDistribution(gen);
+        p(i) = mNorm(gen) * metric(i);
     }
 
     return p;

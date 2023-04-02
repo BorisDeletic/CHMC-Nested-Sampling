@@ -17,11 +17,15 @@ const double Phi4Likelihood::LogLikelihood(const Eigen::VectorXd &theta) {
     }
 
     // potential term
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            fieldAction += Potential(theta[i * n + j]);
-        }
+    for (int i = 0; i < theta.size(); i++) {
+        fieldAction += Potential(theta[i]);
     }
+
+//    for (int i = 0; i < n; i++) {
+//        for (int j = 0; j < n; j++) {
+//            fieldAction += Potential(theta[i * n + j]);
+//        }
+//    }
 
     //lagrangian becomes to T + V after wick rotation
 
