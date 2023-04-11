@@ -11,6 +11,7 @@ public:
     const Eigen::VectorXd PriorTransform(const Eigen::VectorXd &cube) override;
     const double LogLikelihood(const Eigen::VectorXd& theta) override;
     const Eigen::VectorXd Gradient(const Eigen::VectorXd& theta) override;
+    const Eigen::VectorXd DerivedParams(const Eigen::VectorXd& theta) override;
 
     const int GetDimension() override { return n*n; };
 

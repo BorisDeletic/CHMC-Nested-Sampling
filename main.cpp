@@ -8,8 +8,8 @@
 #include "types.h"
 #include <Eigen/Dense>
 
-const int n = 20;
-const double kappa = 2.0; // k = 2 is below transition temp
+const int n = 10;
+const double kappa = 0.0; // k = 2 is below transition temp
 const double lambda = 1.5;
 
 const int d = 50;
@@ -97,7 +97,9 @@ void generateContours(ILikelihood& likelihood, std::pair<float, float>& xran, st
 
     for (double i = xran.first; i < xran.second; i += 0.05) {
         for (double j = yran.first; j < yran.second; j += 0.05) {
-            Eigen::Vector2d theta {{i, j}};
+            Eigen::VectorXd theta(likelihood.GetDimension());
+            theta[0] = i;
+            theta[1] = j;
             const double like = likelihood.LogLikelihood(theta);
 
             file << std::setprecision(3) << std::fixed << i << " " << j << " " <<
@@ -117,8 +119,11 @@ void generateGradientField(ILikelihood& likelihood, std::pair<float, float>& xra
 
     for (double i = xran.first; i < xran.second; i += 0.4) {
         for (double j = yran.first; j < yran.second; j += 0.4) {
-            Eigen::Vector2d theta {{i, j}};
-            Eigen::Vector2d grad = likelihood.Gradient(theta).normalized() / 6;
+            Eigen::VectorXd theta(likelihood.GetDimension());
+            theta[0] = i;
+            theta[1] = j;
+
+            Eigen::VectorXd grad = likelihood.Gradient(theta).normalized() / 6;
          //   Eigen::Vector4d grad = likelihood.Gradient(theta) / 500;
 
             file << std::setprecision(3) << std::fixed << i << " " << j << " " <<
@@ -134,17 +139,17 @@ void generateGradientField(ILikelihood& likelihood, std::pair<float, float>& xra
 
 
 void generateLikelihoodPlot() {
-//    Phi4Likelihood phiLikelihood = Phi4Likelihood(2, kappa, lambda, priorWidth);
-    TopologicalTrap topoLikelihood = TopologicalTrap(2);
+    Phi4Likelihood phiLikelihood = Phi4Likelihood(n, kappa, lambda, priorWidth);
+//    TopologicalTrap topoLikelihood = TopologicalTrap(2);
 
-    std::pair<float, float> xran = {-4, 6};
-    std::pair<float, float> yran = {-4, 6};
-    generateContours(topoLikelihood, xran, yran);
-    generateGradientField(topoLikelihood, xran, yran);
+    std::pair<float, float> xran = {-4, 4};
+    std::pair<float, float> yran = {-4, 4};
+    generateContours(phiLikelihood, xran, yran);
+    generateGradientField(phiLikelihood, xran, yran);
 }
 
 int main() {
-  //  generateLikelihoodPlot();
+    //generateLikelihoodPlot();
     runPhi4();
  //   runGaussian();
  //   runTopoTrap();

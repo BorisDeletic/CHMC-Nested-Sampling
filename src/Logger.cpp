@@ -1,4 +1,5 @@
 #include "Logger.h"
+#include <iostream>
 
 Logger::Logger(std::string name)
     :
@@ -10,13 +11,18 @@ Logger::Logger(std::string name)
 }
 
 
-void Logger::WritePoint(const MCPoint& point) {
+void Logger::WritePoint(const MCPoint& point, const Eigen::VectorXd& derivedParams) {
     if (!mDeadFile.is_open()) {
         mDeadFile.open(mDeadFilename, std::ios::app);
     }
 
-    for (const double x : point.theta) {
-        mDeadFile << x << " ";
+    for (const double phi : derivedParams) {
+    //    std::cout << phi << std::endl;
+        mDeadFile << phi << " ";
+    }
+
+    for (const double theta : point.theta) {
+        mDeadFile << theta << " ";
     }
 
     mDeadFile << point.likelihood << " " << point.birthLikelihood << std::endl;

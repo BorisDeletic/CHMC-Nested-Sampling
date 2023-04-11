@@ -56,10 +56,6 @@ void Adapter::AdaptMetric(const std::multiset<MCPoint> &livePoints) {
     Eigen::ArrayXd centered = likelihood - likelihood.mean();
 //    Eigen::ArrayXd centered = energies - energies.mean();
 
-    for (int i = 0; i < centered.size(); i++) {
-        std::cout << centered[i] << std::endl;
-    }
-
     const double var = centered.pow(2).sum() / size;
 
     // Scale metric alpha.

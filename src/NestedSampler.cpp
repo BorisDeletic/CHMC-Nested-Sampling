@@ -28,7 +28,6 @@ void NestedSampler::Initialise() {
     for (int i = mLivePoints.size(); i < mConfig.numLive; i++) {
         MCPoint newPoint = SampleFromPrior();
         mLivePoints.insert(newPoint);
-        mLogger.WritePoint(newPoint);
     }
 
     mLogZ = -DBL_MAX; // Z = 0 initially
@@ -43,9 +42,8 @@ void NestedSampler::SetAdaption(Adapter* adapter) {
 
 void NestedSampler::Run() {
     bool terminationCondition = false;
-    while (!terminationCondition) {
-     //   std::cout << ", Reject Ratio = " << mSampler.GetSummary().rejectRatio << std::endl;
-
+    while (!terminationCondition)
+    {
         NestedSamplingStep();
         mIter++;
 
@@ -59,12 +57,15 @@ void NestedSampler::Run() {
         }
     }
 
+    for (const auto& point : mLivePoints) {
+        const Eigen::VectorXd derived = mLikelihood.DerivedParams(point.theta);
+        mLogger.WritePoint(point, derived);
+    }
+
     NSSummary summary = {
             mLogZ,
             EstimateLogEvidenceRemaining()
     };
-
-  //  SamplerSummary samplerStats = mSampler.GetSummary();
 
     mLogger.WriteSummary(summary);
 }
@@ -77,11 +78,19 @@ void NestedSampler::NestedSamplingStep() {
     // Analysis on dead point
     UpdateLogEvidence(deadPoint.likelihood);
 
+    // Log dead point
+    const Eigen::VectorXd derived = mLikelihood.DerivedParams(deadPoint.theta);
+    mLogger.WritePoint(deadPoint, derived);
+
+
     // Generate new point(s)
-    if ((double)deadPoint.reflections / deadPoint.steps > 0.9) {
+    if ((double)deadPoint.reflections / deadPoint.steps > 0.9)
+    {
         const MCPoint& randPoint = GetRandomPoint();
         SampleNewPoint(randPoint, deadPoint.likelihood);
-    } else {
+    }
+    else
+    {
         SampleNewPoint(deadPoint, deadPoint.likelihood);
     }
 
@@ -96,15 +105,12 @@ void NestedSampler::NestedSamplingStep() {
 
         mReflections = 0;
         mIntegrationSteps = 0;
-        std::cout << "NS Step: " << mIter;
-        std::cout << ", Num Live = " << mLivePoints.size() << std::endl;
-
     }
 }
 
 
-void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likelihoodConstraint) {
-
+void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likelihoodConstraint)
+{
     for (int i = 0; i < mSampleRetries; i++) {
         const MCPoint newPoint = mSampler.SamplePoint(deadPoint, likelihoodConstraint);
 
@@ -123,7 +129,6 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
         {
             // sampled valid new point
             mLivePoints.insert(newPoint);
-            mLogger.WritePoint(newPoint);
 
             if (mLivePoints.size() > mConfig.numLive)
             {

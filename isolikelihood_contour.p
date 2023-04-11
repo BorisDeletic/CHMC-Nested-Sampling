@@ -6,7 +6,8 @@ unset surface
 set contour
 #set cntrparam levels incr -120,50,0
 #set cntrparam levels disc -40,-30,-20,-14,-10,-2,4,10,14
-set cntrparam levels disc -30,-20,-10,-2,5,10,15
+#set cntrparam levels disc -30,-20,-10,-2,5,10,15
+set cntrparam levels 5
 
 $data << EOD
 0 0 0 2 2 0
