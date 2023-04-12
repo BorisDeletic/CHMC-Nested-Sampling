@@ -1,6 +1,6 @@
-#include "app/Gaussian.h"
-#include "app/Phi4LFT.h"
-#include "app/TopologicalTrap.h"
+#include "likelihoods/Gaussian.h"
+#include "likelihoods/Phi4Likelihood.h"
+#include "likelihoods/TopologicalTrap.h"
 #include "Logger.h"
 #include "RejectionSampler.h"
 #include "CHMC.h"
@@ -13,7 +13,6 @@ const double kappa = 0.0; // k = 2 is below transition temp
 const double lambda = 1.5;
 
 const int d = 50;
-const Eigen::VectorXd ones = Eigen::VectorXd::Ones(n*n);
 const Eigen::VectorXd mean = Eigen::VectorXd::Zero(d);
 const Eigen::VectorXd var  = Eigen::VectorXd::Ones(d);
 const double priorWidth = 6;
@@ -33,23 +32,6 @@ NSConfig config = {
 
 
 
-void runPhi4()
-{
-    Logger logger = Logger("Phi4");
-    Phi4Likelihood likelihood = Phi4Likelihood(n, kappa, lambda, priorWidth);
-
-    //StaticParams params = StaticParams(n*n);
-    Adapter params = Adapter(epsilon, pathLength, n*n);
-
-    CHMC sampler = CHMC(likelihood, params);
-    //RejectionSampler sampler = RejectionSampler(likelihood, epsilon);
-
-    NestedSampler NS = NestedSampler(sampler, likelihood, logger, config);
-
-    NS.SetAdaption(&params);
-    NS.Initialise();
-    NS.Run();
-}
 
 
 void runGaussian() {

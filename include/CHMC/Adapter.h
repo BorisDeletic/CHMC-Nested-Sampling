@@ -2,7 +2,7 @@
 #define CHMC_NESTED_SAMPLING_ADAPTER_H
 
 #include "IParams.h"
-#include "CHMC.h"
+#include "types.h"
 #include <Eigen/Dense>
 #include <iostream>
 #include <set>

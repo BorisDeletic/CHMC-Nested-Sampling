@@ -21,7 +21,6 @@ public:
 private:
     Eigen::VectorXd SampleP(int size);
 
-    ILikelihood& mLikelihood;
     IParams& mParams;
     Hamiltonian mHamiltonian;
 
@@ -30,7 +29,6 @@ private:
     std::random_device rd;
     std::mt19937 gen;
 
-    const int mWarmupSteps = 75;
     const double inf = 1e100;
 
     int mReflectRejections = 0;

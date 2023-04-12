@@ -4,7 +4,6 @@
 
 CHMC::CHMC(ILikelihood& likelihood, IParams& params)
     :
-    mLikelihood(likelihood),
     mParams(params),
     mHamiltonian(likelihood, params),
     gen(rd()),

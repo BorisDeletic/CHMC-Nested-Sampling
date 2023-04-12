@@ -12,7 +12,7 @@ public:
     const double LogLikelihood(const Eigen::VectorXd& x) override;
     const Eigen::VectorXd Gradient(const Eigen::VectorXd& x) override;
 
-    const int GetDimension() { return mDim; };
+    const int GetDimension() override { return mDim; };
 
 private:
     const double a;

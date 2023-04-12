@@ -82,7 +82,6 @@ void NestedSampler::NestedSamplingStep() {
     const Eigen::VectorXd derived = mLikelihood.DerivedParams(deadPoint.theta);
     mLogger.WritePoint(deadPoint, derived);
 
-
     // Generate new point(s)
     if ((double)deadPoint.reflections / deadPoint.steps > 0.9)
     {
