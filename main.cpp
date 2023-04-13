@@ -1,5 +1,4 @@
 #include "likelihoods/Gaussian.h"
-#include "likelihoods/Phi4Likelihood.h"
 #include "likelihoods/TopologicalTrap.h"
 #include "Logger.h"
 #include "RejectionSampler.h"
@@ -29,8 +28,6 @@ NSConfig config = {
         maxIters,
         precisionCriterion,
 };
-
-
 
 
 
@@ -73,66 +70,9 @@ void runTopoTrap() {
 
 
 
-void generateContours(ILikelihood& likelihood, std::pair<float, float>& xran, std::pair<float, float>& yran) {
-    std::ofstream file;
-    file.open("isocontours.dat");
-
-    for (double i = xran.first; i < xran.second; i += 0.05) {
-        for (double j = yran.first; j < yran.second; j += 0.05) {
-            Eigen::VectorXd theta(likelihood.GetDimension());
-            theta[0] = i;
-            theta[1] = j;
-            const double like = likelihood.LogLikelihood(theta);
-
-            file << std::setprecision(3) << std::fixed << i << " " << j << " " <<
-                 std::setprecision(4) << std::fixed << like << std::endl;
- //           file << (int)(i*10) << " " << (int)(j*10) << " " << like << std::endl;
-        }
-        file << std::endl;
-    }
-
-    file.close();
-}
-
-
-void generateGradientField(ILikelihood& likelihood, std::pair<float, float>& xran, std::pair<float, float>& yran) {
-    std::ofstream file;
-    file.open("gradient.dat");
-
-    for (double i = xran.first; i < xran.second; i += 0.4) {
-        for (double j = yran.first; j < yran.second; j += 0.4) {
-            Eigen::VectorXd theta(likelihood.GetDimension());
-            theta[0] = i;
-            theta[1] = j;
-
-            Eigen::VectorXd grad = likelihood.Gradient(theta).normalized() / 6;
-         //   Eigen::Vector4d grad = likelihood.Gradient(theta) / 500;
-
-            file << std::setprecision(3) << std::fixed << i << " " << j << " " <<
-                 std::setprecision(4) << std::fixed << grad[0] << " " << grad[1] << std::endl;
-            //           file << (int)(i*10) << " " << (int)(j*10) << " " << like << std::endl;
-
-        }
-        file << std::endl;
-    }
-
-    file.close();
-}
-
-
-void generateLikelihoodPlot() {
-    Phi4Likelihood phiLikelihood = Phi4Likelihood(n, kappa, lambda, priorWidth);
-//    TopologicalTrap topoLikelihood = TopologicalTrap(2);
-
-    std::pair<float, float> xran = {-4, 4};
-    std::pair<float, float> yran = {-4, 4};
-    generateContours(phiLikelihood, xran, yran);
-    generateGradientField(phiLikelihood, xran, yran);
-}
 
 int main() {
     //generateLikelihoodPlot();
-    runPhi4();
  //   runGaussian();
  //   runTopoTrap();
 }

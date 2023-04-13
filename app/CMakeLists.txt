@@ -1,6 +1,7 @@
 
 add_executable(Phi4LFT
         Phi4LFT.cpp Phi4LFT.h
+        LikelihoodPlots.cpp LikelihoodPlots.h
         likelihoods/Phi4Likelihood.cpp likelihoods/Phi4Likelihood.h
         )
 

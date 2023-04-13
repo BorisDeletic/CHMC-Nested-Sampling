@@ -101,7 +101,6 @@ const Eigen::VectorXd Phi4Likelihood::DerivedParams(const Eigen::VectorXd &theta
     Eigen::VectorXd derived(numDerived);
 
     const double magnetisation = theta.mean();
-
     derived[0] = magnetisation;
 
     return derived;

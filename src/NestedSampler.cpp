@@ -68,6 +68,10 @@ void NestedSampler::Run() {
     };
 
     mLogger.WriteSummary(summary);
+
+    std::vector<std::string> names = {"mag"};
+    int totalParams = mDimension + mLikelihood.DerivedParams(Eigen::VectorXd::Ones(mDimension)).size();
+    mLogger.WriteParamnames(names, totalParams);
 }
 
 
@@ -204,6 +208,7 @@ void NestedSampler::PrintEnergies()
 const bool NestedSampler::TerminateSampling() {
     if (mAdapter != nullptr) {
         mAdapter->AdaptMetric(mLivePoints);
+        mAdapter->Restart();
     }
 
     // PrintEnergies();

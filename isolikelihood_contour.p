@@ -13,8 +13,8 @@ $data << EOD
 0 0 0 2 2 0
 EOD
 
-splot 'cmake-build-debug/isocontours.dat' with lines, \
-    'cmake-build-debug/gradient.dat' using 1:2:(0):3:4:(0) notitle w vector lc -1
+splot 'cmake-build-debug/app/isocontours.dat' with lines, \
+    'cmake-build-debug/app/gradient.dat' using 1:2:(0):3:4:(0) notitle w vector lc -1
 
 #    $data using 1:2:3:4:5:6 w vector lc -1
 
