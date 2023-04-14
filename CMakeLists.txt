@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.9)
 
-set(USE_ENZYME TRUE)
+set(USE_ENZYME FALSE)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 
 IF(USE_ENZYME)
@@ -65,13 +68,16 @@ target_include_directories(CHMC_Nested_Sampling PUBLIC
         include
         include/CHMC
         app
-        enzyme)
+        )
 
 target_link_libraries(CHMC_Nested_Sampling
         CHMC_NS_Lib
         )
 
 if(USE_ENZYME)
+    target_include_directories(CHMC_Nested_Sampling PUBLIC
+	enzyme)
+
     target_link_libraries(CHMC_Nested_Sampling
             EnzymeLikelihoods)
 ENDIF()

@@ -1,7 +1,7 @@
 #include "LikelihoodPlots.h"
 #include <iostream>
 #include <fstream>
-
+#include <iomanip>
 
 void generateContours(ILikelihood& likelihood, std::pair<float, float>& xran, std::pair<float, float>& yran) {
     std::ofstream file;

@@ -5,8 +5,11 @@
 #include "Adapter.h"
 #include "CHMC.h"
 #include "NestedSampler.h"
+#include <filesystem>
 #include <iostream>
 #include <sstream>
+#include <iomanip>
+
 
 const int n = 10;
 const double kappa = 0.01; // k = 2 is below transition temp

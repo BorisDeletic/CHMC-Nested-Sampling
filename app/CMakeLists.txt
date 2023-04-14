@@ -1,3 +1,6 @@
+# app/CMakeLists.txt
+
+find_package(Eigen3)
 
 add_executable(Phi4LFT
         Phi4LFT.cpp Phi4LFT.h
@@ -10,4 +13,6 @@ target_include_directories(Phi4LFT PRIVATE
         ${PROJECT_SOURCE_DIR}/include)
 
 target_link_libraries(Phi4LFT
-        CHMC_NS_Lib)
+        CHMC_NS_Lib
+	Eigen3::Eigen
+	)
