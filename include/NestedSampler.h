@@ -33,8 +33,6 @@ private:
     const double logAdd(double logA, double logB);
     const double logAdd(const Eigen::ArrayXd& logV);
 
-    void PrintEnergies();
-
     ISampler& mSampler;
     ILikelihood& mLikelihood;
     Logger& mLogger;

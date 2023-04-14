@@ -19,7 +19,7 @@ const int pathLength = 100;
 
 const int numLive = 500;
 const int maxIters = 20000;
-const double precisionCriterion = 1e-2;
+const double precisionCriterion = 0.05;
 
 NSConfig config = {
         numLive,
@@ -36,9 +36,11 @@ void generatePhaseDiagramData() {
     for (double k = 0; k < kappaMax; k += kappaMax / resolution) {
         for (double l = 0; l < lambdaMax; l += lambdaMax / resolution) {
             std::ostringstream fname;
-            fname << "phase_diagram/Phi4_" << std::setprecision(3) << std::fixed << k << "_" << l << ".txt";
-            if(std::filesystem::exists(fname.str()))
+            fname << "phase_diagram/Phi4_" << std::setprecision(3) << std::fixed << k << "_" << l;
+            if(std::filesystem::exists(fname.str() + ".stats"))
                 continue;
+
+            std::cout << std::endl << std::endl <<"Running Phi4: kappa=" << k << ", lambda=" << l << std::endl;
 
             Phi4Likelihood likelihood = Phi4Likelihood(n, k, l, priorWidth);
             Logger logger = Logger(fname.str());

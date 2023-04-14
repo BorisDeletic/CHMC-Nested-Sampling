@@ -49,7 +49,7 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
     if (rejected) {
         rejected = true;
         acceptProb = 0;
-        std::cout << "!reflect=" << reflectionRate << std::endl;
+       // std::cout << "!reflect=" << reflectionRate << std::endl;
     }
 
 

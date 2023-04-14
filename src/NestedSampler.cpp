@@ -50,13 +50,9 @@ void NestedSampler::Run() {
         if (mIter % mConfig.numLive == 0) {
             terminationCondition = TerminateSampling();
         }
-
-        if (mIter % 50 == 0) {
-            std::cout << "NS Step: " << mIter;
-            std::cout << ", Num Live = " << mLivePoints.size() << std::endl;
-        }
     }
 
+    // log all remaining live points
     for (const auto& point : mLivePoints) {
         const Eigen::VectorXd derived = mLikelihood.DerivedParams(point.theta);
         mLogger.WritePoint(point, derived);
@@ -103,8 +99,8 @@ void NestedSampler::NestedSamplingStep() {
     if ((mAdapter != nullptr) && (mIter % 50 == 0)) {
         //mAdapter->AdaptEpsilon((double)mReflections / mIntegrationSteps);
         const double reflectionRate = (double) mReflections / mIntegrationSteps * 100;
-        std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << reflectionRate << ", iter=" << mIter
-                  << std::endl;
+    //    std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << reflectionRate << ", iter=" << mIter
+    //              << std::endl;
 
         mReflections = 0;
         mIntegrationSteps = 0;
@@ -123,10 +119,6 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
             mReflections += newPoint.reflections;
             mIntegrationSteps += newPoint.steps;
         }
-
-       // if ((double)newPoint.reflections / newPoint.steps > 0.5) {
-       //     return;
-       // }
 
         if (!newPoint.rejected)
         {
@@ -196,22 +188,19 @@ const double NestedSampler::EstimateLogEvidenceRemaining() {
 }
 
 
-void NestedSampler::PrintEnergies()
-{
-    for (auto& point : mLivePoints) {
-        std::cout << point.energy << std::endl;
-    }
-
-    std::cout << std::endl;
-}
-
 const bool NestedSampler::TerminateSampling() {
     if (mAdapter != nullptr) {
+        const double reflectionRate = (double) mReflections / mIntegrationSteps * 100;
+        std::cout << "NS Step: " << mIter << ", Num Live = " << mLivePoints.size() << std::endl;
+        std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << reflectionRate << std::endl;
+
+        mReflections = 0;
+        mIntegrationSteps = 0;
+
         mAdapter->AdaptMetric(mLivePoints);
-        mAdapter->Restart();
+      //  mAdapter->Restart();
     }
 
-    // PrintEnergies();
     double remainingEvidence = EstimateLogEvidenceRemaining();
     if (remainingEvidence < mLogZ + log10(mConfig.precisionCriterion)) {
         return true;
