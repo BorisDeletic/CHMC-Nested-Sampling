@@ -22,7 +22,7 @@ const int pathLength = 100;
 
 const int numLive = 500;
 const int maxIters = 20000;
-const double precisionCriterion = 0.05;
+const double precisionCriterion = 1e-2;
 
 NSConfig config = {
         numLive,

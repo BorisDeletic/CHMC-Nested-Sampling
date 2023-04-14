@@ -10,7 +10,7 @@ class Logger {
 public:
     Logger(std::string name);
 
-    void WritePoint(const MCPoint&, const Eigen::VectorXd& derivedParams);
+    virtual void WritePoint(const MCPoint&, const Eigen::VectorXd& derivedParams);
     void WriteSummary(const NSSummary&);
     void WriteParamnames(const std::vector<std::string>& names, int totalParams);
 

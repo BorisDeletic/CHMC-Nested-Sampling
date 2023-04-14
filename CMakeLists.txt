@@ -13,30 +13,16 @@ IF(USE_ENZYME)
     message("Found LLVM at: " ${Enzyme_LLVM_BINARY_DIR})
 
     ## C and C++ Compilers can only be configured before project(...)
-    set(CMAKE_CXX_STANDARD 20)
-    set(CMAKE_CXX_STANDARD_REQUIRED True)
     set(CMAKE_C_COMPILER "${Enzyme_LLVM_BINARY_DIR}/bin/clang")
     set(CMAKE_CXX_COMPILER "${Enzyme_LLVM_BINARY_DIR}/bin/clang++")
 
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
-    set(CMAKE_MODULE_PATH
-            ${CMAKE_MODULE_PATH}
-            "${PROJECT_SOURCE_DIR}/cmake")
 ENDIF()
 
 
 project(CHMC_Nested_Sampling)
 
-option(PACKAGE_TESTS "Build the tests" ON)
-if(PACKAGE_TESTS)
-    enable_testing()
-    include(GoogleTest)
-    add_subdirectory(test)
-    add_subdirectory(extern/googletest)
-endif()
-
-add_subdirectory(extern/eigen)
 
 # Find Enzyme Package
 IF(USE_ENZYME)
@@ -49,13 +35,22 @@ IF(USE_ENZYME)
         -Xclang -load -Xclang ${ClangEnzyme} -O2 -fno-vectorize -fno-unroll-loops")
 
     add_subdirectory(enzyme)
-
 ENDIF()
 
 
+add_compile_options(
+        $<$<CONFIG:RELEASE>:-Ofast>
+        $<$<CONFIG:RELEASE>:-funroll-loops>
+        $<$<CONFIG:DEBUG>:-O0>
+        $<$<CONFIG:DEBUG>:-ggdb3>
+)
+
+
+add_subdirectory(extern/eigen)
+add_subdirectory(extern/googletest)
+add_subdirectory(test)
 add_subdirectory(src)
 add_subdirectory(app)
-
 
 add_executable(CHMC_Nested_Sampling
         main.cpp

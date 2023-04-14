@@ -7,7 +7,7 @@
 class MockLogger : public Logger {
 public:
     MockLogger() : Logger("MockLogger") {}
-    MOCK_METHOD(void, WritePoint, (const MCPoint&), (override));
+    MOCK_METHOD(void, WritePoint, (const MCPoint&, const Eigen::VectorXd& derivedParams), (override));
 };
 
 #endif //CHMC_NESTED_SAMPLING_MOCKLOGGER_H
