@@ -14,14 +14,14 @@ def save_magnetisations(path):
     phase_data = []
 
     for file in file_list:
-        fname = file[:16]
+        fname = file[:18]
 
         if fname in files_searched:
             continue
         else:
             files_searched.append(fname)
 
-        params = file[5:16].split('_')
+        params = file[5:18].split('_')
         params = [float(x) for x in params]
 
         chains = os.path.join(data_path, fname)
