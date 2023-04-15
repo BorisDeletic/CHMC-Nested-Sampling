@@ -10,8 +10,9 @@
 #include <sstream>
 #include <iomanip>
 
+std::string phase_dir = "phase_diagram";
 
-const int n = 10;
+const int n = 32;
 const double kappa = 0.01; // k = 2 is below transition temp
 const double lambda = 0.2;
 
@@ -31,15 +32,23 @@ NSConfig config = {
 };
 
 
+
 void generatePhaseDiagramData() {
     double kappaMax = 0.5;
     double lambdaMax = 0.03;
-    int resolution = 20;
+    int resolution = 40;
+
+    if (!std::filesystem::is_directory(phase_dir) || !std::filesystem::exists(phase_dir)) { // Check if src folder exists
+        std::filesystem::create_directory(phase_dir); // create src folder
+    }
+   
 
     for (double k = 0; k < kappaMax; k += kappaMax / resolution) {
         for (double l = 0; l < lambdaMax; l += lambdaMax / resolution) {
             std::ostringstream fname;
-            fname << "phase_diagram/Phi4_" << std::setprecision(3) << std::fixed << k << "_" << l;
+            fname << phase_dir;            
+            fname << "/Phi4_" << std::setprecision(4) << std::fixed << k << "_" << l;
+            
             if(std::filesystem::exists(fname.str() + ".stats"))
                 continue;
 

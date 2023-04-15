@@ -1,11 +1,10 @@
 import anesthetic as ns
-import anesthetic.convert
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import os
 
-path = "cmake-build-release/app"
+path = "/home/bd418/data"
 
 def save_magnetisations(path):
     data_path = os.path.join(path, 'phase_diagram')
@@ -50,17 +49,17 @@ def save_magnetisations(path):
 
 
 
-#save_magnetisations(path)
+save_magnetisations(path)
 
 read_file = os.path.join(path, 'data.csv')
 df = pd.read_csv(read_file)
 
 table = df.pivot('lambda', 'kappa', 'mag')
 
-ax = sns.heatmap(table, vmin=0, vmax=15)
-ax.invert_yaxis()
+#ax = sns.heatmap(table, vmin=0, vmax=15)
+#ax.invert_yaxis()
 print(table)
-plt.show()
+#plt.show()
 
 
 
