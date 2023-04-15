@@ -1,25 +1,38 @@
 import anesthetic as ns
 import anesthetic.convert
 import matplotlib.pyplot as plt
+import seaborn as sns
 import pandas as pd
 import os
 
-path = "cmake-build-debug/app/phase_diagram"
+path = "cmake-build-release/app"
 
 def save_magnetisations(path):
+    data_path = os.path.join(path, 'phase_diagram')
+    file_list = os.listdir(data_path)
+    files_searched = []
     phase_data = []
-    files = os.listdir(path)
 
-    for file in files:
+    for file in file_list:
         fname = file[:16]
+
+        if fname in files_searched:
+            continue
+        else:
+            files_searched.append(fname)
+
         params = file[5:16].split('_')
         params = [float(x) for x in params]
 
-        chains = os.path.join(path, fname)
+        chains = os.path.join(data_path, fname)
         samples = ns.read_chains(chains)
         posterior = samples.posterior_points()
 
-        mag = posterior['m']
+        try:
+            mag = abs(posterior['m'])
+        except:
+            print(params)
+
         mean_mag = mag.mean()
 
         data = {
@@ -30,22 +43,25 @@ def save_magnetisations(path):
 
         phase_data.append(data)
 
-        df = pd.DataFrame(phase_data)
+    df = pd.DataFrame(phase_data)
 
-        save_file = os.path.join(path, 'data.csv')
-        df.to_csv(save_file)
+    save_file = os.path.join(path, 'data.csv')
+    df.to_csv(save_file)
 
 
 
-save_magnetisations(path)
+#save_magnetisations(path)
 
 read_file = os.path.join(path, 'data.csv')
 df = pd.read_csv(read_file)
 
-#samples = ns.read_chains("cmake-build-debug/app/phase_diagram/Phi4_0.000_0.004")
-#posterior = samples.posterior_points()
+table = df.pivot('lambda', 'kappa', 'mag')
 
-#dist = ns.convert.to_getdist(samples)
+ax = sns.heatmap(table, vmin=0, vmax=15)
+ax.invert_yaxis()
+print(table)
+plt.show()
+
 
 
 #samples.gui()

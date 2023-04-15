@@ -12,7 +12,7 @@ const double Phi4Likelihood::LogLikelihood(const Eigen::VectorXd &theta) {
     // kinetic term
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            fieldAction += 2 * mKappa * Laplacian(theta, i, j);
+            fieldAction -= 2 * mKappa * theta[i * n + j] * NeighbourSum(theta, i, j);
         }
     }
 
@@ -53,7 +53,7 @@ double Phi4Likelihood::Potential(double field)
 // lambda = 1.5 is appropriate for some phase transition properties
 
 //    double V = mLambda * pow(field * field - 1, 2) + field * field;
-    double V = mLambda * pow(field * field - 1, 2) + field*field;
+    double V = mLambda * pow(field, 4) + (1 - 2 * mLambda) * pow(field, 2);
 
     return V;
 }

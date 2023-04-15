@@ -33,8 +33,8 @@ NSConfig config = {
 
 void generatePhaseDiagramData() {
     double kappaMax = 0.5;
-    double lambdaMax = 0.02;
-    int resolution = 10;
+    double lambdaMax = 0.03;
+    int resolution = 20;
 
     for (double k = 0; k < kappaMax; k += kappaMax / resolution) {
         for (double l = 0; l < lambdaMax; l += lambdaMax / resolution) {
