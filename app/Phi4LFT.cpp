@@ -10,10 +10,17 @@
 #include <sstream>
 #include <iomanip>
 
+std::string phase_dir = "phase_diagram";
 
+<<<<<<< HEAD
 const int n = 10;
 //const double kappa = 0.01; // k = 2 is below transition temp
 //const double lambda = 0.2;
+=======
+const int n = 32;
+const double kappa = 0.01; // k = 2 is below transition temp
+const double lambda = 0.2;
+>>>>>>> refs/remotes/origin/main
 
 const double priorWidth = 6;
 
@@ -52,12 +59,18 @@ void runPhi4(std::string fname, double kappa, double lambda)
 void generatePhaseDiagramData() {
     double kappaMax = 0.5;
     double lambdaMax = 0.03;
-    int resolution = 20;
+    int resolution = 40;
+
+    if (!std::filesystem::is_directory(phase_dir) || !std::filesystem::exists(phase_dir)) { // Check if src folder exists
+        std::filesystem::create_directory(phase_dir); // create src folder
+    }
 
     for (double k = 0; k < kappaMax; k += kappaMax / resolution) {
         for (double l = 0; l < lambdaMax; l += lambdaMax / resolution) {
             std::ostringstream fname;
-            fname << "phase_diagram/Phi4_" << std::setprecision(4) << std::fixed << k << "_" << l;
+            fname << phase_dir;
+            fname << "/Phi4_" << std::setprecision(4) << std::fixed << k << "_" << l;
+            
             if(std::filesystem::exists(fname.str() + ".stats"))
                 continue;
 
@@ -66,7 +79,6 @@ void generatePhaseDiagramData() {
             runPhi4(fname.str(), k, l);
         }
     }
-
 }
 
 
