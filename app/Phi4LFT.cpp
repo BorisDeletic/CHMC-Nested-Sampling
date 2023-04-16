@@ -9,18 +9,13 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <execution>
 
 std::string phase_dir = "phase_diagram";
 
-<<<<<<< HEAD
-const int n = 10;
+const int n = 32;
 //const double kappa = 0.01; // k = 2 is below transition temp
 //const double lambda = 0.2;
-=======
-const int n = 32;
-const double kappa = 0.01; // k = 2 is below transition temp
-const double lambda = 0.2;
->>>>>>> refs/remotes/origin/main
 
 const double priorWidth = 6;
 
@@ -64,6 +59,15 @@ void generatePhaseDiagramData() {
     if (!std::filesystem::is_directory(phase_dir) || !std::filesystem::exists(phase_dir)) { // Check if src folder exists
         std::filesystem::create_directory(phase_dir); // create src folder
     }
+
+    std::for_each(
+            std::execution::par,
+            foo.begin(),
+            foo.end(),
+            [](auto&& item)
+            {
+                //do stuff with item
+            });
 
     for (double k = 0; k < kappaMax; k += kappaMax / resolution) {
         for (double l = 0; l < lambdaMax; l += lambdaMax / resolution) {

@@ -4,24 +4,35 @@ import seaborn as sns
 import pandas as pd
 import os
 
-path = "/home/bd418/data"
+path = "cmake-build-debug/app"
 
 def save_magnetisations(path):
     data_path = os.path.join(path, 'phase_diagram')
+    out_path = os.path.join(path, 'data.csv')
     file_list = os.listdir(data_path)
     files_searched = []
-    phase_data = []
+
+    if (os.path.exists(out_path) == False):
+        empty = pd.DataFrame(columns=['kappa', 'lambda', 'mag'])
+        empty.to_csv(out_path, index=False)
+        print(empty)
+
 
     for file in file_list:
-        fname = file[:18]
+        fname = file[:16]
 
         if fname in files_searched:
             continue
         else:
             files_searched.append(fname)
 
-        params = file[5:18].split('_')
+        mag_data = pd.read_csv(out_path)
+
+        params = file[5:16].split('_')
         params = [float(x) for x in params]
+
+        if (params[0] in mag_data['kappa'].values) and (params[1] in mag_data['lambda'].values):
+            continue
 
         chains = os.path.join(data_path, fname)
         samples = ns.read_chains(chains)
@@ -34,18 +45,15 @@ def save_magnetisations(path):
 
         mean_mag = mag.mean()
 
-        data = {
+        data = pd.DataFrame({
             'kappa': params[0],
             'lambda': params[1],
             'mag': mean_mag
-        }
+        }, index=[0])
 
-        phase_data.append(data)
-
-    df = pd.DataFrame(phase_data)
-
-    save_file = os.path.join(path, 'data.csv')
-    df.to_csv(save_file)
+        print(mag_data)
+        mag_data = pd.concat([mag_data, data], axis=0)
+        mag_data.to_csv(out_path, index=False)
 
 
 
@@ -53,8 +61,9 @@ save_magnetisations(path)
 
 read_file = os.path.join(path, 'data.csv')
 df = pd.read_csv(read_file)
-
-table = df.pivot('lambda', 'kappa', 'mag')
+print(read_file)
+print(df)
+#table = df.pivot('lambda', 'kappa', 'mag')
 
 #ax = sns.heatmap(table, vmin=0, vmax=15)
 #ax.invert_yaxis()
