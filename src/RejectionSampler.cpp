@@ -47,6 +47,7 @@ const MCPoint RejectionSampler::SamplePoint(const MCPoint &old, const double lik
 
     MCPoint newPoint {
         newTheta,
+        mLikelihood.DerivedParams(newTheta),
         newLikelihood,
         likelihoodConstraint
     };

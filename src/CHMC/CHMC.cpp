@@ -5,6 +5,7 @@
 CHMC::CHMC(ILikelihood& likelihood, IParams& params)
     :
     mParams(params),
+    mLikelihood(likelihood),
     mHamiltonian(likelihood, params),
     gen(rd()),
     mNorm(0, 1),
@@ -60,6 +61,7 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
 
     MCPoint newPoint = {
             mHamiltonian.GetX(),
+            mLikelihood.DerivedParams(mHamiltonian.GetX()),
             mHamiltonian.GetLikelihood(),
             likelihoodConstraint,
             mHamiltonian.GetReflections(),
@@ -72,14 +74,5 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
     return newPoint;
 }
 
-const Rejections CHMC::GetRejections() {
-    Rejections rejected = {
-            mReflectRejections,
-            mEnergyRejections,
-            mIters
-    };
-
-    return rejected;
-}
 
 

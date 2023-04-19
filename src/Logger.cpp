@@ -7,25 +7,35 @@ Logger::Logger(std::string name)
     mDeadFilename(mName + "_dead-birth.txt")
 {
     mDeadFile.open(mDeadFilename);
+    mPosteriorFile.open(mName + ".posterior");
 }
 
 
-void Logger::WritePoint(const MCPoint& point, const Eigen::VectorXd& derivedParams) {
+void Logger::WritePoint(const MCPoint& point, const double logWeight) {
     if (!mDeadFile.is_open()) {
         mDeadFile.open(mDeadFilename, std::ios::app);
     }
 
-    for (const double phi : derivedParams) {
-    //    std::cout << phi << std::endl;
+    if (!mPosteriorFile.is_open()) {
+        mPosteriorFile.open(mName + ".posterior", std::ios::app);
+    }
+
+    double posteriorWeight = exp(logWeight + point.likelihood);
+    mPosteriorFile << posteriorWeight << " ";
+    mPosteriorFile << -point.likelihood << " ";
+
+    for (const double phi : point.derived) {
         mDeadFile << phi << " ";
+        mPosteriorFile << phi << " ";
     }
 
     for (const double theta : point.theta) {
         mDeadFile << theta << " ";
+        mPosteriorFile << theta << " ";
     }
 
     mDeadFile << point.likelihood << " " << point.birthLikelihood << std::endl;
-
+    mPosteriorFile << std::endl;
 }
 
 
@@ -44,17 +54,17 @@ void Logger::WriteSummary(const NSSummary& summary) {
 }
 
 
-void Logger::WriteParamnames(const std::vector<std::string> &names, int totalParams)
+void Logger::WriteParamNames(const std::vector<std::string> &names, int totalParams)
 {
-    mParamnameFile.open(mName + ".paramnames");
+    mParamNameFile.open(mName + ".paramnames");
 
     for (const auto& name : names) {
-        mParamnameFile << name[0] << " " << name << std::endl;
+        mParamNameFile << name[0] << " " << name << std::endl;
     }
 
     for (int i = 1; i < totalParams - names.size() + 1; i++) {
-        mParamnameFile << "p" << i << " \\theta{" << i << "}\n";
+        mParamNameFile << "p" << i << " \\theta{" << i << "}\n";
     }
 
-    mParamnameFile.close();
+    mParamNameFile.close();
 }

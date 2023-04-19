@@ -9,7 +9,6 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
-#include <execution>
 
 std::string phase_dir = "phase_diagram";
 
@@ -24,7 +23,7 @@ const int pathLength = 100;
 
 const int numLive = 500;
 const int maxIters = 20000;
-const double precisionCriterion = 1e-2;
+const double precisionCriterion = 10;
 
 NSConfig config = {
         numLive,
@@ -60,20 +59,11 @@ void generatePhaseDiagramData() {
         std::filesystem::create_directory(phase_dir); // create src folder
     }
 
-    std::for_each(
-            std::execution::par,
-            foo.begin(),
-            foo.end(),
-            [](auto&& item)
-            {
-                //do stuff with item
-            });
-
     for (double k = 0; k < kappaMax; k += kappaMax / resolution) {
         for (double l = 0; l < lambdaMax; l += lambdaMax / resolution) {
             std::ostringstream fname;
             fname << phase_dir;
-            fname << "/Phi4_" << std::setprecision(4) << std::fixed << k << "_" << l;
+            fname << "/Phi4_" << std::setprecision(5) << std::fixed << k << "_" << l;
             
             if(std::filesystem::exists(fname.str() + ".stats"))
                 continue;

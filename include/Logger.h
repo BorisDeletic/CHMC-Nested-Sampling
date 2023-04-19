@@ -10,9 +10,9 @@ class Logger {
 public:
     Logger(std::string name);
 
-    virtual void WritePoint(const MCPoint&, const Eigen::VectorXd& derivedParams);
+    virtual void WritePoint(const MCPoint&, const double logWeight);
     void WriteSummary(const NSSummary&);
-    void WriteParamnames(const std::vector<std::string>& names, int totalParams);
+    void WriteParamNames(const std::vector<std::string>& names, int totalParams);
 
   //  void WriteLivePoints();
   //  void ReadLivePoints();
@@ -22,8 +22,9 @@ private:
     std::string mDeadFilename;
 
     std::ofstream mDeadFile;
+    std::ofstream mPosteriorFile;
     std::ofstream mSummaryFile;
-    std::ofstream mParamnameFile;
+    std::ofstream mParamNameFile;
 };
 
 #endif //CHMC_NESTED_SAMPLING_LOGGER_H

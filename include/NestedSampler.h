@@ -26,7 +26,7 @@ private:
     const MCPoint SampleFromPrior();
     const MCPoint& GetRandomPoint();
 
-    void UpdateLogEvidence(double logLikelihood);
+    void UpdateLogEvidence(const MCPoint&);
     const double EstimateLogEvidenceRemaining();
 
     const bool TerminateSampling();
@@ -41,15 +41,16 @@ private:
     NSConfig mConfig;
 
     std::multiset<MCPoint> mLivePoints;
-    double mLogZ; // log evidence
 //    double mLogZRemaining; // estimate of evidence remaining in live points
 
     int mIter;
     int mReflections;
     int mIntegrationSteps;
 
+    double mLogZ; // log evidence
+    double mLogWeight = 0;
+
     const double minLikelihood = -1e30;
-    const double initialLogWeight;
     const int mDimension;
     const int mSampleRetries = 5;
 

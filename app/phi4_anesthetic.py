@@ -1,10 +1,12 @@
 import anesthetic as ns
 import matplotlib.pyplot as plt
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import seaborn as sns
 import pandas as pd
 import os
 
-path = "cmake-build-debug/app"
+
+path = "cmake-build-release/app"
 
 def save_magnetisations(path):
     data_path = os.path.join(path, 'phase_diagram')
@@ -57,18 +59,31 @@ def save_magnetisations(path):
 
 
 
-save_magnetisations(path)
+#save_magnetisations(path)
 
 read_file = os.path.join(path, 'data.csv')
 df = pd.read_csv(read_file)
-print(read_file)
-print(df)
-#table = df.pivot('lambda', 'kappa', 'mag')
 
-#ax = sns.heatmap(table, vmin=0, vmax=15)
-#ax.invert_yaxis()
-print(table)
-#plt.show()
+print(df[df['lambda'] == 0])
+
+table = df.pivot('lambda', 'kappa', 'mag')
+
+ax = sns.heatmap(table, vmin=0, vmax=15)
+
+ax.locator_params(axis='y', nbins=6)
+ax.locator_params(axis='x', nbins=5)
+
+ax.invert_yaxis()
+ax.set_title("<|M|> Phase Diagram for 32x32 Lattice")
+ax.set_xlabel("Kappa")
+ax.set_ylabel("Lambda")
+
+arr_img = plt.imread(os.path.join(path, "phi4_action.png"))
+im = OffsetImage(arr_img, zoom=.45)
+ab = AnnotationBbox(im, (0.85, 1.02), xycoords='axes fraction', box_alignment=(1.1,-0.1), bboxprops =dict(edgecolor='white'))
+ax.add_artist(ab)
+
+plt.show()
 
 
 

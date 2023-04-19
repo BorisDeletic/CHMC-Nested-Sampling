@@ -14,7 +14,7 @@ NestedSampler::NestedSampler(ISampler& sampler, ILikelihood& likelihood, Logger&
     mDimension(mLikelihood.GetDimension()),
     gen(rd()),
     mUniform(0,1),
-    initialLogWeight(log(exp(1/mConfig.numLive - 1)))
+    mLogWeight(log(exp(1.0f/mConfig.numLive) - 1.0f))
 {
     mReflections = 0;
     mIntegrationSteps=0;
@@ -53,9 +53,10 @@ void NestedSampler::Run() {
     }
 
     // log all remaining live points
-    for (const auto& point : mLivePoints) {
-        const Eigen::VectorXd derived = mLikelihood.DerivedParams(point.theta);
-        mLogger.WritePoint(point, derived);
+    for (const auto& point : mLivePoints)
+    {
+        UpdateLogEvidence(point);
+        mLogger.WritePoint(point, mLogWeight);
     }
 
     NSSummary summary = {
@@ -65,9 +66,8 @@ void NestedSampler::Run() {
 
     mLogger.WriteSummary(summary);
 
-    std::vector<std::string> names = {"mag"};
     int totalParams = mDimension + mLikelihood.DerivedParams(Eigen::VectorXd::Ones(mDimension)).size();
-    mLogger.WriteParamnames(names, totalParams);
+    mLogger.WriteParamNames(mLikelihood.ParamNames(), totalParams);
 }
 
 
@@ -75,12 +75,9 @@ void NestedSampler::NestedSamplingStep() {
     auto lowestIt = mLivePoints.begin();
     const MCPoint &deadPoint = *lowestIt; // lowest likelihood point
 
-    // Analysis on dead point
-    UpdateLogEvidence(deadPoint.likelihood);
-
-    // Log dead point
-    const Eigen::VectorXd derived = mLikelihood.DerivedParams(deadPoint.theta);
-    mLogger.WritePoint(deadPoint, derived);
+    // Analysis and log dead point
+    UpdateLogEvidence(deadPoint);
+    mLogger.WritePoint(deadPoint, mLogWeight);
 
     // Generate new point(s)
     if ((double)deadPoint.reflections / deadPoint.steps > 0.9)
@@ -142,6 +139,7 @@ const MCPoint NestedSampler::SampleFromPrior() {
 
     MCPoint pointFromPrior = {
             theta,
+            mLikelihood.DerivedParams(theta),
             mLikelihood.LogLikelihood(theta),
             minLikelihood
     };
@@ -161,10 +159,10 @@ const MCPoint& NestedSampler::GetRandomPoint() {
 
 
 
-void NestedSampler::UpdateLogEvidence(const double logLikelihood) {
-    double logWeight = initialLogWeight - (float)mIter / mConfig.numLive;
+void NestedSampler::UpdateLogEvidence(const MCPoint& point) {
+    mLogWeight -= 1.0f / mLivePoints.size(); // compress space
 
-    double logEvidence = logWeight + logLikelihood;
+    double logEvidence = mLogWeight + point.likelihood;
 
     mLogZ = logAdd(mLogZ, logEvidence);
 }
@@ -180,16 +178,16 @@ const double NestedSampler::EstimateLogEvidenceRemaining() {
         i++;
     }
 
-    double logLikelihoodRemaining = logAdd(logLikelihoodLive);
-    double logWeight = initialLogWeight - (float)mIter / mConfig.numLive;
+    double logMeanLiveLikelihood = logAdd(logLikelihoodLive) - log(mConfig.numLive);
 
-    double logEvidenceLive = logLikelihoodRemaining + logWeight;
+    double logEvidenceLive = logMeanLiveLikelihood - mIter / mConfig.numLive;
     return logEvidenceLive;
 }
 
 
 const bool NestedSampler::TerminateSampling() {
-    if (mAdapter != nullptr) {
+    if (mAdapter != nullptr)
+    {
         const double reflectionRate = (double) mReflections / mIntegrationSteps * 100;
         std::cout << "NS Step: " << mIter << ", Num Live = " << mLivePoints.size() << std::endl;
         std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << reflectionRate << std::endl;
@@ -202,6 +200,7 @@ const bool NestedSampler::TerminateSampling() {
     }
 
     double remainingEvidence = EstimateLogEvidenceRemaining();
+    std::cout << "logZ_live=" << remainingEvidence << " ,logZ=" << mLogZ << std::endl << std::endl;
     if (remainingEvidence < mLogZ + log10(mConfig.precisionCriterion)) {
         return true;
     }

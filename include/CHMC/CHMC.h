@@ -16,12 +16,12 @@ public:
     CHMC(ILikelihood&, IParams&);
 
     const MCPoint SamplePoint(const MCPoint& old, double likelihoodConstraint) override;
-    const Rejections GetRejections();
 
 private:
     Eigen::VectorXd SampleP(int size);
 
     IParams& mParams;
+    ILikelihood& mLikelihood;
     Hamiltonian mHamiltonian;
 
     std::normal_distribution<double> mNorm;
@@ -29,10 +29,6 @@ private:
     std::random_device rd;
     std::mt19937 gen;
 
-    const double inf = 1e100;
-
-    int mReflectRejections = 0;
-    int mEnergyRejections = 0;
     int mIters = 0;
 };
 

@@ -6,6 +6,7 @@
 // Markov Chain point
 typedef struct MCPoint {
     const Eigen::VectorXd theta;
+    const Eigen::VectorXd derived;
     const double likelihood;
     const double birthLikelihood;
     const int reflections = 0;
@@ -14,6 +15,7 @@ typedef struct MCPoint {
     bool rejected = false;
     double energy = 0;
 } MCPoint;
+
 
 inline bool operator<(const MCPoint& a, const MCPoint& b) {
     return a.likelihood < b.likelihood;
@@ -32,11 +34,5 @@ typedef struct NSSummary {
     const double logZRemaining;
 } NSSummary;
 
-
-typedef struct Rejections {
-    int reflectionRejections;
-    int energyRejections;
-    int mIters;
-} Rejections;
 
 #endif //CHMC_NESTED_SAMPLING_TYPES_H

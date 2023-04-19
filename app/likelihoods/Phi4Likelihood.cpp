@@ -97,13 +97,16 @@ double Phi4Likelihood::NeighbourSum(const Eigen::VectorXd &theta, int i, int j) 
 
 const Eigen::VectorXd Phi4Likelihood::DerivedParams(const Eigen::VectorXd &theta)
 {
-    const int numDerived = 1;
+    const int numDerived = ParamNames().size();
     Eigen::VectorXd derived(numDerived);
 
-    const double magnetisation = theta.mean();
-    derived[0] = magnetisation;
+    derived[0] = theta.mean();
 
     return derived;
+}
+
+const std::vector<std::string> Phi4Likelihood::ParamNames() {
+    return {"mag"};
 }
 
 
