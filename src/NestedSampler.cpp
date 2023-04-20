@@ -14,7 +14,7 @@ NestedSampler::NestedSampler(ISampler& sampler, ILikelihood& likelihood, Logger&
     mDimension(mLikelihood.GetDimension()),
     gen(rd()),
     mUniform(0,1),
-    mLogWeight(log(exp(1.0f/mConfig.numLive) - 1.0f))
+    mLogWeight(log(exp(1.0L/mConfig.numLive) - 1.0L))
 {
     mReflections = 0;
     mIntegrationSteps=0;
@@ -200,7 +200,6 @@ const bool NestedSampler::TerminateSampling() {
     }
 
     double remainingEvidence = EstimateLogEvidenceRemaining();
-    std::cout << "logZ_live=" << remainingEvidence << " ,logZ=" << mLogZ << std::endl << std::endl;
     if (remainingEvidence < mLogZ + log10(mConfig.precisionCriterion)) {
         return true;
     }

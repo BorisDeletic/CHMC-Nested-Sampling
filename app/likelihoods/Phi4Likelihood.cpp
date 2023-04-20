@@ -59,26 +59,6 @@ double Phi4Likelihood::Potential(double field)
 }
 
 
-double Phi4Likelihood::Laplacian(const Eigen::VectorXd& theta, int i, int j)
-{
-    double kinetic = 0.0;
-
-    int idx = i * n + j;
-
-    int idx_left = j + 1 == n   ? i * n         : i * n + (j+1);
-    int idx_right = j - 1 < 0   ? i * n + (n-1) : i * n + (j-1);
-    int idx_up = i - 1 < 0      ? (n-1) * n + j : (i-1) * n + j;
-    int idx_down = i + 1 == n   ? j             : (i+1) * n + j; // with torus b.c.
-
-  //  kinetic += 2 * pow(theta[idx], 2);
-    kinetic -= theta[idx] * theta[idx_left];
-    kinetic -= theta[idx] * theta[idx_right];
-    kinetic -= theta[idx] * theta[idx_up];
-    kinetic -= theta[idx] * theta[idx_down];
-
-    return kinetic;
-}
-
 double Phi4Likelihood::NeighbourSum(const Eigen::VectorXd &theta, int i, int j) {
     double sum = 0.0;
 
@@ -100,13 +80,57 @@ const Eigen::VectorXd Phi4Likelihood::DerivedParams(const Eigen::VectorXd &theta
     const int numDerived = ParamNames().size();
     Eigen::VectorXd derived(numDerived);
 
-    derived[0] = theta.mean();
+    Eigen::VectorXd correlations = SpatialCorrelation(theta);
+    for (int i = 0; i < correlations.size(); i++) {
+        derived[i] = correlations[i];
+    }
+
+    // set last param to magnetisation.
+    derived[numDerived - 1] = theta.mean();
 
     return derived;
 }
 
 const std::vector<std::string> Phi4Likelihood::ParamNames() {
-    return {"mag"};
+    std::vector<std::string> names;
+
+    int maxR = n/2 - 1;
+
+    for (int r = 1; r < maxR; r++) {
+        std::ostringstream corr_name;
+        corr_name << "c_" << r;
+
+        names.push_back(corr_name.str());
+    }
+
+    names.push_back("mag");
+    return names;
+}
+
+
+const Eigen::VectorXd Phi4Likelihood::SpatialCorrelation(const Eigen::VectorXd &theta) {
+    auto inbound = [&](int i) {
+        return i < n ? i : n - i;
+    }; // only check positive bounds as we count correlation for i+r only
+
+    int maxR = n/2 - 1;
+    Eigen::VectorXd correlations = Eigen::VectorXd::Zero(maxR);
+
+    for (int r = 1; r < maxR; r++) {
+        //take correlations along diagonal of lattice
+        //C(r) = s_ii s_ij + s_ii s_ji   , j = i + r
+        for (int i = 0; i < n; i++) {
+            int idx0  = i * n + i;
+            int idx_h = i * n + inbound(i + r);
+            int idx_v = inbound(i + r) * n + i;
+
+            correlations[r] += theta[idx0] * (theta[idx_h] + theta[idx_v]);
+        }
+
+        correlations[r] /= 2 * n;
+    }
+
+    return correlations;
 }
 
 

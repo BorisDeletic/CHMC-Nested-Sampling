@@ -19,8 +19,10 @@ public:
 
 private:
     double Potential(double field);
-    double Laplacian(const Eigen::VectorXd& theta, int i, int j);
     double NeighbourSum(const Eigen::VectorXd& theta, int i, int j);
+
+    const Eigen::VectorXd SpatialCorrelation(const Eigen::VectorXd& theta);
+
 
     const int n;
     const double priorWidth;

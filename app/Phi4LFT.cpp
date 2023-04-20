@@ -13,8 +13,9 @@
 std::string phase_dir = "phase_diagram";
 
 const int n = 32;
-//const double kappa = 0.01; // k = 2 is below transition temp
-//const double lambda = 0.2;
+double kappaMax = 0.5;
+double lambdaMax = 0.03;
+int resolution = 40;
 
 const double priorWidth = 6;
 
@@ -30,7 +31,6 @@ NSConfig config = {
         maxIters,
         precisionCriterion,
 };
-
 
 
 void runPhi4(std::string fname, double kappa, double lambda)
@@ -51,9 +51,6 @@ void runPhi4(std::string fname, double kappa, double lambda)
 
 
 void generatePhaseDiagramData() {
-    double kappaMax = 0.5;
-    double lambdaMax = 0.03;
-    int resolution = 40;
 
     if (!std::filesystem::is_directory(phase_dir) || !std::filesystem::exists(phase_dir)) { // Check if src folder exists
         std::filesystem::create_directory(phase_dir); // create src folder
@@ -76,7 +73,71 @@ void generatePhaseDiagramData() {
 }
 
 
+const Posterior ReadPosteriorFile(std::string fname) {
+    std::ifstream posteriorFile;
+    posteriorFile.open(fname);
 
+    std::vector<double> posteriorWeights;
+    std::vector<Eigen::VectorXd> derivedParams;
+
+    if (posteriorFile.is_open()) {
+        std::string line, str_vals;
+
+        while (std::getline(posteriorFile,line)) {
+            std::stringstream ssline(line);
+            std::vector<double> row;
+
+            while(std::getline(ssline, str_vals, ' '))
+            {
+                double val = std::stod(str_vals);
+                row.push_back(val);
+                std::cout << val << std::endl;
+            }
+
+
+        }
+        posteriorFile.close();
+    }
+
+}
+
+
+double calculateMeanMag(const Posterior& posterior) {
+    int numSamples = posterior.posteriorWeights.size();
+    Eigen::VectorXd absMag(numSamples);
+
+    for (int i = 0; i < numSamples; i++) {
+        // scale observable by posterior weight
+        absMag[i] = posterior.posteriorWeights[i] * abs(posterior.derivedParams[i][0]);
+    }
+
+    double meanMag = absMag.mean();
+
+    return meanMag;
+}
+
+
+void posteriorAnalysis() {
+    std::ofstream magFile;
+    magFile.open("mags.csv");
+
+    magFile << "kappa,lambda,mag" << std::endl;
+
+    for (double k = 0; k < kappaMax; k += kappaMax / resolution) {
+        for (double l = 0; l < lambdaMax; l += lambdaMax / resolution) {
+            std::ostringstream fname;
+            fname << phase_dir;
+            fname << "/Phi4_" << std::setprecision(5) << std::fixed << k << "_" << l << ".posterior";
+
+            const Posterior posteriorData = ReadPosteriorFile(fname.str());
+            const double meanMag = calculateMeanMag(posteriorData);
+
+            magFile << k << "," << l << "," << meanMag << std::endl;
+        }
+    }
+
+    magFile.close();
+}
 
 
 

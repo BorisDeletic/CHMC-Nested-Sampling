@@ -31,7 +31,7 @@ void Logger::WritePoint(const MCPoint& point, const double logWeight) {
 
     for (const double theta : point.theta) {
         mDeadFile << theta << " ";
-        mPosteriorFile << theta << " ";
+  //      mPosteriorFile << theta << " ";
     }
 
     mDeadFile << point.likelihood << " " << point.birthLikelihood << std::endl;
@@ -59,7 +59,7 @@ void Logger::WriteParamNames(const std::vector<std::string> &names, int totalPar
     mParamNameFile.open(mName + ".paramnames");
 
     for (const auto& name : names) {
-        mParamNameFile << name[0] << " " << name << std::endl;
+        mParamNameFile << name << " " << name << std::endl;
     }
 
     for (int i = 1; i < totalParams - names.size() + 1; i++) {

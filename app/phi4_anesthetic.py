@@ -1,4 +1,4 @@
-import anesthetic as ns
+#import anesthetic as ns
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import seaborn as sns
@@ -68,7 +68,7 @@ print(df[df['lambda'] == 0])
 
 table = df.pivot('lambda', 'kappa', 'mag')
 
-ax = sns.heatmap(table, vmin=0, vmax=15)
+ax = sns.heatmap(table, vmin=0, vmax=15, cmap='mako')
 
 ax.locator_params(axis='y', nbins=6)
 ax.locator_params(axis='x', nbins=5)
