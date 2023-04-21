@@ -1,4 +1,6 @@
 #include "Phi4Likelihood.h"
+#include <iostream>
+
 
 const Eigen::VectorXd Phi4Likelihood::PriorTransform(const Eigen::VectorXd &cube)
 {
@@ -96,7 +98,7 @@ const std::vector<std::string> Phi4Likelihood::ParamNames() {
 
     int maxR = n/2 - 1;
 
-    for (int r = 1; r < maxR; r++) {
+    for (int r = 0; r < maxR; r++) {
         std::ostringstream corr_name;
         corr_name << "c_" << r;
 
@@ -110,13 +112,14 @@ const std::vector<std::string> Phi4Likelihood::ParamNames() {
 
 const Eigen::VectorXd Phi4Likelihood::SpatialCorrelation(const Eigen::VectorXd &theta) {
     auto inbound = [&](int i) {
-        return i < n ? i : n - i;
+        return i < n ? i : (n + i) % n;
     }; // only check positive bounds as we count correlation for i+r only
 
     int maxR = n/2 - 1;
     Eigen::VectorXd correlations = Eigen::VectorXd::Zero(maxR);
 
-    for (int r = 1; r < maxR; r++) {
+
+    for (int r = 0; r < maxR; r++) {
         //take correlations along diagonal of lattice
         //C(r) = s_ii s_ij + s_ii s_ji   , j = i + r
         for (int i = 0; i < n; i++) {

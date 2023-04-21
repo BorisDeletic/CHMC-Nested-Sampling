@@ -50,12 +50,12 @@ add_subdirectory(extern/eigen)
 add_subdirectory(extern/googletest)
 add_subdirectory(test)
 add_subdirectory(src)
-add_subdirectory(app)
+add_subdirectory(app/phi4)
 
 add_executable(CHMC_Nested_Sampling
         main.cpp
         app/likelihoods/Gaussian.cpp
-        app/likelihoods/Phi4Likelihood.cpp
+        app/phi4/Phi4Likelihood.cpp
         app/likelihoods/TopologicalTrap.cpp
         )
 
