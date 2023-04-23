@@ -118,7 +118,6 @@ const Eigen::VectorXd Phi4Likelihood::SpatialCorrelation(const Eigen::VectorXd &
     int maxR = n/2 - 1;
     Eigen::VectorXd correlations = Eigen::VectorXd::Zero(maxR);
 
-
     for (int r = 0; r < maxR; r++) {
         //take correlations along diagonal of lattice
         //C(r) = s_ii s_ij + s_ii s_ji   , j = i + r

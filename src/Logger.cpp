@@ -17,7 +17,7 @@ void Logger::WritePoint(const MCPoint& point, const double logWeight) {
     }
 
     if (!mPosteriorFile.is_open()) {
-        mPosteriorFile.open(mName + ".posterior", std::ios::app);
+        mPosteriorFile.open(mName + ".posterior_dead-birth.txt", std::ios::app);
     }
 
     double posteriorWeight = exp(logWeight + point.likelihood);
@@ -30,7 +30,7 @@ void Logger::WritePoint(const MCPoint& point, const double logWeight) {
     }
 
     for (const double theta : point.theta) {
-        mDeadFile << theta << " ";
+   //     mDeadFile << theta << " ";
   //      mPosteriorFile << theta << " ";
     }
 
@@ -63,7 +63,7 @@ void Logger::WriteParamNames(const std::vector<std::string> &names, int totalPar
     }
 
     for (int i = 1; i < totalParams - names.size() + 1; i++) {
-        mParamNameFile << "p" << i << " \\theta{" << i << "}\n";
+    //    mParamNameFile << "p" << i << " \\theta{" << i << "}\n";
     }
 
     mParamNameFile.close();
