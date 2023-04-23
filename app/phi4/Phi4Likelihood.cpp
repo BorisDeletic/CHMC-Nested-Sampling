@@ -1,6 +1,6 @@
 #include "Phi4Likelihood.h"
+#include <unsupported/Eigen/FFT>
 #include <iostream>
-
 
 const Eigen::VectorXd Phi4Likelihood::PriorTransform(const Eigen::VectorXd &cube)
 {
@@ -82,7 +82,7 @@ const Eigen::VectorXd Phi4Likelihood::DerivedParams(const Eigen::VectorXd &theta
     const int numDerived = ParamNames().size();
     Eigen::VectorXd derived(numDerived);
 
-    Eigen::VectorXd correlations = SpatialCorrelation(theta);
+    Eigen::VectorXd correlations = SpatialCorrelationFFT(theta);
     for (int i = 0; i < correlations.size(); i++) {
         derived[i] = correlations[i];
     }
@@ -96,9 +96,7 @@ const Eigen::VectorXd Phi4Likelihood::DerivedParams(const Eigen::VectorXd &theta
 const std::vector<std::string> Phi4Likelihood::ParamNames() {
     std::vector<std::string> names;
 
-    int maxR = n/2 - 1;
-
-    for (int r = 0; r < maxR; r++) {
+    for (int r = 0; r < n; r++) {
         std::ostringstream corr_name;
         corr_name << "c_" << r;
 
@@ -134,5 +132,39 @@ const Eigen::VectorXd Phi4Likelihood::SpatialCorrelation(const Eigen::VectorXd &
 
     return correlations;
 }
+
+
+const Eigen::VectorXd Phi4Likelihood::SpatialCorrelationFFT(const Eigen::VectorXd &theta) {
+    Eigen::VectorXd correlations = Eigen::VectorXd::Zero(n);
+
+    Eigen::FFT<double> fft;
+
+    Eigen::VectorXd spins(n);
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++) {
+            spins[j] = theta[i * n + j];
+        }
+
+        Eigen::VectorXd rowCorrelation(n);
+        Eigen::VectorXcd spinFT(n);
+
+        // Apply convolution theorem to calculate correlation function C(j) for row i
+        fft.fwd(spinFT, spins);
+
+        spinFT = spinFT.cwiseAbs2();
+
+        fft.inv(rowCorrelation,spinFT);
+        //
+
+        correlations += rowCorrelation;
+    }
+
+    correlations /= n; // normalise correlations.
+
+    return correlations;
+}
+
 
 

@@ -12,7 +12,7 @@ files_searched = []
 
 print(file_list)
 for file in file_list:
-    fname = file[:21]
+    fname = file[:20]
 
     if fname in files_searched:
         continue
@@ -30,19 +30,19 @@ for file in file_list:
 
     print("meanmag = {}".format(mean_mag))
     correlations = []
-    for r in range(1, 30):
+    for r in range(1, 64):
         c_key = "c_{}".format(r)
 
-        mean_correlation = posterior[c_key].mean() #- mean_mag*mean_mag
+        mean_correlation = posterior[c_key].mean() - mean_mag*mean_mag
         print(c_key)
         print(mean_correlation)
 
         correlations.append(mean_correlation)
 
 
-    #correlations /= posterior["c_0"].mean()
+    correlations /= posterior["c_0"].mean()
 
-    plt.axhline(mean_mag)
+   # plt.axhline(mean_mag)
     plt.plot(correlations, label="k={:.3f}, m={:.2f}".format(kappa, mean_mag))
 
 

@@ -22,6 +22,7 @@ private:
     double NeighbourSum(const Eigen::VectorXd& theta, int i, int j);
 
     const Eigen::VectorXd SpatialCorrelation(const Eigen::VectorXd& theta);
+    const Eigen::VectorXd SpatialCorrelationFFT(const Eigen::VectorXd& theta);
 
 
     const int n;
