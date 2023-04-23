@@ -81,9 +81,9 @@ void generateCorrelationData() {
 
     const int n = 64;
     const double lambda = 0.03;
-    const double kappaMin = 0.116;
-    const double kappaMax = 0.12;
-    const double resolution = 8;
+    const double kappaMin = 0.11750;
+    const double kappaMax = 0.11760;
+    const double resolution = 5;
 
     for (double k = kappaMin; k < kappaMax; k += (kappaMax - kappaMin) / resolution) {
         std::ostringstream fname;

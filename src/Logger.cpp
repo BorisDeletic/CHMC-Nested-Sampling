@@ -26,7 +26,7 @@ void Logger::WritePoint(const MCPoint& point, const double logWeight) {
 
     for (const double phi : point.derived) {
         mDeadFile << phi << " ";
-        mPosteriorFile << phi << " ";
+    //    mPosteriorFile << phi << " ";
     }
 
     for (const double theta : point.theta) {

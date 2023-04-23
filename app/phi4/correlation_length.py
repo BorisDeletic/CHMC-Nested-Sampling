@@ -1,16 +1,40 @@
 import anesthetic as ns
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 import os
 
 
-path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/phi4/correlation"
-#file = "Phi4_0.16_0.50"
 
+path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/phi4/correlation"
+
+R = 64
 file_list = sorted(os.listdir(path))
 files_searched = []
 
 print(file_list)
+correlation_samples = pd.DataFrame()
+
+def correlationLength(correlations):
+    #split half way as symmetric about L/2
+    log_correlations = np.log(np.abs(correlations[:len(correlations)//2]))
+
+    print(log_correlations)
+
+    fig, ax = plt.subplots()
+    for kappa in log_correlations.columns.values:
+        m,b = np.polyfit(log_correlations.index.values, log_correlations[kappa], 1)
+
+        xi = -1 / m
+
+        ax.plot(log_correlations[kappa], label="k={:.5f}, xi={:.3f}".format(kappa, xi))
+
+    ax.legend(loc="upper right")
+
+
+
+
+fig, ax = plt.subplots()
 for file in file_list:
     fname = file[:20]
 
@@ -30,23 +54,23 @@ for file in file_list:
 
     print("meanmag = {}".format(mean_mag))
     correlations = []
-    for r in range(1, 64):
+    for r in range(1, R):
         c_key = "c_{}".format(r)
 
         mean_correlation = posterior[c_key].mean() - mean_mag*mean_mag
-        print(c_key)
-        print(mean_correlation)
-
+       # print(c_key)
+        #print(mean_correlation)
         correlations.append(mean_correlation)
 
-
     correlations /= posterior["c_0"].mean()
+    correlation_samples[kappa] = correlations
 
-   # plt.axhline(mean_mag)
-    plt.plot(correlations, label="k={:.3f}, m={:.2f}".format(kappa, mean_mag))
+    ax.plot(correlations, label="k={:.5f}, m={:.2f}".format(kappa, mean_mag))
+
+#print(correlation_samples[:32])
+
+correlationLength(correlation_samples)
 
 
-#samples.gui()
-#print(samples)
-plt.legend(loc="upper right")
+ax.legend(loc="upper right")
 plt.show()
