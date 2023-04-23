@@ -21,14 +21,20 @@ def correlationLength(correlations):
 
     print(log_correlations)
 
+    xis = []
+    kappas = []
     fig, ax = plt.subplots()
     for kappa in log_correlations.columns.values:
         m,b = np.polyfit(log_correlations.index.values, log_correlations[kappa], 1)
 
         xi = -1 / m
 
+        xis.append(xi)
+        kappas.append(kappa)
         ax.plot(log_correlations[kappa], label="k={:.5f}, xi={:.3f}".format(kappa, xi))
+    #    ax.plot(kappa, , label="k={:.5f}, xi={:.3f}".format(kappa, xi))
 
+    #ax.scatter(kappas, xis)
     ax.legend(loc="upper right")
 
 

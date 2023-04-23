@@ -79,10 +79,10 @@ void generateCorrelationData() {
         std::filesystem::create_directory(correlation_dir); // create src folder
     }
 
-    const int n = 64;
+    const int n = 512;
     const double lambda = 0.03;
-    const double kappaMin = 0.11750;
-    const double kappaMax = 0.11760;
+    const double kappaMin = 0.117;
+    const double kappaMax = 0.118;
     const double resolution = 5;
 
     for (double k = kappaMin; k < kappaMax; k += (kappaMax - kappaMin) / resolution) {
