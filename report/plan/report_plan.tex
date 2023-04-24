@@ -108,7 +108,6 @@
     in $\kappa$ going from unimodal to bimodal. We plot the contours and gradient of this action
     to show the bimodal loglikelihood function.
 
-
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.75\linewidth]{../figures/phi4_isocontours}
@@ -122,6 +121,34 @@
         \caption{Nested Sampling for Phi4 Theory correctly finds both modes}
         \label{fig:phi4anesthetic}
     \end{figure}
+
+    \subsubsection{Correlation Functions}
+    Correlation functions are the key observable which allow us to perform QFT measurements in a statistical framework.
+    We define the equal-time (position) correlation function for $\phi^4$ theory as
+    \[
+        C(x_1, x_2) = \langle \phi(x_1) \phi(x_2) \rangle
+    \]
+    Where $\langle . \rangle$ represents the ensemble average.
+    Exploiting the rotational and translation symmetry of $\phi^4$ theory, we can fully characterise this function
+    in terms of the distance $r$ between two points along the horizontal or vertical axis of the lattice.
+    \[
+        C(r) = \langle \phi(x') \phi(x' + r) \rangle
+    \]
+    Where we also average over all lattice points $x'$.
+    Calculating this function directly is prohibitively expensive and grows as $O(L^3)$, where $L$ is the lattice dimension\\
+
+    To speed up this computation we use a discrete fourier transform and an application of the convolution theorem. \cite{Ruge_1994}
+    In the continuous limit, the correlation function over all lattice points for a single ensemble state $n$ can be written as
+    \[
+        C_n(r) = \int_{-\infty}^{\infty} \phi(x) \phi(x - r) dx
+    \]
+    We apply the convolution theorem and inverse fourier transform to write
+    \[
+        C_n(r) = \mathcal{F}^{-1} \left( | \widetilde{C_n(k)} |^2 \right)
+    \]
+    Which we can compute with complexity $O(L^2 \log(L))$.
+
+
 
     \subsection{Topological Trap}
     We investigate the results on a likelihood function with a topological trap

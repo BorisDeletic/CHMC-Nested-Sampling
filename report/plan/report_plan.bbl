@@ -1,0 +1,220 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{betancourt2018conceptual}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=1982fa604a3f94837efceaa53330b2a4}{%
+           family={Betancourt},
+           familyi={B\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{1982fa604a3f94837efceaa53330b2a4}
+      \strng{fullhash}{1982fa604a3f94837efceaa53330b2a4}
+      \strng{bibnamehash}{1982fa604a3f94837efceaa53330b2a4}
+      \strng{authorbibnamehash}{1982fa604a3f94837efceaa53330b2a4}
+      \strng{authornamehash}{1982fa604a3f94837efceaa53330b2a4}
+      \strng{authorfullhash}{1982fa604a3f94837efceaa53330b2a4}
+      \field{extraname}{1}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{stat.ME}
+      \field{eprinttype}{arXiv}
+      \field{title}{A Conceptual Introduction to Hamiltonian Monte Carlo}
+      \field{year}{2018}
+      \verb{eprint}
+      \verb 1701.02434
+      \endverb
+    \endentry
+    \entry{betancourt2016energymetric}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=1982fa604a3f94837efceaa53330b2a4}{%
+           family={Betancourt},
+           familyi={B\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{1982fa604a3f94837efceaa53330b2a4}
+      \strng{fullhash}{1982fa604a3f94837efceaa53330b2a4}
+      \strng{bibnamehash}{1982fa604a3f94837efceaa53330b2a4}
+      \strng{authorbibnamehash}{1982fa604a3f94837efceaa53330b2a4}
+      \strng{authornamehash}{1982fa604a3f94837efceaa53330b2a4}
+      \strng{authorfullhash}{1982fa604a3f94837efceaa53330b2a4}
+      \field{extraname}{2}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{stat.ME}
+      \field{eprinttype}{arXiv}
+      \field{title}{Diagnosing Suboptimal Cotangent Disintegrations in Hamiltonian Monte Carlo}
+      \field{year}{2016}
+      \verb{eprint}
+      \verb 1604.00695
+      \endverb
+    \endentry
+    \entry{betancourt2016integrationtime}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=1982fa604a3f94837efceaa53330b2a4}{%
+           family={Betancourt},
+           familyi={B\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{1982fa604a3f94837efceaa53330b2a4}
+      \strng{fullhash}{1982fa604a3f94837efceaa53330b2a4}
+      \strng{bibnamehash}{1982fa604a3f94837efceaa53330b2a4}
+      \strng{authorbibnamehash}{1982fa604a3f94837efceaa53330b2a4}
+      \strng{authornamehash}{1982fa604a3f94837efceaa53330b2a4}
+      \strng{authorfullhash}{1982fa604a3f94837efceaa53330b2a4}
+      \field{extraname}{3}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{stat.ME}
+      \field{eprinttype}{arXiv}
+      \field{title}{Identifying the Optimal Integration Time in Hamiltonian Monte Carlo}
+      \field{year}{2016}
+      \verb{eprint}
+      \verb 1601.00225
+      \endverb
+    \endentry
+    \entry{Handley_polychord}{article}{}
+      \name{author}{3}{}{%
+        {{hash=b614a4ae73269a4030f667823a7ca4b5}{%
+           family={Handley},
+           familyi={H\bibinitperiod},
+           given={W.\bibnamedelimi J.},
+           giveni={W\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=f81ebfc218ed573f729122c9112ee997}{%
+           family={Hobson},
+           familyi={H\bibinitperiod},
+           given={M.\bibnamedelimi P.},
+           giveni={M\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+        {{hash=7b0880553e1507c6b2b906c7cbe57b8b}{%
+           family={Lasenby},
+           familyi={L\bibinitperiod},
+           given={A.\bibnamedelimi N.},
+           giveni={A\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Oxford University Press ({OUP})}%
+      }
+      \strng{namehash}{116eedd8f62aae173dbb47fa84503198}
+      \strng{fullhash}{116eedd8f62aae173dbb47fa84503198}
+      \strng{bibnamehash}{116eedd8f62aae173dbb47fa84503198}
+      \strng{authorbibnamehash}{116eedd8f62aae173dbb47fa84503198}
+      \strng{authornamehash}{116eedd8f62aae173dbb47fa84503198}
+      \strng{authorfullhash}{116eedd8f62aae173dbb47fa84503198}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Monthly Notices of the Royal Astronomical Society}
+      \field{number}{4}
+      \field{title}{polychord: next-generation nested sampling}
+      \field{volume}{453}
+      \field{year}{2015}
+      \field{pages}{4385\bibrangedash 4399}
+      \range{pages}{15}
+      \verb{doi}
+      \verb 10.1093/mnras/stv1911
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1093/mnras/stv1911
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1093/mnras/stv1911
+      \endverb
+    \endentry
+    \entry{hoffman2011nouturn}{misc}{}
+      \name{author}{2}{}{%
+        {{hash=937991c72400f4d0e0252027c8c03f67}{%
+           family={Hoffman},
+           familyi={H\bibinitperiod},
+           given={Matthew\bibnamedelima D.},
+           giveni={M\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=1e1eb60e3b6e222217bf8e9b24070b28}{%
+           family={Gelman},
+           familyi={G\bibinitperiod},
+           given={Andrew},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{ebc3339ca457482898a36327bc5f7ca8}
+      \strng{fullhash}{ebc3339ca457482898a36327bc5f7ca8}
+      \strng{bibnamehash}{ebc3339ca457482898a36327bc5f7ca8}
+      \strng{authorbibnamehash}{ebc3339ca457482898a36327bc5f7ca8}
+      \strng{authornamehash}{ebc3339ca457482898a36327bc5f7ca8}
+      \strng{authorfullhash}{ebc3339ca457482898a36327bc5f7ca8}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{stat.CO}
+      \field{eprinttype}{arXiv}
+      \field{title}{The No-U-Turn Sampler: Adaptively Setting Path Lengths in Hamiltonian Monte Carlo}
+      \field{year}{2011}
+      \verb{eprint}
+      \verb 1111.4246
+      \endverb
+    \endentry
+    \entry{Ruge_1994}{article}{}
+      \name{author}{3}{}{%
+        {{hash=c90249b0cd87c072f91f1fa110d1dd17}{%
+           family={Ruge},
+           familyi={R\bibinitperiod},
+           given={C.},
+           giveni={C\bibinitperiod}}}%
+        {{hash=f899eca8532dc3baf4e6495b0de0514b}{%
+           family={Zhu},
+           familyi={Z\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=9095b653bf6542241112e55c932eeca4}{%
+           family={Wagner},
+           familyi={W\bibinitperiod},
+           given={F.},
+           giveni={F\bibinitperiod}}}%
+      }
+      \strng{namehash}{3ac0badcb328915bc8eb3ec4e4712586}
+      \strng{fullhash}{3ac0badcb328915bc8eb3ec4e4712586}
+      \strng{bibnamehash}{3ac0badcb328915bc8eb3ec4e4712586}
+      \strng{authorbibnamehash}{3ac0badcb328915bc8eb3ec4e4712586}
+      \strng{authornamehash}{3ac0badcb328915bc8eb3ec4e4712586}
+      \strng{authorfullhash}{3ac0badcb328915bc8eb3ec4e4712586}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arXiv}
+      \field{title}{Correlation Function in Ising Models}
+      \field{year}{1994}
+      \verb{eprint}
+      \verb hep-lat/9403009
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
