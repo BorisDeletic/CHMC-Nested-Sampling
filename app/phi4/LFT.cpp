@@ -18,8 +18,8 @@ const double priorWidth = 6;
 const double epsilon = 0.1;
 const int pathLength = 100;
 
-const int numLive = 500;
-const int maxIters = 20000;
+const int numLive = 100;
+const int maxIters = 100000;
 const double precisionCriterion = 0.1;
 
 NSConfig config = {
@@ -81,9 +81,9 @@ void generateCorrelationData() {
 
     const int n = 512;
     const double lambda = 0.03;
-    const double kappaMin = 0.117;
-    const double kappaMax = 0.118;
-    const double resolution = 5;
+    const double kappaMin = 0.11600;
+    const double kappaMax = 0.11700;
+    const double resolution = 1;
 
     for (double k = kappaMin; k < kappaMax; k += (kappaMax - kappaMin) / resolution) {
         std::ostringstream fname;

@@ -62,7 +62,6 @@ void Adapter::AdaptMetric(const std::multiset<MCPoint> &livePoints) {
     mAlpha = sqrt(2 * var) / mDimension;
 
     mMetric = mAlpha * Eigen::VectorXd::Ones(mDimension);
-    std::cout << "var = " << var << std::endl;
 
     std::cout << "alpha = " << mAlpha << std::endl;
 

@@ -6,9 +6,9 @@ import os
 
 
 
-path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/phi4/correlation"
+path = "/rds/user/bd418/hpc-work/correlation"
 
-R = 64
+R = 512
 file_list = sorted(os.listdir(path))
 files_searched = []
 
@@ -37,6 +37,7 @@ def correlationLength(correlations):
     #ax.scatter(kappas, xis)
     ax.legend(loc="upper right")
 
+    ax.figure.savefig('log_corr.png')
 
 
 
@@ -79,4 +80,8 @@ correlationLength(correlation_samples)
 
 
 ax.legend(loc="upper right")
-plt.show()
+#plt.show()
+ax.figure.savefig('correlations.png')
+
+
+
