@@ -1,0 +1,50 @@
+%%===========================%%
+%%  Part III Project Macros  %%
+%%===========================%%
+
+%	The Planck mass
+\newrobustcmd{\Planck}{%
+	{M_{\text{Pl}}}%
+}
+
+%	The Riemannian covariant derivative
+\newrobustcmd{\rD}[1]{%
+	\tensor{\mathring{\nabla}}{#1}%
+}
+
+%	The Riemann-Cartan covariant derivative
+\newrobustcmd{\rcD}[1]{%
+	\tensor{\nabla}{#1}%
+}
+
+%	The Riemann tensor
+\newrobustcmd{\rR}[1]{%
+	\tensor{\mathring{R}}{#1}%
+}
+
+%	The Riemann-Cartan tensor
+\newrobustcmd{\rcR}[1]{%
+	\tensor{R}{#1}%
+}
+
+%	Irreducible parts of the torsion
+\newrobustcmd{\T}[2][placeholder]{%
+	\IfEqCase{#1}{%
+	{placeholder}{\tensor{T}{#2}}%
+	{1}{\tensor[^{(1)}]{T}{#2}}%
+	{2}{\tensor[^{(2)}]{T}{#2}}%
+	{3}{\tensor[^{(3)}]{T}{#2}}%
+	}%
+	[\packageError{cosmicclass}{Symbol #1 is not an irreducible part!}{}]%
+}
+
+%	Irreducible parts of the multiplier
+\newrobustcmd{\TLambda}[2][placeholder]{%
+	\IfEqCase{#1}{%
+	{placeholder}{\tensor{\lambda}{#2}}%
+	{1}{\tensor[^{(1)}]{\lambda}{#2}}%
+	{2}{\tensor[^{(2)}]{\lambda}{#2}}%
+	{3}{\tensor[^{(3)}]{\lambda}{#2}}%
+	}%
+	[\packageError{cosmicclass}{Symbol #1 is not an irreducible part!}{}]%
+}
