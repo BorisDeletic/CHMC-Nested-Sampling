@@ -1,2 +1,10 @@
 .idea/
 cmake-build-*/
+report/plan/report_plan.aux
+report/plan/report_plan.bbl
+report/plan/report_plan.bcf
+report/plan/report_plan.blg
+report/plan/report_plan.log
+report/plan/report_plan.out
+report/plan/report_plan.run.xml
+report/plan/report_plan.synctex.gz
