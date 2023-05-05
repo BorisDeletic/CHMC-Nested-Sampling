@@ -79,10 +79,10 @@ void generateCorrelationData() {
         std::filesystem::create_directory(correlation_dir); // create src folder
     }
 
-    const int n = 512;
+    const int n = 64;
     const double lambda = 0.03;
-    const double kappaMin = 0.11600;
-    const double kappaMax = 0.11700;
+    const double kappaMin = 0.11900;
+    const double kappaMax = 0.119500;
     const double resolution = 1;
 
     for (double k = kappaMin; k < kappaMax; k += (kappaMax - kappaMin) / resolution) {
@@ -98,7 +98,6 @@ void generateCorrelationData() {
         runPhi4(fname.str(), n,k, lambda);
     }
 }
-
 
 
 

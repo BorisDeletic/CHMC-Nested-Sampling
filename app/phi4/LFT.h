@@ -8,7 +8,6 @@
 
 void runPhi4(std::string fname, int n, double kappa, double lambda);
 
-
 void generatePhaseDiagramData();
 
 #endif //CHMC_NESTED_SAMPLING_LFT_H

@@ -8,13 +8,11 @@
 \usepackage{amssymb}
 \usepackage{stix}
 \usepackage{hhline}
-\usepackage{amsmath}
 \usepackage{mathtools}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{xspace}
 \usepackage{multirow,tabularx}
 \usepackage{siunitx}
-\usepackage{multirow}
 \usepackage{graphicx}
 \usepackage{xstring}
 \usepackage{etoolbox}
@@ -26,12 +24,14 @@
 \usepackage{accents}
 \usepackage{tikz}
 \usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algorithmic}
 \allowdisplaybreaks
 
 \parskip 1mm
 \parindent 2mm
 
-\input{PartIIIProjectTemplateMacros.tex} %some personal macros
+\input{macros.tex} %some personal macros
 
 \usepackage{hyperref}
 \hypersetup{%
@@ -41,12 +41,13 @@
      filecolor = Blue,%
      urlcolor = Blue% 
      }%
-\usepackage[capitalize]{cleveref} %always load this last in preamble
+\usepackage[capitalize]{cleveref}
+\usepackage{subfiles} %always load this last in preamble
 
 
 \begin{document}
 
-\title{Part III Master's Thesis}
+\title{Constrained Hamiltonian Monte Carlo with Nested Sampling for use in Lattice Field Theory}
 
 \author{Candidate \#\#\#\#\#}
 \affiliation{Astrophysics Group, Cavendish Laboratory, JJ Thomson Avenue, Cambridge CB3 0HE, UK}
@@ -62,124 +63,22 @@
 
 \maketitle
 
-\begin{figure}[t!]
-  \center
-  \includegraphics[width=\linewidth]{PartIIIProjectTemplateFigure.pdf}
-	\caption{\label{PartIIIProjectTemplateFigure} 
-	When captioning a figure, you should assume that the reader will have read the title and abstract of your paper and \textit{nothing else}. Therefore, the caption should be as self-contained as possible. Avoid acronyms, but feel free to use inline equations and even repeat content from the main body of the text. Most plots these days are produced via the Matplotlib library in Python. The plot above was made this way, but is not necessarily a good example of Matplotlib styling (which goes beyond the scope of this template). For schematic diagrams, flow-charts and suchlike, you should use \texttt{TikZ}. Never use the Wolfram language to produce plots.
-	}
-\end{figure}
+%\begin{figure}[t!]
+%  \center
+%  \includegraphics[width=\linewidth]{PartIIIProjectTemplateFigure.pdf}
+%	\caption{\label{PartIIIProjectTemplateFigure}
+%	When captioning a figure, you should assume that the reader will have read the title and abstract of your paper and \textit{nothing else}. Therefore, the caption should be as self-contained as possible. Avoid acronyms, but feel free to use inline equations and even repeat content from the main body of the text. Most plots these days are produced via the Matplotlib library in Python. The plot above was made this way, but is not necessarily a good example of Matplotlib styling (which goes beyond the scope of this template). For schematic diagrams, flow-charts and suchlike, you should use \texttt{TikZ}. Never use the Wolfram language to produce plots.
+%	}
+%\end{figure}
 
-\section{Introduction}\label{Introduction}
+\subfile{introduction}
 
-The introduction can be really very long. Much of it will be made up of introductory paragraphs with a citation density~\cite{Heisenberg:2020xak} of one or more per line~\cite{PhysRevD.28.286,Shaposhnikov:2020aen}. Take careful note of the tilde used to fill the space before \texttt{\textbackslash cite\{\}}, since this prevents citations from appearing at the beginning of a new line. You should use the tilde technique before \emph{all} kinds of references, be they equations, citations or figures. The density of citations is important: there is a special place in Jahannam for people who do not cite enough;
-\begin{enumerate}
-\item The reader will find it useful if you provide references.
-\item It costs nothing to extend your references; journal word limits typically apply to the text. 
-\item If you write a paper with $\lesssim 20$ references then you are either (i) a hardcore Soviet physicist writing from behind the iron curtain in 1970, or (ii) you are pretending to be (i) but in 2023.
-\item If you read a paper, and found it useful in the performance of your duties, then it is courteous to cite the damned thing when presenting your results!
-\end{enumerate}
-To cite, you must use \texttt{BibTeX}. Find your papers on the \href{https://ui.adsabs.harvard.edu/}{NASA astrophysics data system (ADS)} or \href{https://inspirehep.net/}{INSPIRE HEP}, and click either \texttt{cite} or \texttt{Export Citation}. Paste into the \texttt{.bib} file and use the first argument of the entry as a label. These days you can also get \texttt{BibTeX} entries from the arXiv.
 
-There can also be paragraphs where you argue verbally, without citing. You can have some equations, but it is better to avoid long, heavy derivations. If your equations are inline, you can prevent them from being broken by wrapping with an extra pair of braces, as with \texttt{\$\{z=r\textbackslash cos(\textbackslash theta)\}\$}, but this can lead to some strange effects if you're not careful.
+\subfile{constrained_hmc.tex}
 
-In this section, you will start to introduce and then use (strictly in that order) acronyms; such is the case with Einstein--Cartan (EC) theory. Note that name-concatenation is done with a \emph{long} hyphen, typed as~\texttt{-{-}}. If you want to make a parenthetic remark --- such as this useless clause --- you can use the \emph{longer} hyphen~\texttt{-{-}{-}}.
-
-There are some other quirks, for example Sean Carroll may believe that there are many universes, but \emph{ours} must always be referred to as the Universe with a capital U.
-
-Every now and then, you may want a figure, such as~\cref{PartIIIProjectTemplateFigure}. You should try as hard as you can to refer to the figure for the first time somewhere in the same page on which it appears, but don't worry if you lag or lead by a page (especially if the figure is large). Never let a figure appear significantly ahead of its textual reference, and never ever fail to refer to a figure in the text. Controlling the positions of floats in \LaTeX{} is a pain, but you can usually find a way.
-
-The final paragraph of the introduction should tell the reader what the structure of the remaining part of the paper will be like. For example in~\cref{Methods} we will point out that interesting papers have interesting section titles. In~\cref{FTL} we will list some formatting tips, before concluding in~\cref{ConcludingRemarks}. Appendices follow. You should also set out your conventions, such as the (preferred) use of the West Coast signature $(+,-,-,-)$, natural units $\hbar=c=1$ and construction of the chiral matrix from the gamma basis (i.e. whether or not you prefer to include the imaginary unit)\footnote{By the way, don't be afraid to use footnotes.}.
-
-\section{Methods}\label{Methods}
-
-Real scientific papers do not have a `methods' section. This is a fiction which you learn in school.
-
-\section{Proposal for faster-than-light travel}\label{FTL}
-
-Instead, sections should have titles which refer to real things, or to aspects of your theoretical argument.
-
-A paper should not read like one of those bloated western textbooks, which have pages and pages full of words without a single equation to tell you what is really going on. A picture tells a thousand words, an equation paints a thousand pictures. It is wholesome and nutritious to have lots of equations.
-
-By default, a short equation should be inline, like $E=mc^2$. You can then consider possible reasons for using a displayed equation instead. You should display an equation such as 
-\begin{equation}\label{NormalGR}
-L_{\text{GR}}\equiv-\frac{1}{2}\Planck^2\rR{}\simeq-\frac{1}{2}\Planck^2\rcR{}
-	+\TLambda{_{\mu\nu\sigma}}\T{^{\mu\nu\sigma}},
-\end{equation}
-if you want to refer to it, as in~\eqref{NormalGR} or~\cref{NormalGR}, or because it is not very tiny. Note that subscripts which do not refer to variables, but to words (and names such as Planck) should be protected within math environments, e.g. by using \texttt{\textbackslash text\{Pl\}}. Macros can be used to make your life easier for this kind of thing. Note also that tensors such as $\tensor{A}{_\nu}$ should be incorporated as \texttt{\textbackslash tensor\{A\}\{\_\textbackslash nu\}}, because subscripts in the math environment are not very flexible. Note that punctuation almost \emph{never} appears between the text and the equation, but almost \emph{always} at the end of the equation and within the relevant math environment. There can be some rare exceptions, such as if you are presenting a very large system of equations that cannot be viewed as belonging to a sentence. In that case, you may use a colon:
-\begin{widetext}
-\begin{subequations}
-\begin{align}\label{BigSystem}
-	\frac{\mathrm{d}x}{\mathrm{d}t}&\equiv 17x^7y^3+5x^6y^4-7x^4y^5-3x^4y^3+7x^4y^2+17x^3y^3+5x^2y^3+11x^3y^2-13x^2y^2+19xy^2-23x^2y+37xy+87,\\
-	\frac{\mathrm{d}y}{\mathrm{d}t}&\equiv 5x^7y^3-11x^6y^4-3x^4y^5+11x^4y^3+23x^4y^2-53x^3y^3+2x^2y^3+17x^3y^2-107x^2y^2+xy^2-3x^2y+3xy+7.
-\end{align}
-\end{subequations}
-\end{widetext}
-Note also that total differentials are expressed as $\mathrm{d}x$ rather than $dx$, and also that sub-equations should be used for cases like this. Single equations of intermediate length may need to be broken over multiple lines, for example
-\begin{equation}\label{TEGR}
-	\begin{aligned}
-		L_{\text{TEGR}}&\equiv
-		\frac{4}{9}\Planck^2\T[1]{_{\mu[\nu\sigma]}}\T[1]{^{\mu[\nu\sigma]}}
-		-\frac{1}{3}\Planck^2\T[2]{_{\mu}}\T[2]{^{\mu}}
-		\\&\ \ \
-		+\frac{3}{4}\Planck^2\T[3]{_{\mu}}\T[3]{^{\mu}}
-	+\RLambda{^{\mu\nu}_{\sigma\lambda}}\rcR{_{\mu\nu}^{\sigma\lambda}}.
-	\end{aligned}
-\end{equation}
-In this case, you should take good care of the alignment tag \texttt{\&}, which should appear \emph{before} the equality operator. You can use \texttt{\textbackslash\ \textbackslash\ \textbackslash} or \texttt{\textbackslash phantom\{=\}} to preserve the extra indent from the equality on subsequent broken lines. If you want to be able to use the full line width for the first part of a line-broken equation, and have the equation number take up space only on the final line, you can try \texttt{\textbackslash nonumber}
-\begin{subequations}
-\begin{align}
-	\frac{\mathrm{d}x}{\mathrm{d}t}&\equiv 17x^7y^3+5x^6y^4-7x^4y^5-3x^4y^3+7x^4y^2+17x^3y^3\nonumber\\
-	&\ \ \ +5x^2y^3+11x^3y^2-13x^2y^2+19xy^2-23x^2y\nonumber\\
-	&\ \ \ +37xy+87,\label{SubEqn1}\\
-	\frac{\mathrm{d}y}{\mathrm{d}t}&\equiv 5x^7y^3-11x^6y^4-3x^4y^5+11x^4y^3+23x^4y^2-53x^3y^3\nonumber\\
-	&\ \ \ +2x^2y^3+17x^3y^2-107x^2y^2+xy^2-3x^2y+3xy\nonumber\\
-	&\ \ \ +7.\label{SubEqn2}
-\end{align}
-\end{subequations}
-There are automated ways to refer to multiple equations, such as~\cref{NormalGR,TEGR} and perhaps~\cref{TEGR,NormalGR,SubEqn2} or to ranges of equations such as~\crefrange{NormalGR}{TEGR}.
-
-Sometimes, you may have a collection of little equations, e.g.
-\begin{equation}
-	x=y, \quad z=w, \quad v=u.
-\end{equation}
-It may not be appropriate to give each a line (or label), but be mindful of the \texttt{\textbackslash quad} command for spacing things out. In addition, you can use the \texttt{gather} or \texttt{gathered} environments for clusters of equations which do not call for alignment.
-
-If your project includes a substantial computational component, you will almost certainly wish to use code listings. There are many, highly customisable options here, for example
-\begin{widetext}
-\lstset{language=Haskell}
-\begin{lstlisting}
--- Print some random numbers in Haskell. There are many ways to include code in LaTeX!
-
-import System.Random
-
-main = (randomRIO (1, 137) :: IO Int) >>= print
-\end{lstlisting}
-\end{widetext}
-can be readily beautified with \texttt{\textbackslash lstset}. You can certainly quote Wolfram language in your paper. However, output from the Mathematica GUI should be handled more carefully. I have some useful tricks to help with this, which will likely be better than any solutions you can find on the internet.
-
-By the way, some computations can be very long, and they may detract from the flow of the paper. If they need to be included at all (for example, for the sake of reproducibility of your results), it is okay to include them in an appendix, such as~\cref{Appendix}.
-
-\section{Concluding remarks}\label{ConcludingRemarks}
-
-Apart from~\cref{Introduction}, the final section is the only one which is allowed to have a generic title. Your conclusions should be as short as humanly possible. If you find yourself writing closely-argued and lengthy arguments in the conclusions, then you should stop and move them further up into the body of the paper (perhaps into a penultimate `Discussion' section). If the reader got as far as the conclusions, it is likely because they read the title and abstract, scanned the figures and \emph{skipped} the whole of the rest of the paper. Be very terse, it is okay to include some bullet points in the conclusion. 
-
-By the way, on the topic of brevity: florid language has no place in physics. The reader will be suspicious that the author has nothing to say and is trying to cover it up. Zen can be achieved with a high equation density punctuated by clear statements in the passive voice. Some modern graduate writing guides claim that the passive voice should be avoided: this is incorrect. It is okay to use `\emph{we}' (note the use of an initial opening quote mark in \texttt{`\textbackslash emph\{we\}'}, which avoids ugly closing-closing quotes) if you really have to, but you should not use `\emph{I}'. If you are not quoting a person (and why would you be?), the quote marks should be single.
-
-\section{Acknowledgements}
-
-If you used any compute time from the cluster project, called \texttt{wbarker-sl3-cpu/gpu}, then you should add the following:
-
-This work was performed using resources provided by the Cambridge Service for Data Driven Discovery (CSD3) operated by the University of Cambridge Research Computing Service (\href{www.csd3.cam.ac.uk}{www.csd3.cam.ac.uk}), provided by Dell EMC and Intel using Tier-2 funding from the Engineering and Physical Sciences Research Council (capital grant EP/T022159/1), and DiRAC funding from the Science and Technology Facilities Council (\href{www.dirac.ac.uk}{www.dirac.ac.uk}).
-
-Alternatively, if you used Dr. Handley's threadripper (Newton), you should acknowledge his assistance and the support of the ERC.
-
-You may also want to express your gratitude for any significant financial assistance from your college, or an overseas government in the case that you are supported by a scholarship.
-
-If, during the course of the project, either the candidate or supervisor were assisted by email exchanges or conversations with others, it is polite and nice to acknowledge them here, too!
 
 \bibliographystyle{apsrev4-1}
-\bibliography{PartIIIProjectTemplate}
+\bibliography{/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/report/bibliography/references}
 
 \appendix
 \section{Some lengthy calculations}\label{Appendix}

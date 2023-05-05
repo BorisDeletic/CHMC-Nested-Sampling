@@ -6,9 +6,12 @@ import os
 
 
 
-path = "/rds/user/bd418/hpc-work/correlation"
+#path = "/rds/user/bd418/hpc-work/correlation"
+path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/phi4/correlation"
 
 R = 512
+R = 64
+
 file_list = sorted(os.listdir(path))
 files_searched = []
 
