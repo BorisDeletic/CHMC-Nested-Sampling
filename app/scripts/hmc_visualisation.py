@@ -68,12 +68,19 @@ class CHMCPlot():
 
     def plot_X(self, data):
         x, y = data.T
+
         x0, y0 = x[0], y[0]
         xL, yL = x[-1], y[-1]
 
-        self.ax.plot(x, y, '-o', c='black', mfc='red', mec='black', markersize=5)
-        self.ax.plot([xL], [yL], 'D', c='blue', mfc='red', mec='black', markersize=8)
-        self.ax.plot([x0], [y0], 'D', c='blue', mfc='red', mec='black', markersize=8)
+        deltaX = x[1:] - x[:-1]
+        deltaY = y[1:] - y[:-1]
+
+        self.ax.plot(x, y, '-o', c='black', mfc='red', mec='black', markersize=3)
+        self.ax.plot([xL], [yL], 'D', c='blue', mfc='red', mec='black', markersize=6)
+        self.ax.plot([x0], [y0], 'D', c='blue', mfc='red', mec='black', markersize=6)
+
+        self.ax.quiver(x[:-1], y[:-1], deltaX, deltaY, angles='xy', scale_units='xy', scale=1.5, pivot='tail')
+#        self.ax.quiver(x[:-1], y[:-1], deltaX, deltaY, angles='xy', scale_units='xy', scale=1, pivot='tail')
 
     def plot_failed_X(self, data):
         for p0, p1 in data:
@@ -82,34 +89,31 @@ class CHMCPlot():
 
 
 
-    def plot_arrow(self, x, p):
-        self.ax.annotate('', xy=(x[0]+0.5*p[0], x[1]+0.5*p[1]), xytext=(x[0], x[1]), arrowprops=dict(arrowstyle='->',linewidth=2))
-
-        # self.ax.quiver(x[0], x[1], p[0], p[1])
-
     def plot_contours(self, vals):
         self.ax.contour(self.X, self.Y, self.Z, vals, colors=['#580061', '#580061'])
 
-    def plot_reflections(self, reflections):
-        reflections = reflections[:1]
+    def plot_reflections(self, reflections, scale = 1):
+        #reflections = reflections[:1]
         for x, n in reflections:
             parallel = [-n[1], n[0]]
             # Generate two points on the line perpendicular to the normal vector, centered on the point x
-            point1 = x - parallel/np.linalg.norm(parallel)**2 / 10
-            point2 = x + parallel/np.linalg.norm(parallel)**2 / 10
+            point1 = x - parallel/np.linalg.norm(parallel)**2 * scale
+            point2 = x + parallel/np.linalg.norm(parallel)**2 * scale
 
             # Plot the line perpendicular to the normal vector, centered on the point x
             self.ax.plot([point1[0], point2[0]], [point1[1], point2[1]], 'k--')
-            #self.ax.plot(x[0], x[1], 'rs', mec='black')  # Plot the center point
+            self.ax.plot(x[0], x[1], 'rs', mec='black', markersize=6)  # Plot the center point
 
 
-    def plot_heatmap(self):
+    def plot_heatmap(self, vmin, vmax):
         heatmap = self.ax.pcolormesh(self.X, self.Y, self.Z,
                        cmap='Blues',
                        shading='nearest')
 
        # heatmap.set_alpha(0.4)
-        heatmap.set_clim(vmin=-1.0, vmax=0.4)
+        #        heatmap.set_clim( vmax=200)
+        heatmap.set_clim( vmin=vmin, vmax = vmax)
+
 
 
 
@@ -145,11 +149,10 @@ def plot_Gaussian_CHMC():
 
     basic_plot = CHMCPlot(gauss_loglikelihood, [-1.5,1.5])
 
-    basic_plot.plot_heatmap()
-    basic_plot.plot_arrow(x0, p0)
+    basic_plot.plot_heatmap(vmin=-1.0, vmax=0.4)
     basic_plot.plot_X(data)
     basic_plot.plot_contours([uncompressed_constraint])
-    basic_plot.plot_reflections(uncompressed.reflections)
+    basic_plot.plot_reflections(uncompressed.reflections, scale=1/2)
     basic_plot.ax.set_title("Constrained Hamiltonian Monte Carlo")
 
     # adaption_plot = CHMCPlot([-1.5,1.5])
@@ -183,13 +186,57 @@ def plot_Square_CHMC():
 
     #basic_plot.plot_heatmap()
     #basic_plot.plot_arrow(x0, p0)
-    basic_plot.plot_reflections(chmc.reflections)
     basic_plot.plot_failed_X(chmc.failed_x)
     basic_plot.plot_X(data)
+    basic_plot.plot_reflections(chmc.reflections)
     basic_plot.plot_contours([constraint])
     basic_plot.ax.set_title("Epsilon Halving")
 
 
-plot_Square_CHMC()
+def plot_Bimodal_CHMC():
+    bimodal_likelihood = BimodalLikelihood()
+
+    path_length = 17
+    path_length2 = 25
+    constraint = -1
+
+    x0 = np.array([2.9, 2.4])
+    p0 = np.array([0.8, 3.1])
+
+    x1 = np.array([-3.2, -2.4])
+    p1 = np.array([1.2, 2.6])
+
+    chmc = CHMC(bimodal_likelihood, 0.2, constraint)
+    chmc2 = CHMC(bimodal_likelihood, 0.2, constraint)
+
+    chmc.initialise(x0, p0)
+    chmc2.initialise(x1, p1)
+
+    data = x0
+    data2 = x1
+    for i in range(path_length):
+        chmc.evolve()
+        data = np.vstack((data, chmc.x))
+
+    for i in range(path_length2):
+        chmc2.evolve()
+        data2 = np.vstack((data2, chmc2.x))
+
+    basic_plot = CHMCPlot(bimodal_loglikelihood, [-6,6])
+
+    basic_plot.plot_heatmap(vmin=-7, vmax=2.5)
+    #basic_plot.plot_arrow(x0, p0)
+  #  basic_plot.plot_failed_X(chmc.failed_x)
+    basic_plot.plot_X(data)
+    basic_plot.plot_X(data2)
+    basic_plot.plot_contours([constraint])
+    basic_plot.plot_reflections(chmc.reflections, scale=10)
+    basic_plot.plot_reflections(chmc2.reflections, scale=10)
+    basic_plot.ax.set_title("Clustering")
+
+
+#plot_Square_CHMC()
+plot_Gaussian_CHMC()
+#plot_Bimodal_CHMC()
 
 plt.show()
