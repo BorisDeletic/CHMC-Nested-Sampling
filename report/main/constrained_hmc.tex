@@ -22,11 +22,12 @@
     As described conceptually by Skilling~\cite{GMC} \& Betancourt~\cite{Betancourt_NS_CHMC}, reflecting
     off the iso-likelihood contours ensures that proposed samples are within the constrained distribution.
     When the next position $\mathbf{x}$ in the trajectory would be below the likelihood constraint, we reflect the
-    momentum normal to $\mathbf{n}$ according to
+    momentum off the boundary with normal $n$
     \begin{equation}\label{eq:reflection}
     \begin{aligned}
-        \mathbf{p'} &= \mathbf{p} - 2 \frac{ \mathbf{p} \cdot \mathbf{n_R} }{\mathbf{n} \cdot \mathbf{n_R}} \mathbf{n} \\
-        \mathbf{n_R} &= M^{-1} \mathbf{n}
+        \mathbf{n} &= - \nabla \log{\mathcal{L}}, \\
+        \mathbf{n_R} &= M^{-1} \mathbf{n}, \\
+        \mathbf{p'} &= \mathbf{p} - 2 \frac{ \mathbf{p} \cdot \mathbf{n_R} }{\mathbf{n} \cdot \mathbf{n_R}}. \mathbf{n}
     \end{aligned}
     \end{equation}
 
@@ -44,7 +45,7 @@
 
     At iteration $i$ of nested sampling, the point with the lowest likelihood $\mathcal{L}_i$ is deleted and used to
     seed the generation of the next sample.
-    Implementing this algorithm in practice poses new challenges with discretization and clustering.
+    Implementing this algorithm in practice poses new challenges with discretization, clustering, and parameter adaption.
     We propose a novel set of additional algorithms which are essential for a working implementation of
     Constrained HMC (CHMC).
 

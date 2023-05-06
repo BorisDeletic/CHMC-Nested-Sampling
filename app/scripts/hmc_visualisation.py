@@ -79,7 +79,7 @@ class CHMCPlot():
         self.ax.plot([xL], [yL], 'D', c='blue', mfc='red', mec='black', markersize=6)
         self.ax.plot([x0], [y0], 'D', c='blue', mfc='red', mec='black', markersize=6)
 
-        self.ax.quiver(x[:-1], y[:-1], deltaX, deltaY, angles='xy', scale_units='xy', scale=1.5, pivot='tail')
+        self.ax.quiver(x[:-1], y[:-1], deltaX, deltaY, angles='xy', scale_units='xy', scale=3, pivot='tail')
 #        self.ax.quiver(x[:-1], y[:-1], deltaX, deltaY, angles='xy', scale_units='xy', scale=1, pivot='tail')
 
     def plot_failed_X(self, data):
@@ -122,18 +122,18 @@ class CHMCPlot():
 def plot_Gaussian_CHMC():
     gauss_likelihood = GaussianLikelihood()
 
-    path_length = 34
+    path_length = 20
     uncompressed_constraint = -0.5
     compressed_constraint = -0.035
 
-    x0 = np.array([1.0, 0.55])
-    p0 = np.array([-0.1, 0.75])
+    x0 = np.array([0.8, 0.85])
+    p0 = np.array([0.0, -0.55])
 
-    x1 = np.array([0.1,0.1])
-    p1 = np.array([-0.15, 0.3])
+    x1 = np.array([0.1,0.01])
+    p1 = np.array([-0.5, 0.55])
 
     uncompressed = CHMC(gauss_likelihood, 0.3, uncompressed_constraint)
-    compressed = CHMC(gauss_likelihood, 0.15, compressed_constraint)
+    compressed = CHMC(gauss_likelihood, 0.3, compressed_constraint)
 
     uncompressed.initialise(x0, p0)
     compressed.initialise(x1, p1)
@@ -147,20 +147,21 @@ def plot_Gaussian_CHMC():
         data2 = np.vstack((data2, compressed.x))
 
 
-    basic_plot = CHMCPlot(gauss_loglikelihood, [-1.5,1.5])
+    #basic_plot = CHMCPlot(gauss_loglikelihood, [-1.5,1.5])
 
-    basic_plot.plot_heatmap(vmin=-1.0, vmax=0.4)
-    basic_plot.plot_X(data)
-    basic_plot.plot_contours([uncompressed_constraint])
-    basic_plot.plot_reflections(uncompressed.reflections, scale=1/2)
-    basic_plot.ax.set_title("Constrained Hamiltonian Monte Carlo")
+    # basic_plot.plot_heatmap(vmin=-1.0, vmax=0.4)
+    # basic_plot.plot_X(data)
+    # basic_plot.plot_contours([uncompressed_constraint])
+    # basic_plot.plot_reflections(uncompressed.reflections, scale=1/2)
+    # basic_plot.ax.set_title("Constrained Hamiltonian Monte Carlo")
 
-    # adaption_plot = CHMCPlot([-1.5,1.5])
-    # adaption_plot.plot_heatmap()
-    # adaption_plot.plot_X(data)
-    # adaption_plot.plot_X(data2)
-    # adaption_plot.plot_contours([uncompressed_constraint, compressed_constraint])
-    #adaption_plot.ax.set_title("Parameter Adaption as Constraint tightens")
+    adaption_plot = CHMCPlot(gauss_loglikelihood, [-1.5,1.5])
+    adaption_plot.plot_heatmap(None, 1.5)
+    adaption_plot.plot_X(data)
+    adaption_plot.plot_X(data2)
+    adaption_plot.plot_contours([uncompressed_constraint, compressed_constraint])
+    adaption_plot.plot_reflections(uncompressed.reflections, scale=1/2)
+    adaption_plot.ax.set_title("Static step size with compressing constraint")
 
 
 def plot_Square_CHMC():
