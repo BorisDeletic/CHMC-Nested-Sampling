@@ -77,13 +77,29 @@
     arguments~\cite{betancourt2016energymetric}, and geometric approaches~\cite{bales2019_hmc_metric}.
 
     We propose a new algorithm to continuously adapt the metric in CHMC for nested sampling, using motivations
-    from the \emph{virial theorem}~\cite{landau1972theoretical}.
-    From the virial theorem, we aim to match the average kinetic and potential energy as
-    \begin{equation}\label{eq:virial_theorem}
-        2 \langle T \rangle = \langle U \rangle.
+    from \emph{equipartition theorem}.
+    The equipartition theorem states that in thermal equilibrium, the energy is shared equally amongst a system's degrees
+    of freedom~\cite{landau1972theoretical}.
+    Considering the set of live points as a thermodynamic ensemble, we can therefore relate the \emph{variance} of the
+    kinetic and potential energy distributions.
+    \begin{equation}\label{eq:equipartition_theorem}
+        \mathrm{Var}[T] = \mathrm{Var}[U].
     \end{equation}
-    Following the derivation in~\ref{sec:metric_derivation} we arrive at the result
-...
+    Following the derivation in~\ref{sec:metric_derivation} we arrive at the result for the metric
+    \begin{equation}\label{eq:metric_adaption}
+        M = 2 \sqrt{\frac{\mathrm{Var}[U]}{D}} \mathbb{1},
+    \end{equation}
+    Where $D$ is the dimensionality of the problem, and we use a scaled unit metric for simplicity.
+
+    In order to computationally estimate the potential energy variance during the CHMC algorithm, we use the
+    set of live points as an ensemble sample of the distribution.
+    For example, when sampling directly from the posterior, $\mathrm{Var}[U] = \mathrm{Var}[\log{\mathcal{L}}]$,
+    and we can update our metric every $\mathcal{O}(n_{live})$ iterations with very little computational overhead.
+
+    We compared this scheme for kinetic energy adaption to other suggested approaches such as a BFMI
+    diagnostic~\cite{betancourt2016energymetric}.
+    We observe heuristically that our equipartition scheme performs better than BFMI, with lower
+    computational cost, as we exploit the natural information contained by the set of live points.
 
 
 \end{document}
