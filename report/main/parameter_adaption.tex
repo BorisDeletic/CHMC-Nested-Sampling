@@ -69,7 +69,7 @@
         T = \frac{1}{2} \mathbf{p}^T M^{-1} \mathbf{p},
     \end{aligned}
     \end{equation}
-    with metric $M$, where the momentum is drawn from the distribution $\mathbf{p} \sim \mathcal{N}(0, M)$.
+    with metric $M$, where the momentum is drawn from the distribution $\mathbf{p} \sim \mathcal{N}(0, \sigma = M)$.
     Rephrasing the Hamiltonian in terms of energy $H(E)$, the metric defines which energy level sets will be explored
     by the HMC Markov-Chain.
     A poorly chosen metric will very slowly explore the energy levels of the target distribution $\pi(E)$.
@@ -87,7 +87,7 @@
     \end{equation}
     Following the derivation in~\ref{sec:metric_derivation} we arrive at the result for the metric
     \begin{equation}\label{eq:metric_adaption}
-        M = 2 \sqrt{\frac{\mathrm{Var}[U]}{D}} \mathbb{1},
+        M = \frac{2}{D} \sqrt{\mathrm{Var}[U]} \mathbb{1},
     \end{equation}
     Where $D$ is the dimensionality of the problem, and we use a scaled unit metric for simplicity.
 
