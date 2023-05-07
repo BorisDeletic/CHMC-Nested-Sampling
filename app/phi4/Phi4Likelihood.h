@@ -18,6 +18,8 @@ public:
     const int GetDimension() override { return n*n; };
 
 private:
+    double FixedBoundaryConditions(const Eigen::VectorXd &theta, int i, int j);
+
     double Potential(double field);
     double NeighbourSum(const Eigen::VectorXd& theta, int i, int j);
 

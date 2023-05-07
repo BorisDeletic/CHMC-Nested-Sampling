@@ -7,6 +7,16 @@ const Eigen::VectorXd Phi4Likelihood::PriorTransform(const Eigen::VectorXd &cube
     return cube.array() * priorWidth - priorWidth / 2;
 }
 
+// return the field value at any i,j even if out of bounds.
+// fixed boundary of phi=0 outside of lattice
+double Phi4Likelihood::FixedBoundaryConditions(const Eigen::VectorXd &theta, int i, int j) {
+    if ((i < 0) || (j < 0) || (i > n-1) || (j > n-1)) {
+        return 0;
+    }
+
+    return theta[i * n + j];
+}
+
 
 const double Phi4Likelihood::LogLikelihood(const Eigen::VectorXd &theta) {
     double fieldAction = 0.0;
@@ -64,15 +74,20 @@ double Phi4Likelihood::Potential(double field)
 double Phi4Likelihood::NeighbourSum(const Eigen::VectorXd &theta, int i, int j) {
     double sum = 0.0;
 
-    int idx_left = j + 1 == n   ? i * n         : i * n + (j+1);
-    int idx_right = j - 1 < 0   ? i * n + (n-1) : i * n + (j-1);
-    int idx_up = i - 1 < 0      ? (n-1) * n + j : (i-1) * n + j;
-    int idx_down = i + 1 == n   ? j             : (i+1) * n + j; // with torus b.c.
+//    int idx_left = j + 1 == n   ? i * n         : i * n + (j+1);
+//    int idx_right = j - 1 < 0   ? i * n + (n-1) : i * n + (j-1);
+//    int idx_up = i - 1 < 0      ? (n-1) * n + j : (i-1) * n + j;
+//    int idx_down = i + 1 == n   ? j             : (i+1) * n + j; // with torus b.c.
 
-    sum += theta[idx_left];
-    sum += theta[idx_right];
-    sum += theta[idx_up];
-    sum += theta[idx_down];
+//    sum += theta[idx_left];
+//    sum += theta[idx_right];
+//    sum += theta[idx_up];
+//    sum += theta[idx_down];
+
+    sum += FixedBoundaryConditions(theta, i + 1, j);
+    sum += FixedBoundaryConditions(theta, i - 1, j);
+    sum += FixedBoundaryConditions(theta, i, j + 1);
+    sum += FixedBoundaryConditions(theta, i, j - 1);
 
     return sum;
 }
@@ -165,6 +180,7 @@ const Eigen::VectorXd Phi4Likelihood::SpatialCorrelationFFT(const Eigen::VectorX
 
     return correlations;
 }
+
 
 
 
