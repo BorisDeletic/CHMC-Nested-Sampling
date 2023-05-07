@@ -18,7 +18,7 @@ const double priorWidth = 6;
 const double epsilon = 0.1;
 const int pathLength = 100;
 
-const int numLive = 100;
+const int numLive = 200;
 const int maxIters = 100000;
 const double precisionCriterion = 0.1;
 
@@ -81,14 +81,14 @@ void generateCorrelationData() {
 
     const int n = 512;
     const double lambda = 0.03;
-    const double kappaMin = 0.11600;
-    const double kappaMax = 0.11700;
-    const double resolution = 1;
+    const double kappaMin = 0.11749;
+    const double kappaMax = 0.11750;
+    const double resolution = 2;
 
     for (double k = kappaMin; k < kappaMax; k += (kappaMax - kappaMin) / resolution) {
         std::ostringstream fname;
         fname << correlation_dir;
-        fname << "/Phi4_" << std::setprecision(5) << std::fixed << k << "_" << lambda;
+        fname << "/Phi4_" << std::setprecision(6) << std::fixed << k << "_" << lambda;
 
         if(std::filesystem::exists(fname.str() + ".stats"))
             continue;

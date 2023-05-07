@@ -40,7 +40,9 @@ ENDIF()
 #$<$<CONFIG:RELEASE>:-Ofast>
 add_compile_options(
         $<$<CONFIG:RELEASE>:-funroll-loops>
-        $<$<CONFIG:DEBUG>:-O0>
+        $<$<CONFIG:RELEASE>:-ffast-math>       
+	$<$<CONFIG:RELEASE>:-march=cascadelake> 
+	$<$<CONFIG:DEBUG>:-O0>
         $<$<CONFIG:DEBUG>:-ggdb3>
 )
 

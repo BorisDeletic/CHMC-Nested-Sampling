@@ -200,7 +200,7 @@ const bool NestedSampler::TerminateSampling() {
     }
 
     double remainingEvidence = EstimateLogEvidenceRemaining();
-    std::cout << "Log(Z)=" << mLogZ << " ,LogZlive=" << remainingEvidence << std::endl;
+    std::cout << "Log(Z)=" << mLogZ << " ,LogZlive=" << remainingEvidence << std::endl << std::endl;
 
     if (remainingEvidence < mLogZ + log10(mConfig.precisionCriterion)) {
         return true;

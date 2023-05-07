@@ -17,33 +17,37 @@ correlation_samples = pd.DataFrame()
 
 def correlationLength(correlations):
     #split half way as symmetric about L/2
-    log_correlations = np.log(np.abs(correlations[:len(correlations)//2]))
+    log_correlations = np.log(np.abs(correlations))
 
-    print(log_correlations)
+    #print(log_correlations)
 
     xis = []
     kappas = []
     fig, ax = plt.subplots()
+
     for kappa in log_correlations.columns.values:
-        m,b = np.polyfit(log_correlations.index.values, log_correlations[kappa], 1)
+        front_x = log_correlations.index.values[:R//10]
+        front_y = log_correlations[kappa][:R//10]
+
+        m,b = np.polyfit(front_x, front_y, 1)
 
         xi = -1 / m
 
         xis.append(xi)
         kappas.append(kappa)
-        ax.plot(log_correlations[kappa], label="k={:.5f}, xi={:.3f}".format(kappa, xi))
+        ax.plot(log_correlations[kappa], label="k={:.6f}, xi={:.1f}".format(kappa, xi))
     #    ax.plot(kappa, , label="k={:.5f}, xi={:.3f}".format(kappa, xi))
-
+    
+    ax.set_title("Log Correlation Func vs R")
     #ax.scatter(kappas, xis)
     ax.legend(loc="upper right")
 
-    ax.figure.savefig('log_corr.png')
-
+    ax.figure.savefig('/rds/user/bd418/hpc-work/images/log_corr.png', dpi=300)
 
 
 fig, ax = plt.subplots()
 for file in file_list:
-    fname = file[:20]
+    fname = file[:22]
 
     if fname in files_searched:
         continue
@@ -53,8 +57,12 @@ for file in file_list:
     kappa = float(fname.split("_")[1])
     l = fname.split("_")[2]
 
-    chains = os.path.join(path, fname)
-    samples = ns.read_chains(chains)
+    try:
+        chains = os.path.join(path, fname)
+        samples = ns.read_chains(chains)
+    except:
+        continue
+
     posterior = samples.posterior_points()
 
     mean_mag = abs(posterior['mag']).mean()
@@ -72,16 +80,16 @@ for file in file_list:
     correlations /= posterior["c_0"].mean()
     correlation_samples[kappa] = correlations
 
-    ax.plot(correlations, label="k={:.5f}, m={:.2f}".format(kappa, mean_mag))
+    ax.plot(correlations, label="k={:.6f}, m={:.2f}".format(kappa, mean_mag))
 
 #print(correlation_samples[:32])
 
 correlationLength(correlation_samples)
 
-
+ax.set_title("Correlation Function vs R")
 ax.legend(loc="upper right")
 #plt.show()
-ax.figure.savefig('correlations.png')
+ax.figure.savefig('/rds/user/bd418/hpc-work/images/correlations.png', dpi=300)
 
 
 

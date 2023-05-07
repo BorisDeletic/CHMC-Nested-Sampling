@@ -7,6 +7,7 @@
 #include "types.h"
 #include <iostream>
 #include <sstream>
+#include <filesystem>
 #include <chrono>
 
 std::string dir = "benchmark";
@@ -56,7 +57,7 @@ void logResults(std::string fname, int n, long long time) {
 
 void generateDimensionalityBenchmark() {
 
-    const int nMin = 10;
+    const int nMin = 810;
     const int nMax = 1010;
     const double lambda = 0.03;
     const double kappa = 0.11750;
