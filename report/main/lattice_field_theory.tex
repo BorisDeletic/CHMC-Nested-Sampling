@@ -28,6 +28,7 @@
     However, this still leaves a sum over an infinite number of possible field configurations.
     In order to computationally measure observables of a field theory system, we must employ MCMC methods to estimate
     the path integral.
+
     In order to interpret the field weight factor $e^{iS[\phi]}$ as a probability for a given configuration,
     we can perform a Wick-rotation by redefining time as imaginary~\cite{rothe2005lattice}.
     \begin{equation}\label{eq:wick_rotation}
@@ -39,7 +40,7 @@
     where from now on we only refer to the Euclidean action as $S$.
 
     This factor is now a well-defined probability distribution as it is bounded and normalised
-    $P[\phi] \equiv \frac{1}{Z} e^{-S_E[\phi]} > 0$.
+    $P[\phi] \equiv \frac{1}{Z} e^{-S[\phi]} > 0$.
     Therefore, it is possible to apply MCMC methods to sample from this distribution and calculate observables
     with an acceptance probability
     \begin{equation}\label{eq:accept_prob_lft}
@@ -130,7 +131,12 @@
         \end{subfigure}
     \end{figure}
 
-    We set prior to posterior.
+    When using CHMC and nested sampling for $\phi^4$ theory, we must define a prior distribution $\pi(\theta)$.
+    To use CHMC, we already provide the likelihood function gradient for reflections.
+    Therefore, we can set the prior to be the posterior by using the likelihood function as the
+    prior $\pi(\theta) = \log{\mathcal{L}}$.
+    This removes the need for any new gradients and maximises the speed of convergence, as sampling directly from the
+    posterior will be most efficient.
 
     \section{Numerical Results}\label{sec:numerical_results}
 

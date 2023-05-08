@@ -35,8 +35,9 @@
         \center
         \includegraphics[width=\linewidth]{../figures/ConstrainedHMC}
         \caption{
-        Hamiltonian Monte Carlo modified to reflect off iso-likelihood boundaries. Initial point with randomly sampled
-        momentum (diamond with arrow) moving through prior distribution shown in blue. Finite step size $\epsilon$,
+        Hamiltonian Monte Carlo modified to reflect off iso-likelihood boundary $\mathcal{L}_0$.
+        Initial point with randomly sampled
+        momentum (diamond with arrow) moving through prior distribution, $\tilde{\pi}(\theta)$, shown in blue. Finite step size $\epsilon$,
         shows discretisation of integrator with intermediate points (circles). Points which reflect off
         boundary (squares) do not fall exactly on the boundary due to discretization. After a fixed number of
         integration steps $L$, we propose a new sample from the constrained distribtion (diamond).

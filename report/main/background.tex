@@ -8,8 +8,47 @@
 \begin{document}
 
     \section{Bayesian Inference}\label{sec:bayesian_inference}
+    Bayesian inference is a robust analytic framework which allows the construction of predictive models $\mathcal{M}$
+    in the context of some dataset $\mathcal{D}$.
 
+    The \emph{likelihood} is defined as the probability of observing the data given a specific parameter choice
+    \begin{equation}\label{eq:likelihood}
+        p(\mathcal{D} | \theta, \mathcal{M}) \equiv \mathcal{L}(\theta).
+    \end{equation}
+    A Bayesian model must also specify it's distribution of parameters before any data is known.
+    This is termed the \emph{prior}, defined by
+    \begin{equation}\label{eq:prior}
+        p(\theta|\mathcal{M}) \equiv \pi(\theta).
+    \end{equation}
+    The \emph{evidence} is the distribution of observed data marginalised over the parameters, defined as
+    \begin{equation}\label{eq:evidence}
+        p(\mathcal{D} | \mathcal{M}) \equiv \mathcal{Z} = \int{\mathcal{L}(\theta) \pi(\theta) d\theta}.
+    \end{equation}
+    The \emph{evidence} or sometimes \emph{marginalised likelihood} is an important quantity which provides a measure
+    on the quality of a model $\mathcal{M}$.
 
+    By using Bayes' Theorem~\cite{bishop2006}, the distribution of parameters $\theta$ given our model and data
+    can be written in terms of the quantities
+    \begin{equation}\label{eq:bayes_theorem}
+    \begin{aligned}
+        p(\theta | \mathcal{D}, \mathcal{M}) &=
+            \frac{p(\mathcal{D} | \theta, \mathcal{M}) p(\theta|\mathcal{M})}{p(\mathcal{D} | \mathcal{M})}, \\
+        \mathcal{P}(\theta) &= \frac{\mathcal{L}(\theta) \pi(\theta)}{\mathcal{Z}},
+    \end{aligned}
+    \end{equation}
+    where $\mathcal{P}(\theta)$ is termed the \emph{posterior}.
+    The \emph{posterior} is the distribution of parameters $\theta$ after taking the data into account.
+
+    An intuitive relationship between these quantities is that a model where the \emph{prior} more closely
+    resembles the \emph{posterior} will have a greater \emph{evidence}~\cite{mackay2003}.
+
+    Calculating the posterior is in the domain of \emph{parameter estimation} and is practically a very difficult task
+    and often not feasible analytically.
+    For high-dimensional problems, this is facilitated computationally by sampling from the posterior using
+    Markov-Chain Monte-Carlo techniques~\cite{gupta2014comparison, delmoral2013mean}.
+
+    Examples of such sampling algorithms include Metropolis-Hastings~\cite{Metropolis_OG},
+    Slice sampling~\cite{neal2003slice}, and Hamiltonian Monte Carlo~\cite{HMC_Duane, neal1996monte}.
 
     \section{Hamiltonian Monte Carlo}\label{sec:hamiltonian_monte_carlo}
 
