@@ -19,14 +19,16 @@
     \end{equation}
     with momentum distributed as $\mathbf{p} \sim \mathcal{N}(0, \sigma=M)$.
     For simplicity, we use a scaled unit metric $M = \alpha \mathbb{1}$.
-    According to the equipartition theorem, we match the variance of kinetic and potential energy,
+    According to the equipartition theorem, the energy is equally shared among the degrees of freedom.
+    Therefore, we match the variance in potential energy per dimension to the kinetic energy.
     \begin{equation}\label{eq:var_matching}
     \begin{aligned}
-        \mathrm{Var}[U] &= \mathrm{Var}\left[\frac{1}{2} \mathbf{p}^T M^{-1} \mathbf{p}\right]  \\
-        \mathrm{Var}[U] &= \frac{1}{4 \alpha^2} \mathrm{Var}\left[\mathbf{p}^T \mathbf{p}\right] \\
-        \mathrm{Var}[U] &= \frac{1}{4 \alpha^2} \mathrm{Var}\left[\sum_i^D{\mathbf{p}_i^2}\right] \\
-        \mathrm{Var}[U] &= \frac{D^2}{4 \alpha^2} \mathrm{Var}[M^4] \\
-        \mathrm{Var}[U] &= \frac{D \alpha^2}{4} \\
+        \frac{1}{D} \mathrm{Var}[U] &= \mathrm{Var}[T]  \\
+        \mathrm{Var}[U] &= D\mathrm{Var}\left[\frac{1}{2} \mathbf{p}^T M^{-1} \mathbf{p}\right]  \\
+        \mathrm{Var}[U] &= \frac{D}{4 \alpha^2} \mathrm{Var}\left[\mathbf{p}^T \mathbf{p}\right] \\
+        \mathrm{Var}[U] &= \frac{D}{4 \alpha^2} \mathrm{Var}\left[\sum_i^D{\mathbf{p}_i^2}\right] \\
+        \mathrm{Var}[U] &= \frac{D^2}{4 \alpha^2} \alpha^4 \\
+        \mathrm{Var}[U] &= \frac{D^2 \alpha^2}{4} \\
         \alpha = \frac{2}{D} \sqrt{\mathrm{Var}[U]}
     \end{aligned}
     \end{equation}

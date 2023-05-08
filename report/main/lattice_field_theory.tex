@@ -7,6 +7,55 @@
 % Document
 \begin{document}
 
+\section{Scalar $\phi^4$ Theory on a Lattice}\label{sec:phi^4_theory}
+    We work with a real, scalar $\phi^4$-theory in two-dimensions, discretized to a Euclidean square lattice of length $N$.
+    The dimensionless action for the theory is given by
+    \begin{equation}\label{eq:phi4_action}
+    \begin{aligned}
+        S = \,\sum\limits_{x \in \Lambda} \Biggl[-2\kappa \sum\limits_{\mu=1}^d & \phi(x) \phi(x+\hat{\mu}) \\
+        &+\lambda \phi(x)^4 + (1 - 2\lambda) \phi(x)^2 \Biggr],
+    \end{aligned}
+    \end{equation}
+    where $\Lambda$ is the set of lattice points, $\hat{\mu}$ is the unit vector in $\mu$ direction, and $\phi(x)$ is
+    the field value at lattice site $x$~\cite{maas2020lattice}. $\kappa$ is the kinetic coupling for neighbour interactions and $\lambda$ is the
+    coupling strength of the interaction.
+
+    $\phi^4$ theory lives in the same universality class as the 2D Ising model, as we recover the Ising model
+    in the limit $\lambda \rightarrow \infty$.
+    As such, the model exhibits a second-order phase transition in the $\kappa, \lambda$ parameters, associated
+    with the breaking of $\mathcal{Z}_2$ symmetry.
+    The order parameter which undergoes the phase transition is the mean magnetization, defined as the expectation of
+    absolute field value
+    \begin{equation}\label{eq:magnetization}
+        \langle M \rangle = \frac{1}{N^2} \bigl< \sum_{x \in \Lambda} |\phi(x)| \bigr>.
+    \end{equation}
+
+    The two point correlation function $\langle \phi(x_1) \phi(x_2) \rangle$ represents a physical observable of the
+    quantum field theory, which are used to measure parameters of the system such as the correlation length,
+    which diverges at the critical point.
+
+    Beginning with the Wick-rotated path integral~\cite{maas2020lattice}
+    \begin{equation}\label{eq:path_integral}
+        \mathcal{Z} = \int {\mathcal{D}\phi e^{-S[\phi]}},
+    \end{equation}
+    we note that the factor $e^{-S[\phi]}$ can be interpreted as a probability weighting for a given field configuration.
+    Therefore, defining the log likelihood function as $\log{\mathcal{L}} = -S[\phi]$, we reframe the problem in
+    Bayesian inference terms, allowing us to apply the tools we have developed.
+
+    \subsection{Nested Sampling for $\phi^4$ theory}\label{subsec:nested-sampling-phi4}
+    The model of $\phi^4$-theory is a good candidate to test CHMC for nested sampling for a number of reasons.
+    Below the critical point, the loglikelihood is a bimodal distribution allowing us to investigate the clustering
+    behaviour of the algorithm.
+    The likelihood gradient is also analytic
+    \begin{equation}\label{eq:grad_likelihood}
+    \begin{aligned}
+        \frac{\partial \log{\mathcal{L}}} {\partial \phi(x)} = -2\kappa \sum\limits_{\mu} &\phi(x+\hat{\mu}) \\
+        &+ 4\lambda \phi(x)^3 + 2(1-2\lambda)\phi(x).
+    \end{aligned}
+    \end{equation}
+    Furthermore, as we approach the critical point, this model exhibits \emph{critical slowing down}, allowing us to
+    test the resilience of the algorithm to this phenomenon.
+
 
 
 \end{document}

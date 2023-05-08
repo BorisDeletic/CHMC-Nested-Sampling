@@ -1,5 +1,6 @@
 #include "LFT.h"
 #include "Phi4Likelihood.h"
+#include "../LikelihoodPlots.h"
 #include "Logger.h"
 #include "Adapter.h"
 #include "CHMC.h"
