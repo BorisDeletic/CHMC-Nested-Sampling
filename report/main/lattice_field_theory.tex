@@ -10,7 +10,7 @@
 
 \section{Lattice Field Theory}\label{sec:LFT}
 
-\subsection{LFT with Markov-Chain Monte Carlo}\label{subsec:lft_mcmc}
+\subsection{LFT for Markov-Chain Monte Carlo methods}\label{subsec:lft_mcmc}
     The path integral formalism for quantum mechanics provides a powerful tool for studying relativistic
     quantum field theories~\cite{Feynman1948}.
     It is written as a functional integral
@@ -20,7 +20,7 @@
     where $\mathcal{D}\phi$ is a measure over all field configurations $\phi$, and $e^{iS[\phi]}$ weights the contribution
     of each configuration.
     In the classical limit, all the 'unphysical' fields with very a large action cancel each other, and we reduce
-    to the classical least action principle.
+    to Hamilton's least action principle.
 
     The path integral approach provides a useful starting point for lattice field theory.
     We begin by discretizing space-time, such that the field $\phi(x)$ lives on a finite lattice rather than in a
@@ -40,17 +40,11 @@
 
     This factor is now a well-defined probability distribution as it is bounded and normalised
     $P[\phi] \equiv \frac{1}{Z} e^{-S_E[\phi]} > 0$.
-    Therefore, it is possible to apply MCMC methods to sample from this distribution to calculate observables.
-    Suffice that the Markov-Chain algorithm samples fields with an acceptance probability
+    Therefore, it is possible to apply MCMC methods to sample from this distribution and calculate observables
+    with an acceptance probability
     \begin{equation}\label{eq:accept_prob_lft}
     \begin{aligned}
         A(\phi'|\phi) = \min \left(1, \frac{\exp(-S[\phi'])}{\exp(-S[\phi])} \right),
-    \end{aligned}
-    \end{equation}
-    we can calculate observables as
-    \begin{equation}\label{eq:field_observable}
-    \begin{aligned}
-        \langle \mathcal{O} \rangle = \frac{1}{N}\sum_{i=0}^N \mathcal{O}(\phi_i).
     \end{aligned}
     \end{equation}
 
@@ -71,17 +65,33 @@
     in the limit $\lambda \rightarrow \infty$.
     As such, the model exhibits a second-order phase transition in the $\kappa, \lambda$ parameters, associated
     with the breaking of $\mathcal{Z}_2$ symmetry.
+
     The order parameter which undergoes a phase transition is the mean magnetization, defined as the normalised
     expectation of absolute field value
     \begin{equation}\label{eq:magnetization}
         \langle M \rangle = \frac{1}{N^2} \bigl< \sum_{x \in \Lambda} |\phi(x)| \bigr>.
     \end{equation}
 
-    The two point correlation function $\langle \phi(x_1) \phi(x_2) \rangle$ is a physical observable of the
-    quantum field theory, which measure parameters of the system such as the correlation length,
-    which diverges at the critical point.
+    \subsubsection{Correlation Functions}
+    The two-point correlation functions are a key quantity related to physical
+    observables of the quantum field theory.
+    For example, the renormalised mass parameter and correlation length can both be measured with correlation
+    functions~\cite{maas2020lattice}.
 
-    \subsection{Nested Sampling for $\phi^4$ Theory}\label{subsec:nested-sampling-phi4}
+    In the context of a Euclidean $\phi^4$ theory, we define the equal-time correlation functions as
+    \begin{equation}\label{eq:full_correlation_function}
+        C(x_1, x_2) = \langle \phi(x_1) \phi(x_2) \rangle,
+    \end{equation}
+    where $\langle . \rangle$ denotes the ensemble average~\ref{eq:field_observable}.
+
+    Exploiting the translation and rotational symmetry of the $\phi^4$ action, we can fully characterise the two-point
+    correlation function in terms of the distance between two points
+    \begin{equation}\label{eq:correlation_function}
+        C(r) = \langle \phi(x) \phi(x + r) \rangle,
+    \end{equation}
+    where we now also average over all lattice points $x$.
+
+\subsection{Nested Sampling for $\phi^4$ Theory}\label{subsec:nested-sampling-phi4}
     As described in~\ref{subsec:lft_mcmc}, we sample from the distribution with probability $P[\phi] = e^{-S[\phi]}$.
     Therefore, defining the log likelihood function as $\log{\mathcal{L}} = -S[\phi]$ the problem is reframed in
     Bayesian inference terms, allowing us to apply the tools we have developed~\ref{sec:chmc}.
@@ -119,6 +129,8 @@
             \label{fig:phi4likelihood_disordered}
         \end{subfigure}
     \end{figure}
+
+    We set prior to posterior.
 
     \section{Numerical Results}\label{sec:numerical_results}
 
