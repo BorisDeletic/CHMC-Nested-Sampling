@@ -7,7 +7,54 @@
 % Document
 \begin{document}
 
-\section{Scalar $\phi^4$ Theory on a Lattice}\label{sec:phi^4_theory}
+
+\section{Lattice Field Theory}\label{sec:LFT}
+
+\subsection{LFT with Markov-Chain Monte Carlo}\label{subsec:lft_mcmc}
+    The path integral formalism for quantum mechanics provides a powerful tool for studying relativistic
+    quantum field theories~\cite{Feynman1948}.
+    It is written as a functional integral
+    \begin{equation}\label{eq:path_integral}
+    \mathcal{Z} = \int {\mathcal{D}\phi e^{iS[\phi]}},
+    \end{equation}
+    where $\mathcal{D}\phi$ is a measure over all field configurations $\phi$, and $e^{iS[\phi]}$ weights the contribution
+    of each configuration.
+    In the classical limit, all the 'unphysical' fields with very a large action cancel each other, and we reduce
+    to the classical least action principle.
+
+    The path integral approach provides a useful starting point for lattice field theory.
+    We begin by discretizing space-time, such that the field $\phi(x)$ lives on a finite lattice rather than in a
+    continuous space.
+    However, this still leaves a sum over an infinite number of possible field configurations.
+    In order to computationally measure observables of a field theory system, we must employ MCMC methods to estimate
+    the path integral.
+    In order to interpret the field weight factor $e^{iS[\phi]}$ as a probability for a given configuration,
+    we can perform a Wick-rotation by redefining time as imaginary~\cite{rothe2005lattice}.
+    \begin{equation}\label{eq:wick_rotation}
+    \begin{aligned}
+        t &\rightarrow i \tau, \\
+        $e^{iS[\phi]}$ &\rightarrow e^{-S_E[\phi]},
+    \end{aligned}
+    \end{equation}
+    where from now on we only refer to the Euclidean action as $S$.
+
+    This factor is now a well-defined probability distribution as it is bounded and normalised
+    $P[\phi] \equiv \frac{1}{Z} e^{-S_E[\phi]} > 0$.
+    Therefore, it is possible to apply MCMC methods to sample from this distribution to calculate observables.
+    Suffice that the Markov-Chain algorithm samples fields with an acceptance probability
+    \begin{equation}\label{eq:accept_prob_lft}
+    \begin{aligned}
+        A(\phi'|\phi) = \min \left(1, \frac{\exp(-S[\phi'])}{\exp(-S[\phi])} \right),
+    \end{aligned}
+    \end{equation}
+    we can calculate observables as
+    \begin{equation}\label{eq:field_observable}
+    \begin{aligned}
+        \langle \mathcal{O} \rangle = \frac{1}{N}\sum_{i=0}^N \mathcal{O}(\phi_i).
+    \end{aligned}
+    \end{equation}
+
+\subsection{Scalar $\phi^4$ Theory}\label{subsec:phi^4_theory}
     We work with a real, scalar $\phi^4$-theory in two-dimensions, discretized to a Euclidean square lattice of length $N$.
     The dimensionless action for the theory is given by
     \begin{equation}\label{eq:phi4_action}
@@ -20,29 +67,25 @@
     the field value at lattice site $x$~\cite{maas2020lattice}. $\kappa$ is the kinetic coupling for neighbour interactions and $\lambda$ is the
     coupling strength of the interaction.
 
-    $\phi^4$ theory lives in the same universality class as the 2D Ising model, as we recover the Ising model
+    $\phi^4$ theory lives in the same universality class as the 2D Ising model, and we recover the Ising model
     in the limit $\lambda \rightarrow \infty$.
     As such, the model exhibits a second-order phase transition in the $\kappa, \lambda$ parameters, associated
     with the breaking of $\mathcal{Z}_2$ symmetry.
-    The order parameter which undergoes the phase transition is the mean magnetization, defined as the expectation of
-    absolute field value
+    The order parameter which undergoes a phase transition is the mean magnetization, defined as the normalised
+    expectation of absolute field value
     \begin{equation}\label{eq:magnetization}
         \langle M \rangle = \frac{1}{N^2} \bigl< \sum_{x \in \Lambda} |\phi(x)| \bigr>.
     \end{equation}
 
-    The two point correlation function $\langle \phi(x_1) \phi(x_2) \rangle$ represents a physical observable of the
-    quantum field theory, which are used to measure parameters of the system such as the correlation length,
+    The two point correlation function $\langle \phi(x_1) \phi(x_2) \rangle$ is a physical observable of the
+    quantum field theory, which measure parameters of the system such as the correlation length,
     which diverges at the critical point.
 
-    Beginning with the Wick-rotated path integral~\cite{maas2020lattice}
-    \begin{equation}\label{eq:path_integral}
-        \mathcal{Z} = \int {\mathcal{D}\phi e^{-S[\phi]}},
-    \end{equation}
-    we note that the factor $e^{-S[\phi]}$ can be interpreted as a probability weighting for a given field configuration.
-    Therefore, defining the log likelihood function as $\log{\mathcal{L}} = -S[\phi]$, we reframe the problem in
-    Bayesian inference terms, allowing us to apply the tools we have developed.
+    \subsection{Nested Sampling for $\phi^4$ Theory}\label{subsec:nested-sampling-phi4}
+    As described in~\ref{subsec:lft_mcmc}, we sample from the distribution with probability $P[\phi] = e^{-S[\phi]}$.
+    Therefore, defining the log likelihood function as $\log{\mathcal{L}} = -S[\phi]$ the problem is reframed in
+    Bayesian inference terms, allowing us to apply the tools we have developed~\ref{sec:chmc}.
 
-    \subsection{Nested Sampling for $\phi^4$ theory}\label{subsec:nested-sampling-phi4}
     The model of $\phi^4$-theory is a good candidate to test CHMC for nested sampling for a number of reasons.
     Below the critical point, the loglikelihood is a bimodal distribution allowing us to investigate the clustering
     behaviour of the algorithm.
@@ -50,11 +93,34 @@
     \begin{equation}\label{eq:grad_likelihood}
     \begin{aligned}
         \frac{\partial \log{\mathcal{L}}} {\partial \phi(x)} = -2\kappa \sum\limits_{\mu} &\phi(x+\hat{\mu}) \\
-        &+ 4\lambda \phi(x)^3 + 2(1-2\lambda)\phi(x).
+        &+ 4\lambda \phi(x)^3 + 2(1-2\lambda)\phi(x)
     \end{aligned}
     \end{equation}
+    and well-behaved.
     Furthermore, as we approach the critical point, this model exhibits \emph{critical slowing down}, allowing us to
-    test the resilience of the algorithm to this phenomenon.
+    test the algorithm's resilience to this phenomenon.
+
+    \begin{figure}[t!]
+        \centering
+        \begin{subfigure}{\linewidth}
+            \centering
+            \includegraphics[width=\linewidth]{../figures/Phi4LikelihoodOrdered}
+            \caption{
+            In the ordered phase, neighbouring fields prefer aligning in the same direction as each other.
+            This results in a bimodal distribution with a positive mean magnetisation $\langle M \rangle$.}
+            \label{fig:phi4likelihood_ordered}
+        \end{subfigure}
+        \begin{subfigure}{\linewidth}
+            \centering
+            \includegraphics[width=\linewidth]{../figures/Phi4LikelihoodDisordered}
+            \caption{
+            In the disordered phase, neighbouring fields are uncorrelated. The likelihood is a unimodal distribution
+            with zero mean magnetisation $\langle M \rangle$.}
+            \label{fig:phi4likelihood_disordered}
+        \end{subfigure}
+    \end{figure}
+
+    \section{Numerical Results}\label{sec:numerical_results}
 
 
 

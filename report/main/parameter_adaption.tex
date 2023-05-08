@@ -56,7 +56,7 @@
 
     To apply this averaging scheme to CHMC we set $x = \log{\epsilon}$ and $H_t = \delta - P_t$, where $P_t$ is the
     metropolis acceptance probability of sample $t$ and $\delta \in (0, 1)$.
-    The values for $\mu, \kappa, \delta$ used for our implementations are listed in appendix~\ref{sec:paramvalues}.
+    The values for $\mu, \kappa, \delta$ used for our implementations are listed in appendix~\ref{sec:param_table}.
     Averaging in HMC is generally performed for a fixed number of steps during the burn-in phase, after which the
     tuned value of epsilon is chosen and kept constant.
     As illustrated above, this scheme is modified for CHMC and we continuously adapt $\epsilon$ accordingly until termination.

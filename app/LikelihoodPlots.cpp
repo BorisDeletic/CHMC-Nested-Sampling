@@ -6,6 +6,7 @@
 void generateContours(ILikelihood& likelihood, std::pair<float, float>& xran, std::pair<float, float>& yran) {
     std::ofstream file;
     file.open("isocontours.dat");
+    file << "x y z" << std::endl;
 
     double xSpacing = (xran.second - xran.first) / 100;
     double ySpacing = (yran.second - yran.first) / 100;
@@ -30,6 +31,7 @@ void generateContours(ILikelihood& likelihood, std::pair<float, float>& xran, st
 void generateGradientField(ILikelihood& likelihood, std::pair<float, float>& xran, std::pair<float, float>& yran) {
     std::ofstream file;
     file.open("gradient.dat");
+    file << "x y dx dy" << std::endl;
 
     double xSpacing = (xran.second - xran.first) / 20;
     double ySpacing = (yran.second - yran.first) / 20;

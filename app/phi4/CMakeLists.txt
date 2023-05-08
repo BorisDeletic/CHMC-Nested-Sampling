@@ -6,6 +6,7 @@ add_executable(Phi4LFT
         LFT.cpp LFT.h
         Phi4Likelihood.cpp Phi4Likelihood.h
 		PosteriorAnalysis.cpp PosteriorAnalysis.h
+		../LikelihoodPlots.cpp ../LikelihoodPlots.h
         )
 
 add_executable(Phi4Benchmark
