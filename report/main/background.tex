@@ -11,7 +11,7 @@
     Bayesian inference is a robust analytic framework which allows the construction of predictive models $\mathcal{M}$
     in the context of some dataset $\mathcal{D}$.
 
-    The \emph{likelihood} is defined as the probability of observing the data given a specific parameter choice
+    The \emph{likelihood} is defined as the probability of observing the data given a specific parameter choice $\theta$
     \begin{equation}\label{eq:likelihood}
         p(\mathcal{D} | \theta, \mathcal{M}) \equiv \mathcal{L}(\theta).
     \end{equation}
@@ -44,13 +44,46 @@
 
     Calculating the posterior is in the domain of \emph{parameter estimation} and is practically a very difficult task
     and often not feasible analytically.
-    For high-dimensional problems, this is facilitated computationally by sampling from the posterior using
-    Markov-Chain Monte-Carlo techniques~\cite{gupta2014comparison, delmoral2013mean}.
+    For high-dimensional problems, we therefore resort to computationally estimating the distribution by sampling
+    from the posterior using Markov-Chain Monte-Carlo techniques~\cite{gupta2014comparison, delmoral2013mean}.
 
     Examples of such sampling algorithms include Metropolis-Hastings~\cite{Metropolis_OG},
-    Slice sampling~\cite{neal2003slice}, and Hamiltonian Monte Carlo~\cite{HMC_Duane, neal1996monte}.
+    Slice sampling~\cite{neal2003slice}, and Hamiltonian Monte Carlo~\cite{HMC_Duane, neal1996monte}~\ref{sec:hamiltonian_monte_carlo}.
+
+    \section{Nested Sampling}\label{sec:nested_sampling}
+    Nested sampling is an algorithm which simultaneously computes
+    the \emph{evidence} and \emph{posterior}~\cite{Skilling2006, Handley_polychord, NS_Review_2022}.
+    For a set of parameters $\theta$ with dimension $D$, calculating the evidence through direct evaluation of the
+    high-dimensional integral~\ref{eq:evidence} becomes exponentially more expensive as $D$ is increased.
+
+    We define the \emph{prior mass} as the fraction of prior contained within an iso-likelihood contour
+    \begin{equation}\label{eq:prior_mass}
+        X(\lambda) = \int_{\mathcal{L}(\theta)>\lambda} \pi(\theta) d\theta.
+    \end{equation}
+    Using a change of variable we write the evidence as a one-dimensional integral more feasible to calculate
+    \begin{equation}\label{eq:evidence_ns}
+        \mathcal{Z} = \int_0^1 {\mathcal{L}(X)} dX
+    \end{equation}
+
+    Nested sampling introduces a population of $n_{live}$ \emph{live points} in the parameter space which are sorted
+    by likelihood.
+    These points are then iteratively updated to compress around the peaks of the posterior distribution.
+
+    Initially, $n_{live}$ points are sampled from the prior $\pi(\theta)$.
+    At each iteration $i$, the point with the lowest likelihood $\mathcal{L}_i$ is deleted and moved to the set
+    of \emph{dead points}.
+    A new live point is then generated from the prior, subject to the hard constraint that its likelihood is
+    greater than $\mathcal{L}_i$.
+
+    The prior volume on average will contract by a factor $n_{live}/(n_{live}+1)$ each iteration, such that the
+    expected prior mass at iteration $i$ will be
+    \begin{equation}\label{eq:exp_prior_volume}
+        \langle X_i \rangle \approx e^{-i/n_{live}}
+    \end{equation}
+    thus contracting exponentially.
 
     \section{Hamiltonian Monte Carlo}\label{sec:hamiltonian_monte_carlo}
+    Sampling from D>1million
 
     we can calculate observables as
     \begin{equation}\label{eq:field_observable}
