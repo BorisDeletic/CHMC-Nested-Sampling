@@ -9,7 +9,7 @@
 % Document
 \begin{document}
 
-    \section{Constrained Hamiltonian Monte Carlo}\label{sec:chmc}
+\section{Constrained Hamiltonian Monte Carlo}\label{sec:chmc}
     Consider the constrained prior distribution subject to the hard likelihood constraint
     \begin{equation}\label{eq:constrained_prior}
         \tilde{\pi}(\theta) = \begin{cases}
@@ -50,7 +50,7 @@
     We propose a novel set of additional algorithms which are essential for a working implementation of
     Constrained HMC (CHMC).
 
-    \subsection{Epsilon Halving}
+\subsection{Epsilon Halving}\label{subsec:epsilon_halving}
     When performing reflections with a finite step size $\epsilon$, there is no guarantee that after a reflection,
     the next point will be within the constrained boundary.
     While this scenario is uncommon for smooth boundaries, over many iterations it is likely that at one time,
@@ -96,7 +96,7 @@
     \end{algorithm}
 
 
-    \subsection{Ergodicity}
+\subsection{Ergodicity}\label{subsec:ergodicity}
     Ergodicity and detailed balance are well known to be requirements of any MCMC algorithm~\cite{Metropolis_OG}.
     However, in practice no algorithm is truly ergodic due to imperfections in computation such as floating-point
     errors and the cyclic nature of pseudo-random number generators.
@@ -108,7 +108,7 @@
     Therefore, we argue that so long as our non-ergodic techniques are used infrequently, CHMC will be sufficiently
     ergodic to pass all statistical tests.
 
-    \subsection{Clustering}
+\subsection{Clustering}\label{subsec:clustering}
 
     Multi-modal posteriors pose a challenging problem for many MCMC sampling algorithms with topological freezing
     causing complications~\cite{mangoubi2018_HMC_Multimodal}.
@@ -136,7 +136,7 @@
         }\label{fig:clustering}
     \end{figure}
 
-    \subsection{Topological Traps}
+\subsection{Topological Traps}\label{subsec:topological_trap}
     The natural clustering advantage of CHMC also brings rise a susceptibility to topological traps.
     Any live points in a local maxima will be forced to stay there, becoming further and further compressed until there
     is no more space new samples to be generated.
@@ -171,7 +171,7 @@
     When a dead point has a reflection rate above some threshold, $\mathcal{R}_0$, we use a random live point as
     the seed for the next iteration, instead of the dead point.
     This ensures that if at least one live point is in the global maximum, eventually all the new live points will move
-    into this mode where there is more 'space'.
+    into this mode where there is more `space`.
 
     Show tests.
 \end{document}

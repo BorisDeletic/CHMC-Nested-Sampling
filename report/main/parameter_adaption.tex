@@ -94,7 +94,7 @@
     In order to computationally estimate the potential energy variance during the CHMC algorithm, we use the
     set of live points as an ensemble sample of the distribution.
     For example, when sampling directly from the posterior, $\mathrm{Var}[U] = \mathrm{Var}[\log{\mathcal{L}}]$,
-    and we can update our metric every $\mathcal{O}(n_{live})$ iterations with very little computational overhead.
+    and we can update our metric every $\mathcal{O}(n_{\text{live}})$ iterations with very little computational overhead.
 
     We compared this scheme for kinetic energy adaption to other suggested approaches such as a BFMI
     diagnostic~\cite{betancourt2016energymetric}.
