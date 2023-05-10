@@ -6,7 +6,7 @@ import pandas as pd
 import os
 
 
-path = "cmake-build-release/app"
+path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/phi4"
 
 def save_magnetisations(path):
     data_path = os.path.join(path, 'phase_diagram')
@@ -64,7 +64,7 @@ def save_magnetisations(path):
 read_file = os.path.join(path, 'data.csv')
 df = pd.read_csv(read_file)
 
-print(df[df['lambda'] == 0])
+print(df)
 
 table = df.pivot('lambda', 'kappa', 'mag')
 
@@ -77,11 +77,6 @@ ax.invert_yaxis()
 ax.set_title("<|M|> Phase Diagram for 32x32 Lattice")
 ax.set_xlabel("Kappa")
 ax.set_ylabel("Lambda")
-
-arr_img = plt.imread(os.path.join(path, "phi4_action.png"))
-im = OffsetImage(arr_img, zoom=.45)
-ab = AnnotationBbox(im, (0.85, 1.02), xycoords='axes fraction', box_alignment=(1.1,-0.1), bboxprops =dict(edgecolor='white'))
-ax.add_artist(ab)
 
 plt.show()
 
