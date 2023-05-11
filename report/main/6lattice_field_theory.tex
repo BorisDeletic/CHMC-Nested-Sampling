@@ -134,7 +134,7 @@
     When using CHMC and nested sampling for $\phi^4$ theory, we must define a prior distribution $\pi(\theta)$.
     To use CHMC, we already provide the likelihood function gradient for reflections.
     Therefore, we can set the prior to be the posterior by using the likelihood function as the
-    prior $\pi(\theta) = \log{\mathcal{L}}$.
+    prior $\pi(\theta) = \log \mathcal{L}(\theta)$.
     This removes the need for any new gradients and maximises the speed of convergence, as sampling directly from the
     posterior will be most efficient.
 
