@@ -85,7 +85,8 @@
     \end{aligned}
     \end{equation}
     where $M$ is a mass matrix known as the \emph{metric}, and $\mathbf{p}$ is a new auxiliary momentum variable we have introduced.
-    Intuitively, this treats the sample as a $D$ dimensional particle moving through a potential well $U = -\log \pi(\theta)$.
+    Intuitively, this treats the Markov-Chain point as a $D$ dimensional particle moving through a
+    potential well $U(\theta) = -\log \pi(\theta)$.
 
     For each Hamiltonian, the momentum is stochastically drawn from a normal distribution with
     standard deviation $M$, $\mathbf{p} \sim \mathcal{N}(0, \sigma = M)$.
@@ -100,21 +101,46 @@
     This often presents a practical difficult as not many distributions have easily accessible gradients, however this
     can be alleviated using \emph{auto differentiation} as discussed further in~\ref{sec:autodiff}~\cite{carpenter2015stan}.
 
-    The Hamiltonian satisfies the principle of energy conservation, so theoretically $H$ is unchanged during
-    the evolution $H(\theta_0, q_0)) = H(\theta_1, q_1))$.
-    However, the use of numerical integration introduces an energy drift.
-    To counter this, a Metropolis correction step is performed to choose whether to accept or reject the sample in
-    the Markov-Chain with probability
+
+\subsection{Leapfrog Integrator}\label{subsec:integrator}
+    When choosing a numerical integrator to solve Hamilton's equations, a few considerations must be taken into account.
+    To maintain detailed balance in HMC, our system must exhibit time-reversibility so that the proposal distribution
+    remains symmetric.
+    Under T-symmetry where all momenta are reversed $\mathbf{p} \rightarrow -\mathbf{p}$, the equations of motion are
+    theoretically time-reversible, therefore the probability of generating any two points is
+    symmetric $(\theta_0, q_0) \leftrightarrow (\theta_1, q_1)$.
+
+    In practice, not all numerical solvers preserve time-reversibility, and we must take care which algorithm to use.
+    One such class of solvers is \emph{symplectic integrators}, which does not
+    maintain energy conservation, but instead guarantees time-reversibility.
+
+    The leapfrog integrator is a symplectic integrator and proves an attractive candidate due to its simplicity.
+    Given a step size $\epsilon$ and path length $L$, we can update the position $\theta$ and momentum $p$ at each iteration $t$.
+    \begin{algorithm}
+    \caption{Leapfrog Integrator}
+    \label{alg:leapfrog_integrator}
+    \begin{algorithmic}
+        \FOR{$0 < t < L$}
+        \STATE \COMMENT{First momentum half step}
+        \STATE $\mathbf{p}_{t+1/2} \gets \mathbf{p}_t - \frac{1}{2} \epsilon \nabla U(\mathbf{\theta}_t)$
+        \STATE
+        \STATE $ \mathbf{\theta}_{t+1} \gets \mathbf{\theta}_t + \epsilon \mathbf{p}_{t+1/2}$
+        \STATE
+        \STATE $ \mathbf{p}_{t+1} \gets \mathbf{p}_{t+1/2} - \frac{1}{2} \epsilon \nabla U(\mathbf{\theta}_{t+1})$
+        \ENDFOR
+    \end{algorithmic}
+    \end{algorithm}
+
+    While theoretically the Hamiltonian satisfies the principle of energy conservation, the use of numerical
+    integration introduces an energy drift and the total energy can change during the evolution.
+    To correct for this, a Metropolis step is performed to choose whether to accept or reject the sample in
+    the Markov-Chain.
+    The acceptance probability is given by
     \begin{equation}\label{eq:hmc_accept_prob}
     \begin{aligned}
         A(\theta' | \theta) = \min \left(1, \frac{\exp(-H(\theta_1, q_1)) }{\exp(-H(\theta_0, q_0)) } \right).
     \end{aligned}
     \end{equation}
-
-    HMC naturally preserves detailed balance due to the principle of time-reversibility.
-    Under T-symmetry where all momenta are reversed $\mathbf{p} \rightarrow -\mathbf{p}$, the Hamiltonian is
-    time-reversible.
-    Therefore, the probability of generating any two points is symmetric $(\theta_0, q_0) \leftrightarrow (\theta_1, q_1)$.
 
 \subsection{HMC Parameters}\label{subsec:hmc_params}
     The three main input parameters for HMC are the step size $\epsilon$, path length $L$, and metric $M$.
@@ -134,6 +160,28 @@
     sets which HMC explores.
     It is important for the metric to be properly chosen such that the momenta drawn are not too large or small and
     adequately explore the target distribution level sets.
+
+\subsection{Critical Slowing Down}\label{subsec:critical_slowing}
+    For a well functioning MCMC algorithm, the sequence of samples in the Markov-Chain must be uncorrelated and
+    effectively independent.
+    Define the autocorrelation of an observable $\mathcal{O}$ is defined as
+    \begin{equation}\label{eq:autocorrelation}
+    \begin{aligned}
+        C_{\mathcal(O)}(\tau) = \langle \mathcal{O}(t) \mathcal{O}(t + \tau) \rangle,
+    \end{aligned}
+    \end{equation}
+    where $t$ denotes the discrete time of the Markov-Chain, and $\langle \cdot \rangle$ denotes the time average.
+
+    The autocorrelation time characterises how long it takes for the Markov-Chain to generate an independent sample,
+    and is defined as
+    \begin{equation}\label{eq:autocorrelation_time}
+    \begin{aligned}
+        \tau_{\mathcal{O}, \text{int}} = \frac{1}{C_{\mathcal(O)}(0)} \sum_{t=1}^T C_{\mathcal{O}}(t).
+    \end{aligned}
+    \end{equation}
+
+    Critical slowing down is a phenomenon where when the target distribution approaches a critical point,
+    the autocorrelation time dramatically increases.
 
 \subsection{Sampling within an Iso-Likelihood Contour}\label{subsec:isolikelood_sampling}
     Nested sampling requires that samples are generated subject to the hard likelihood constraint
