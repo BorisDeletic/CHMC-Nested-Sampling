@@ -19,7 +19,7 @@
     \end{equation}
     where $\mathcal{D}\phi$ is a measure over all field configurations $\phi$, and $e^{iS[\phi]}$ weights the contribution
     of each configuration.
-    In the classical limit, all the 'unphysical' fields with very a large action cancel each other, and we reduce
+    In the classical limit, all the `unphysical` fields with very a large action cancel each other, and we reduce
     to Hamilton's least action principle.
 
     The path integral approach provides a useful starting point for lattice field theory.
@@ -73,29 +73,11 @@
         \langle M \rangle = \frac{1}{N^2} \bigl< \sum_{x \in \Lambda} |\phi(x)| \bigr>.
     \end{equation}
 
-    \subsubsection{Correlation Functions}
-    The two-point correlation functions are a key quantity related to physical
-    observables of the quantum field theory.
-    For example, the renormalised mass parameter and correlation length can both be measured with correlation
-    functions~\cite{maas2020lattice}.
-
-    In the context of a Euclidean $\phi^4$ theory, we define the equal-time correlation functions as
-    \begin{equation}\label{eq:full_correlation_function}
-        C(x_1, x_2) = \langle \phi(x_1) \phi(x_2) \rangle,
-    \end{equation}
-    where $\langle . \rangle$ denotes the ensemble average~\ref{eq:field_observable}.
-
-    Exploiting the translation and rotational symmetry of the $\phi^4$ action, we can fully characterise the two-point
-    correlation function in terms of the distance between two points
-    \begin{equation}\label{eq:correlation_function}
-        C(r) = \langle \phi(x) \phi(x + r) \rangle,
-    \end{equation}
-    where we now also average over all lattice points $x$.
 
 \subsection{Nested Sampling for $\phi^4$ Theory}\label{subsec:nested-sampling-phi4}
     As described in~\ref{subsec:lft_mcmc}, we sample from the distribution with probability $P[\phi] = e^{-S[\phi]}$.
     Therefore, defining the log likelihood function as $\log{\mathcal{L}} = -S[\phi]$ the problem is reframed in
-    Bayesian inference terms, allowing us to apply the tools we have developed~\ref{sec:chmc}.
+    Bayesian inference terms, allowing us to apply the new algorithm we have introduced in~\ref{sec:chmc}.
 
     The model of $\phi^4$-theory is a good candidate to test CHMC for nested sampling for a number of reasons.
     Below the critical point, the loglikelihood is a bimodal distribution allowing us to investigate the clustering
@@ -134,11 +116,9 @@
     When using CHMC and nested sampling for $\phi^4$ theory, we must define a prior distribution $\pi(\theta)$.
     To use CHMC, we already provide the likelihood function gradient for reflections.
     Therefore, we can set the prior to be the posterior by using the likelihood function as the
-    prior $\pi(\theta) = \log \mathcal{L}(\theta)$.
+    prior $\pi(\theta) = \mathcal{L}(\theta)$.
     This removes the need for any new gradients and maximises the speed of convergence, as sampling directly from the
     posterior will be most efficient.
-
-
 
 
 \end{document}

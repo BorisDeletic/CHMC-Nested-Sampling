@@ -1,9 +1,41 @@
 #import anesthetic as ns
 import matplotlib.pyplot as plt
-from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+import matplotlib as mpl
 import seaborn as sns
 import pandas as pd
 import os
+
+params = {
+    'font.family': 'serif',
+    'font.serif': ['Times New Roman'],
+    'font.size': 12,
+    'axes.labelsize': 12,
+    'axes.titlesize': 14,
+    'xtick.labelsize': 12,
+    'ytick.labelsize': 12,
+    'legend.fontsize': 12,
+    'figure.figsize': [6.4, 4.8],
+    'figure.dpi': 100,
+    'lines.linewidth': 2,
+    'lines.markersize': 8,
+    'axes.linewidth': 1.5,
+    'xtick.major.width': 1.5,
+    'ytick.major.width': 1.5,
+    'xtick.minor.width': 1,
+    'ytick.minor.width': 1,
+    'xtick.major.size': 6,
+    'ytick.major.size': 6,
+    'xtick.minor.size': 4,
+    'ytick.minor.size': 4,
+    'axes.grid': False,
+    'grid.alpha': 0.5,
+    'grid.linewidth': 1,
+    'image.cmap': 'viridis',
+    'image.interpolation': 'nearest',
+}
+
+# Update the default parameters
+mpl.rcParams.update(params)
 
 
 path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/phi4"
@@ -68,15 +100,16 @@ print(df)
 
 table = df.pivot('lambda', 'kappa', 'mag')
 
-ax = sns.heatmap(table, vmin=0, vmax=15, cmap='mako')
+#ax = sns.heatmap(table, vmin=0, vmax=15, cmap='mako')
+ax = sns.heatmap(table, vmin=0, vmax=15)
 
 ax.locator_params(axis='y', nbins=6)
 ax.locator_params(axis='x', nbins=5)
 
 ax.invert_yaxis()
-ax.set_title("<|M|> Phase Diagram for 32x32 Lattice")
-ax.set_xlabel("Kappa")
-ax.set_ylabel("Lambda")
+ax.set_title(r"<M>" + " Phase Diagram for 32x32 Lattice")
+ax.set_xlabel(r"$\kappa$")
+ax.set_ylabel(r"$\lambda$")
 
 plt.show()
 

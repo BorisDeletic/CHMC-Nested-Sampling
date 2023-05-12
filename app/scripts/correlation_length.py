@@ -10,17 +10,17 @@ import os
 path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/phi4/correlation"
 
 R = 512
-R = 64
 
 file_list = sorted(os.listdir(path))
 files_searched = []
 
 print(file_list)
 correlation_samples = pd.DataFrame()
+mags = pd.DataFrame()
 
 def correlationLength(correlations):
-    #split half way as symmetric about L/2
-    log_correlations = np.log(np.abs(correlations[:len(correlations)//2]))
+
+    log_correlations = np.log(np.abs(correlations[:len(correlations)]))
 
     print(log_correlations)
 
@@ -40,15 +40,15 @@ def correlationLength(correlations):
     #ax.scatter(kappas, xis)
     ax.legend(loc="upper right")
 
-    ax.figure.savefig('log_corr.png')
+   # ax.figure.savefig('log_corr.png')
 
 
 
 fig, ax = plt.subplots()
 for file in file_list:
-    fname = file[:20]
+    fname = file[:22]
 
-    if fname in files_searched:
+    if fname in files_searched or fname == '.DS_Store':
         continue
     else:
         files_searched.append(fname)
@@ -74,17 +74,21 @@ for file in file_list:
 
     correlations /= posterior["c_0"].mean()
     correlation_samples[kappa] = correlations
-
-    ax.plot(correlations, label="k={:.5f}, m={:.2f}".format(kappa, mean_mag))
+    mags[kappa] = mean_mag
 
 #print(correlation_samples[:32])
 
+correlation_samples.to_csv("correlation_data.csv", index=False)
+
 correlationLength(correlation_samples)
+
+for kappa, correlation in correlation_samples.iterrows():
+    ax.plot(correlation[kappa], label="k={:.5f}, m={:.2f}".format(kappa, mags[kappa]))
 
 
 ax.legend(loc="upper right")
-#plt.show()
-ax.figure.savefig('correlations.png')
+plt.show()
+#ax.figure.savefig('correlations.png')
 
 
 
