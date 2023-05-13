@@ -32,7 +32,6 @@
 \parskip 1mm
 \parindent 2mm
 
-\input{macros.tex} %some personal macros
 
 \usepackage{hyperref}
 \hypersetup{%
@@ -54,7 +53,13 @@
 \affiliation{Astrophysics Group, Cavendish Laboratory, JJ Thomson Avenue, Cambridge CB3 0HE, UK}
 
 \begin{abstract}
-	The abstract should be very short, just a single paragraph. You should convince the reader that the work is important and interesting. Avoid the use of \LaTeX{} in the abstract, which can cause problems with SEO later on. If absolutely necessary however, you can use some inline maths such as $E=mc^2$.
+     Constrained Hamiltonian Monte Carlo is a novel algorithm for nested sampling in high dimensions by using gradients.
+     We introduce a set of novel methods which modify traditional Hamiltonian Monte Carlo to be computationally viable for
+     nested sampling.
+     The algorithm is applied to numerically solve $\phi^4$-theory, a simple model in lattice field theory which
+     exhibits a phase transition.
+     We further demonstrate the resistance of our method to topological freezing and critical slowing down at criticality.
+     In this work, we successfully measure observables on 512x512 sized lattices ($D=262,144$) using nested sampling.
 \end{abstract}
 
 \pacs{04.50.Kd, 04.60.-m, 04.20.Fy, or find your PACS numbers~\href{https://ufn.ru/en/pacs/}{here} and elsewhere.}
@@ -74,6 +79,19 @@
 \subfile{6lattice_field_theory}
 
 \subfile{7results}
+
+\subfile{8performance}
+
+\section{Conclusion}\label{sec:conclusion}
+     We have introduced a novel algorithm and implementation for Constrained Hamiltonian Monte Carlo for nested sampling.
+     We have found that drawing concepts from classical mechanics together with Bayesian inference provides a powerful
+     new algorithm which is very effectively applied to lattice field theory.
+     Further work can be done in parallelising the implementation to fully take advantage of compute clusters.
+     Using auto differentiation will also require further investigation to ensure no pathological behaviour arises for
+     complex likelihoods.
+     By exploiting gradients we believe it is possible to further apply this algorithm to a new class of
+     Bayesian problems previously inaccessible to machines.
+
 
 \bibliographystyle{apsrev4-1}
 \bibliography{/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/report/bibliography/references}

@@ -37,7 +37,21 @@
     to effectively sample in very high-dimensional parameter space, while being resistant to multimodal distributions
     and topological freezing.
 
-    Describe structure of report
-
+    Section~\ref{sec:bayesian_inference} of this paper is an introduction to Bayesian inference and lays out conventions
+    and definitions used.
+    In Section~\ref{sec:nested_sampling} we explain the nested sampling algorithm and comment on its
+    previous implementations.
+    Section~\ref{sec:hamiltonian_monte_carlo} introduces Hamiltonian Monte Carlo and describes how it works as a sampler.
+    In Section~\ref{sec:chmc} we introduce our novel algorithm which modifies HMC for use in nested sampling.
+    Section~\ref{sec:param_adaption} discusses the necessity for adaptive parameters and the describes the solutions
+    to achieve this.
+    We introduce the theoretical background of lattice field theory in Section~\ref{sec:LFT} and how it can be
+    solved computationally with Bayesian inference.
+    Then in Section~\ref{sec:numerical_results} we give the numerical results for $\phi^4$-theory
+    using our implementation.
+    Finally, a discussion of the performance and its comparison to other methods is given in Section~\ref{sec:performance}.
+    The appendix outlines further details such as the input parameters used~\ref{sec:param_table},
+    metric derivation~\ref{sec:metric_derivation}, C++ code structure~\ref{sec:code_implementation},
+    and auto differentation~\ref{sec:autodiff}.
 
 \end{document}

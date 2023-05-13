@@ -3,8 +3,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import os
+from scipy.optimize import curve_fit
 
-
+def exp(x, m):
+    return np.exp(-m * x)
 
 #path = "/rds/user/bd418/hpc-work/correlation"
 path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/phi4/correlation"
@@ -15,8 +17,6 @@ file_list = sorted(os.listdir(path))
 files_searched = []
 
 print(file_list)
-correlation_samples = pd.DataFrame()
-mags = pd.DataFrame()
 
 def correlationLength(correlations):
 
@@ -34,7 +34,7 @@ def correlationLength(correlations):
 
         xis.append(xi)
         kappas.append(kappa)
-        ax.plot(log_correlations[kappa], label="k={:.5f}, xi={:.3f}".format(kappa, xi))
+        ax.plot(log_correlations[kappa], label="k={:.5f}, xi={:.3f}".format(float(kappa), xi))
     #    ax.plot(kappa, , label="k={:.5f}, xi={:.3f}".format(kappa, xi))
 
     #ax.scatter(kappas, xis)
@@ -42,48 +42,67 @@ def correlationLength(correlations):
 
    # ax.figure.savefig('log_corr.png')
 
+def read_correlation_data():
+    correlation_samples = pd.DataFrame()
+   # mags = {}
+
+    for file in file_list:
+        fname = file[:22]
+
+        if fname in files_searched or fname == '.DS_Store':
+            continue
+        else:
+            files_searched.append(fname)
+
+        kappa = float(fname.split("_")[1])
+        l = fname.split("_")[2]
+
+        chains = os.path.join(path, fname)
+        samples = ns.read_chains(chains)
+        posterior = samples.posterior_points()
+
+        mean_mag = abs(posterior['mag']).mean()
+
+        print("meanmag = {}".format(mean_mag))
+        correlations = [posterior["c_0"].mean()]
+        for r in range(1, R):
+            c_key = "c_{}".format(r)
+
+            mean_correlation = posterior[c_key].mean() - mean_mag*mean_mag
+           # print(c_key)
+            #print(mean_correlation)
+            correlations.append(mean_correlation)
+
+        correlations /= posterior["c_0"].mean()
+        correlation_samples[kappa] = correlations
+        #mags[kappa] = mean_mag
+
+    correlation_samples.to_csv("correlation_data.csv", index=False)
+   # mag_df = pd.DataFrame(mags)
+   # mag_df.to_csv("mag_data.csv", index=False)
+
+
+#read_correlation_data()
+
+correlation_samples = pd.read_csv("correlation_data.csv")
+correlationLength(correlation_samples)
 
 
 fig, ax = plt.subplots()
-for file in file_list:
-    fname = file[:22]
 
-    if fname in files_searched or fname == '.DS_Store':
-        continue
-    else:
-        files_searched.append(fname)
+for kappa in correlation_samples.columns.values:
+    init_decay = correlation_samples[kappa][:50]
+    ax.plot(correlation_samples[kappa], label="k={:.6f}".format(float(kappa)))
 
-    kappa = float(fname.split("_")[1])
-    l = fname.split("_")[2]
+        # Fit the function to the data
+    popt, pcov = curve_fit(exp, init_decay.index.values, init_decay.values)
 
-    chains = os.path.join(path, fname)
-    samples = ns.read_chains(chains)
-    posterior = samples.posterior_points()
+    # Print the optimal parameters
+    m = popt[0]
+    x = np.arange(0, 50, 1)
 
-    mean_mag = abs(posterior['mag']).mean()
 
-    print("meanmag = {}".format(mean_mag))
-    correlations = []
-    for r in range(1, R):
-        c_key = "c_{}".format(r)
 
-        mean_correlation = posterior[c_key].mean() - mean_mag*mean_mag
-       # print(c_key)
-        #print(mean_correlation)
-        correlations.append(mean_correlation)
-
-    correlations /= posterior["c_0"].mean()
-    correlation_samples[kappa] = correlations
-    mags[kappa] = mean_mag
-
-#print(correlation_samples[:32])
-
-correlation_samples.to_csv("correlation_data.csv", index=False)
-
-correlationLength(correlation_samples)
-
-for kappa, correlation in correlation_samples.iterrows():
-    ax.plot(correlation[kappa], label="k={:.5f}, m={:.2f}".format(kappa, mags[kappa]))
 
 
 ax.legend(loc="upper right")

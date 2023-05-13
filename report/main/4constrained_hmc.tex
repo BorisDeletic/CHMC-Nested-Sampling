@@ -21,17 +21,17 @@
     technique for generating new live points in nested sampling.
     As described conceptually by Skilling~\cite{GMC} \& Betancourt~\cite{Betancourt_NS_CHMC}, reflecting
     off the iso-likelihood contours ensures that proposed samples are within the constrained distribution.
-    When the next position $\mathbf{x}$ in the trajectory would be below the likelihood constraint, we reflect the
-    momentum off the boundary with normal $n$
+    When the next position $\theta_t$ in the trajectory would be below the likelihood constraint, we reflect the
+    momentum off the boundary with normal $\mathbf{n}$
     \begin{equation}\label{eq:reflection}
     \begin{aligned}
-        \mathbf{n} &= - \nabla \log{\mathcal{L}}, \\
+        \mathbf{n} &= - \nabla \log{\pi(\theta)}, \\
         \mathbf{n_R} &= M^{-1} \mathbf{n}, \\
         \mathbf{p'} &= \mathbf{p} - 2 \frac{ \mathbf{p} \cdot \mathbf{n_R} }{\mathbf{n} \cdot \mathbf{n_R}}. \mathbf{n}
     \end{aligned}
     \end{equation}
 
-    \begin{figure}[t!]
+    \begin{figure}[h!]
         \center
         \includegraphics[width=\linewidth]{../figures/ConstrainedHMC}
         \caption{
@@ -44,8 +44,9 @@
         }\label{fig:constrainedhmc}
     \end{figure}
 
-    At iteration $i$ of nested sampling, the point with the lowest likelihood $\mathcal{L}_i$ is deleted and used to
-    seed the generation of the next sample.
+    This sampling method can now be used for nested sampling, by using the point with the lowest
+    likelihood at iteration $i$ with likelihood $\mathcal{L}_i$ to seed the generation of the next sample subject to
+    the constraint $\mathcal{L} > \mathcal{L}_i$.
     Implementing this algorithm in practice poses new challenges with discretization, clustering, and parameter adaption.
     We propose a novel set of additional algorithms which are essential for a working implementation of
     Constrained HMC (CHMC).
@@ -56,7 +57,7 @@
     While this scenario is uncommon for smooth boundaries, over many iterations it is likely that at one time,
     no valid reflection will be found, causing the algorithm to crash.
 
-    \begin{figure}[t!]
+    \begin{figure}[h!]
         \center
         \includegraphics[width=\linewidth]{../figures/EpsilonHalving}
         \caption{
@@ -83,12 +84,12 @@
             \STATE \COMMENT{Momentum reflection}
             \STATE $\mathbf{p} \gets \mathbf{p} - 2 \left(\mathbf{p} \cdot \hat{ \mathbf{n} } \right) \hat{ \mathbf{n} }$
             \STATE
-            \STATE $ \mathbf{x_{new}} \gets \mathbf{x} + \epsilon_0 \mathbf{p}$
+            \STATE $ \theta_{new} \gets \theta + \epsilon_0 \mathbf{p}$
             \STATE $ \epsilon' \gets \epsilon_0$
             \STATE
-            \WHILE{ $\mathcal{L}(\mathbf{x_{new}}) < \mathcal{L}_0$ }
+            \WHILE{ $\mathcal{L}(\theta_{new}) < \mathcal{L}_0$ }
                 \STATE $\epsilon' \gets \epsilon' / 2$
-                \STATE $ \mathbf{x_{new}} \gets \mathbf{x} + \epsilon' \mathbf{p}$
+                \STATE $ \theta_{new} \gets \theta + \epsilon' \mathbf{p}$
             \ENDWHILE
             \STATE
             \STATE $\mathbf{x} \gets \mathbf{x_{new}}$

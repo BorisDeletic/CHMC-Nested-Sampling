@@ -16,7 +16,7 @@
     complex distributions, which is currently unmatched by other MCMC algorithms.
 
 \subsection{Metropolis-Hastings Algorithm}\label{subsec:metropolis_hastings}
-    HMC is a subclass of the Metropolis-Hastings algorithm~\cite{Metropolis_OG}, a MCMC which comprises of two
+    HMC is a subclass of the Metropolis-Hastings algorithm~\cite{Metropolis_OG}, a MCMC method which comprises of two
     steps: a proposal and a correction.
     Given an initial state $\theta$, a new sample $\theta'$ is proposed using some stochastic process.
     The proposal is then corrected to ensure detailed-balance so the Markov-Chain converges to the
@@ -26,7 +26,7 @@
         A(\theta' | \theta) = \min \left(1, \frac{Q(\theta | \theta') \pi(\theta') }{Q(\theta' | \theta) \pi(\theta) } \right),
     \end{equation}
     where $Q(\theta | \theta')$ is the probability distribution of the proposal function.
-    All methods we will explore have symmetric proposal distributions $Q(\theta | \theta') = Q(\theta; | \theta)$,
+    All methods we will explore have symmetric proposal distributions $Q(\theta | \theta') = Q(\theta' | \theta)$,
     such that the acceptance probability reduces to
     \begin{equation}\label{eq:metropolis}
         A(\theta' | \theta) = \min \left(1, \frac{\pi(\theta') }{\pi(\theta) } \right).
@@ -66,17 +66,17 @@
         H = \frac{p^2}{2m} + U(q).
     \end{aligned}
     \end{equation}
-    Given initial conditions $(q_0, p_0)$, we integrate the equations of motion~\ref{eq:hamiltonian_motion} to find
+    Given initial conditions $(q_0, p_0)$, we integrate the equations of motion~\eqref{eq:hamiltonian_motion} to find
     the trajectory of the particle.
 
 \subsection{HMC Algorithm}\label{subsec:hmc_algorithm}
     HMC derives its strengths from incorporating the use of Hamiltonian dynamics to generate new samples in the Markov-Chain.
     The main idea is to treat the parameters $\theta$ as a position and introduce an auxiliary momentum variable $p$.
     Then, treating the target distribution as a potential energy, we can navigate the landscape by solving Hamilton's
-    equations~\ref{eq:hamiltonian_motion} and integrating the trajectory from $(\theta_0, p_0)$ to a new point
+    equations~\eqref{eq:hamiltonian_motion} and integrating the trajectory from $(\theta_0, p_0)$ to a new point
     $(\theta_1, p_1)$.
-    Finally, a correction step is performed as described~\ref{eq:metropolis_hastings} and the new sample is accepted
-    with a given probability.
+    Finally, a correction step is performed as described in~\eqref{eq:metropolis_hastings} and the new sample is accepted
+    to the Markov-Chain with a given probability.
 
     Suppose we are trying to sample from a target distribution $\pi(\theta)$, the Hamiltonian for HMC is defined as
     \begin{equation}\label{eq:hmc_hamiltonian}
@@ -88,16 +88,15 @@
     Intuitively, this treats the Markov-Chain point as a $D$ dimensional particle moving through a
     potential well $U(\theta) = -\log \pi(\theta)$.
 
-    For each Hamiltonian, the momentum is stochastically drawn from a normal distribution with
-    standard deviation $M$, $\mathbf{p} \sim \mathcal{N}(0, \sigma = M)$.
+    For each Hamiltonian, the momentum is stochastically drawn from a normal distribution,
+    $\mathbf{p} \sim \mathcal{N}(0, \sigma = M)$.
     The metric therefore defines the region of phase space HMC explores and is an important input parameter to
     tune for effective sampling exploration~\cite{betancourt2016energymetric}.
 
-    Once the Hamiltonian is obtained, the equations of motion~\ref{eq:hamiltonian_motion} are numerically integrated
-    with step size $\epsilon$ and a fixed number of steps $L$ to give a new
-    sample $(\theta_0, p_0)$ \rightarrow $(\theta_1, p_1)$.
+    Once the Hamiltonian is obtained, the equations of motion~\eqref{eq:hamiltonian_motion} are numerically integrated
+    to give a new sample $(\theta_0, p_0)$ \rightarrow $(\theta_1, p_1)$.
     In order to solve the equations of motion we therefore rely on the \emph{gradient} of the
-    distribution $\nabla \pi(\theta)$.
+    distribution $\nabla \log \pi(\theta)$.
     This often presents a practical difficult as not many distributions have easily accessible gradients, however this
     can be alleviated using \emph{auto differentiation} as discussed further in~\ref{sec:autodiff}~\cite{carpenter2015stan}.
 
@@ -108,10 +107,10 @@
     remains symmetric.
     Under T-symmetry where all momenta are reversed $\mathbf{p} \rightarrow -\mathbf{p}$, the equations of motion are
     theoretically time-reversible, therefore the probability of generating any two points is
-    symmetric $(\theta_0, q_0) \leftrightarrow (\theta_1, q_1)$.
+    symmetric $(\theta_0, p_0) \leftrightarrow (\theta_1, p_1)$.
 
     In practice, not all numerical solvers preserve time-reversibility, and we must take care which algorithm to use.
-    One such class of solvers is \emph{symplectic integrators}, which does not
+    One such class of solvers is \emph{symplectic integrators}, which do not
     maintain energy conservation, but instead guarantees time-reversibility.
 
     The leapfrog integrator is a symplectic integrator and proves an attractive candidate due to its simplicity.
@@ -148,18 +147,18 @@
 
     The step size $\epsilon$ affects the accuracy of numerical integration and therefore the change in energy between the initial
     and final point $\Delta H = H(\theta_1, q_1)) - H(\theta_0, q_0))$.
-    Choosing $\epsilon$ to be too large will result in high rejection rates during the correction step, causing
-    inefficient sampling in the Markov-Chain, while an $\epsilon$ too small will lead to longer integration
-    times $L\epsilon$ wasting computational resources.
+    Choosing $\epsilon$ to be too large will result in high rejection rates during the correction step,
+    while an $\epsilon$ too small will lead to longer integration
+    time ($L\epsilon$), both wasting computational resources.
 
     The path length $L$ with $\epsilon$ defines the integration time $L\epsilon$ of the numerical integration.
-    It is important for the integration time to be sufficient such that the proposal point is sufficiently decorrelated
+    It is important for the integration time to be long enough such that the proposal point is sufficiently decorrelated
     from the initial point.
 
     Considering the Hamiltonian from an energy perspective $H(E)$, the metric defines the distribution of energy level
     sets which HMC explores.
-    It is important for the metric to be properly chosen such that the momenta drawn are not too large or small and
-    adequately explore the target distribution level sets.
+    The metric must be properly chosen such that the momenta drawn adequately explore the target distribution level
+    sets~\cite{betancourt2016energymetric}.
 
 \subsection{Critical Slowing Down}\label{subsec:critical_slowing}
     For a well functioning MCMC algorithm, the sequence of samples in the Markov-Chain must be uncorrelated and
@@ -167,7 +166,7 @@
     Define the autocorrelation of an observable $\mathcal{O}$ is defined as
     \begin{equation}\label{eq:autocorrelation}
     \begin{aligned}
-        C_{\mathcal(O)}(\tau) = \langle \mathcal{O}(t) \mathcal{O}(t + \tau) \rangle,
+        C_{\mathcal{O}}(\tau) = \langle \mathcal{O}(t) \mathcal{O}(t + \tau) \rangle,
     \end{aligned}
     \end{equation}
     where $t$ denotes the discrete time of the Markov-Chain, and $\langle \cdot \rangle$ denotes the time average.
@@ -176,7 +175,7 @@
     and is defined as
     \begin{equation}\label{eq:autocorrelation_time}
     \begin{aligned}
-        \tau_{\mathcal{O}, \text{int}} = \frac{1}{C_{\mathcal(O)}(0)} \sum_{t=1}^T C_{\mathcal{O}}(t).
+        \tau_{\mathcal{O}, \text{int}} = \frac{1}{C_{\mathcal{O}}(0)} \sum_{t=1}^T C_{\mathcal{O}}(t).
     \end{aligned}
     \end{equation}
 

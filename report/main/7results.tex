@@ -8,8 +8,10 @@
 \begin{document}
 
 \section{Numerical Results}\label{sec:numerical_results}
-    We implemented our algorithm as an optimised C++ library in order to run large scale, high dimensional tests.
-    $\phi^4$-theory was given as the likelihood function as defined in section~\ref{subsec:nested-sampling-phi4}.
+    The CHMC for nested sampling algorithm was implemented as an optimised C++ library in order to run large scale,
+    high dimensional tests.
+    We provide a novel application of nested sampling to $\phi^4$-theory to perform experiments.
+    The $\phi^4$ action was given as the likelihood function as defined in section~\ref{subsec:nested-sampling-phi4}.
     Details about the implementation can be found in appendix~\ref{sec:code_implementation}.
     All results were gathered using a single core on the CSD3 compute cluster.
 
@@ -91,23 +93,14 @@
     Using $n_{\text{live}}=200$ sped up the computation time to average $5,000$ iterations per lattice and still
     provided high resolution results.
 
-    With a fixed $\lambda=0.03$, we give the measured correlation functions for a range
+    With fixed $\lambda=0.03$, we show the measured correlation functions for a range
     of $\kappa$ up to the critical point.
 
 \begin{figure}[t!]
     \center
     \includegraphics[width=\linewidth]{../figures/correlations_n64}
     \caption{
-        $\kappa$ vs $\lambda$ phase diagram for 32x32 lattice $\phi^4$-theory.
-        For $\kappa \lesssim 0.125$, we see the expression of the disordered phase with $\langle M \rangle = 0$.
-        The second-order phase transition is apparent along this boundary, as $\langle M \rangle$ grows suddenly
-        across it. \\
-        In the ordered phase ($\kappa \gtrsim 0.125$), the mean magnetisation is strongly dependent on the field
-        coupling $\lambda$.
-        With a weak coupling, the kinetic energy dominates and the field seperates, leading to
-        large $\langle M \rangle$.
-        We also note that $\lambda$ has a minor influence on the exact critical point in $\kappa$, with the
-        critical line having a slight negative slope.
+        64x64 lattice correlation functions.
     }\label{fig:correlation_functions}
 \end{figure}
 
