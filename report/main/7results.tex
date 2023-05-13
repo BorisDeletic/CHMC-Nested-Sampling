@@ -12,7 +12,9 @@
     high dimensional tests.
     We provide a novel application of nested sampling to $\phi^4$-theory to perform experiments.
     The $\phi^4$ action was given as the likelihood function as defined in section~\ref{subsec:nested-sampling-phi4}.
-    Details about the implementation can be found in appendix~\ref{sec:code_implementation}.
+
+    All input parameter values are listed in appendix~\ref{sec:param_table} and full details about the implementation
+    can be found in appendix~\ref{sec:code_implementation}.
     All results were gathered using a single core on the CSD3 compute cluster.
 
 \subsection{Phase Transitions}\label{subsec:phase_transition}
@@ -21,12 +23,11 @@
 
     We use a 32x32 lattice ($D=1024$) and set $n_{\text{live}}=500$ with precision criteria $p=0.1$.
     For this setup, the average number of nested sampling iterations to converge is $i_{\max} \approx 15,000$.
-    The full details of parameter setup can be found in~\eqref{sec:param_table}.
 
     We vary the action~\eqref{eq:phi4_action} across the range $\kappa \in (0, 0.3), \quad \lambda \in (0, 0.03)$ for
     a total of $1,000$ unique actions, and calculate $\langle M \rangle$ for each one to construct a phase diagram.
 
-    \begin{figure}[t!]
+    \begin{figure}[h!]
         \center
         \includegraphics[width=\linewidth]{../figures/PhaseDiagram}
         \caption{
@@ -52,13 +53,13 @@
     For example, the renormalised mass parameter and correlation length can both be measured with correlation
     functions~\cite{maas2020lattice}.
 
-    In the context of a Euclidean $\phi^4$ theory, we define the equal-time correlation functions as
+    In the context of a Euclidean $\phi^4$ theory, we define the spatial (equal-time) correlation functions as
     \begin{equation}\label{eq:full_correlation_function}
     C(x_1, x_2) = \langle \phi(x_1) \phi(x_2) \rangle,
     \end{equation}
-    where $\langle . \rangle$ denotes the ensemble average~\eqref{eq:mcmc_observable}.
+    where $\langle . \rangle$ denotes the Markov-Chain ensemble average~\eqref{eq:mcmc_observable}.
 
-    Exploiting the translation and rotational symmetry of the $\phi^4$ action, we can fully characterise the two-point
+    Exploiting the translational and rotational symmetry of the $\phi^4$ action, we can fully characterise the two-point
     correlation function in terms of the distance between two points $r$
     \begin{equation}\label{eq:correlation_function}
     C(r) = \langle \phi(x) \phi(x + r) \rangle,
@@ -66,8 +67,8 @@
     where we now also average over all lattice points $x$.
 
     Directly calculating correlation functions numerically is prohibitively expensive, requiring $\mathcal{O}(N^3)$
-    operations for each iteration.
-    Therefore, we use a method of Fourier Transform and exploit the convolution theorem to speed up
+    operations for each microstate.
+    Therefore, we use a method of fourier transform and convolution theorem to speed up
     calculation~\cite{Ruge_1994}.
 
     In the continuous limit $N \rightarrow \infty$ we can write the correlation function for a single microstate at
@@ -86,7 +87,7 @@
 
     Just below the critical point, the correlation function decays exponentially as $C(r) \sim \exp(-r / \xi)$,
     where $\xi$ is defined as the correlation length.
-    At the critical point, the correlation length diverges and becomes infinite above the phase transition.
+    At the critical point, the correlation length diverges and becomes infinite in the ordered phase.
 
     We measure the correlation functions on a large 512x512 lattice ($D=262,144$) to minimise finite-size effects which
     will cause significant errors for smaller lattices.
@@ -96,7 +97,7 @@
     With fixed $\lambda=0.03$, we show the measured correlation functions for a range
     of $\kappa$ up to the critical point.
 
-\begin{figure}[t!]
+\begin{figure}[h!]
     \center
     \includegraphics[width=\linewidth]{../figures/correlations_n64}
     \caption{

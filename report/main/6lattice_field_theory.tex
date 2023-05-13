@@ -26,10 +26,10 @@
     We begin by discretizing space-time, such that the field $\phi(x)$ lives on a finite lattice rather than in a
     continuous space.
     However, this still leaves a sum over an infinite number of possible field configurations.
-    In order to computationally measure observables of a field theory system, we must employ MCMC methods to estimate
-    the path integral.
+    In order to computationally measure observables of a field theory system, we must employ MCMC methods to sample
+    a number of field configurations and estimate the path integral.
 
-    In order to interpret the field weight factor $e^{iS[\phi]}$ as a probability for a given configuration,
+    To interpret the field weight factor $e^{iS[\phi]}$ as a probability for a given configuration,
     we can perform a Wick-rotation by redefining time as imaginary~\cite{rothe2005lattice}.
     \begin{equation}\label{eq:wick_rotation}
     \begin{aligned}
@@ -40,12 +40,13 @@
     where from now on we only refer to the Euclidean action as $S$.
 
     This factor is now a well-defined probability distribution as it is bounded and normalised
-    $P[\phi] \equiv \frac{1}{Z} e^{-S[\phi]} > 0$.
-    Therefore, it is possible to apply MCMC methods to sample from this distribution and calculate observables
+    $P[\phi] \equiv e^{-S[\phi]} / \mathcal{Z} > 0$.
+    Therefore, it is possible to apply MCMC methods to sample from this distribution and calculate observables.
+    Given a proposal field $\phi'$ from initial field $\phi$, we can sample using Metropolis algorithm~\eqref{eq:metropolis}
     with an acceptance probability
     \begin{equation}\label{eq:accept_prob_lft}
     \begin{aligned}
-        A(\phi'|\phi) = \min \left(1, \frac{\exp(-S[\phi'])}{\exp(-S[\phi])} \right),
+        A(\phi'|\phi) = \min \left(1, \frac{\exp(-S[\phi'])}{\exp(-S[\phi])} \right).
     \end{aligned}
     \end{equation}
 
@@ -62,10 +63,10 @@
     the field value at lattice site $x$~\cite{maas2020lattice}. $\kappa$ is the kinetic coupling for neighbour interactions and $\lambda$ is the
     coupling strength of the interaction.
 
-    $\phi^4$ theory lives in the same universality class as the 2D Ising model, and we recover the Ising model
+    $\phi^4$ theory lives in the same universality class as the 2D Ising model, and we fully recover the Ising model
     in the limit $\lambda \rightarrow \infty$.
-    As such, the model exhibits a second-order phase transition in the $\kappa, \lambda$ parameters, associated
-    with the breaking of $\mathcal{Z}_2$ symmetry.
+    As such, the model exhibits a second-order phase transition in the $\kappa$ \& $\lambda$ parameters, associated
+    with the breaking of $Z_2$ symmetry.
 
     The order parameter which undergoes a phase transition is the mean magnetization, defined as the normalised
     expectation of absolute field value
@@ -90,10 +91,10 @@
     \end{aligned}
     \end{equation}
     and well-behaved.
-    Furthermore, as we approach the critical point, this model exhibits \emph{critical slowing down}, allowing us to
+    Furthermore, this model exhibits \emph{critical slowing down}, allowing us to
     test the algorithm's resilience to this phenomenon.
 
-    \begin{figure}[t!]
+    \begin{figure}[h!]
         \centering
         \begin{subfigure}{\linewidth}
             \centering

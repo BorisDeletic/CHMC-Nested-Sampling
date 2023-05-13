@@ -7,15 +7,26 @@
 % Document
 \begin{document}
 
-    \appendix
-    \section{Constrained HMC Parameter Values}\label{sec:param_table}
+\appendix
+\section{Constrained HMC Parameter Values}\label{sec:param_table}
     The below table shows the values used for all input parameters into CHMC as defined in the paper.
     $\delta = 0.8$~\cite{MCMChamiltonian}
 
-    \section{Metric Adaption with the Equipartition Theorem}\label{sec:metric_derivation}
+\section{Code Implementation}\label{sec:code_implementation}
+
+\section{Auto Differentiation}\label{sec:autodiff}
+    Auto differentiation is a modern approach to numerically calculating gradients.
+    The essential idea is that a compiler can break down a program to its base operations and automatically apply the
+    chain-rule repeatedly to calculate its gradient.
+    Recent advancements in machine learning have greatly increased the demand for auto differentiation tools and now
+    highly optimised frameworks exist to calculate gradients for any code base.
+
+    One such example is
+
+\section{Metric Adaption with the Equipartition Theorem}\label{sec:metric_derivation}
     Consider a $D$ dimensional Hamiltonian with kinetic and potential energy
     \begin{equation}\label{eq:hamiltonian_appendix}
-        H = \frac{1}{2} \mathbf{p}^T M^{-1} \mathbf{p} + U,
+    H = \frac{1}{2} \mathbf{p}^T M^{-1} \mathbf{p} + U,
     \end{equation}
     with momentum distributed as $\mathbf{p} \sim \mathcal{N}(0, \sigma=M)$.
     For simplicity, we use a scaled unit metric $M = \alpha \mathbb{1}$.
@@ -34,18 +45,8 @@
     \end{equation}
     Which gives the result for the metric
     \begin{equation}\label{eq:metric_adaption_appendix}
-        M = \frac{2}{D} \sqrt{\mathrm{Var}[U]} \mathbb{1},
+    M = \frac{2}{D} \sqrt{\mathrm{Var}[U]} \mathbb{1},
     \end{equation}
 
-    \section{Code Implementation}\label{sec:code_implementation}
-
-    \section{Auto Differentiation}\label{sec:autodiff}
-    Auto differentiation is a modern approach to numerically calculating gradients.
-    The essential idea is that a compiler can break down a program to its base operations and automatically apply the
-    chain-rule repeatedly to calculate its gradient.
-    Recent advancements in machine learning have greatly increased the demand for auto differentiation tools and now
-    highly optimised frameworks exist to calculate gradients for any code base.
-
-    One such example is
 
 \end{document}
