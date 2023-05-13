@@ -56,19 +56,38 @@ class LikelihoodPlot():
                        angles='xy', scale_units='xy', pivot='tail')
 
 
-path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/phi4/"
+def plot_phi4():
+    path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/phi4/"
 
-likelihood = pd.read_csv(path + "isocontours.dat", delimiter=" ")
-gradient = pd.read_csv(path + "gradient.dat", delimiter=" ")
+    likelihood = pd.read_csv(path + "isocontours.dat", delimiter=" ")
+    gradient = pd.read_csv(path + "gradient.dat", delimiter=" ")
 
-contours = [-100, -40, -10, 0, 2]
-plot = LikelihoodPlot()
+    contours = [-100, -40, -10, 0, 2]
+    plot = LikelihoodPlot()
 
-plot.plot_gradient(gradient)
-plot.plot_contours(likelihood, contours)
-plot.ax.set_title(r"$\phi^4$-Theory Likelihood and Gradient" + "\n(Disordered Phase)")
-plot.ax.set_xlabel(r"$\phi_i$")
-plot.ax.set_ylabel(r"$\phi_j$")
+    plot.plot_gradient(gradient)
+    plot.plot_contours(likelihood, contours)
+    plot.ax.set_title(r"$\phi^4$-Theory Likelihood and Gradient" + "\n(Disordered Phase)")
+    plot.ax.set_xlabel(r"$\phi_i$")
+    plot.ax.set_ylabel(r"$\phi_j$")
 
-plt.show()
+    plt.show()
 
+def plot_rosenbrock():
+    path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-debug/"
+
+    likelihood = pd.read_csv(path + "isocontours.dat", delimiter=" ")
+    gradient = pd.read_csv(path + "gradient.dat", delimiter=" ")
+
+    contours = [10, 20, 30]
+    plot = LikelihoodPlot()
+
+    plot.plot_gradient(gradient)
+    plot.plot_contours(likelihood, contours)
+    plot.ax.set_title(r"Rosenbrock Function - Auto Gradient")
+    plot.ax.set_xlabel(r"$x_1$")
+    plot.ax.set_ylabel(r"$x_2$")
+
+    plt.show()
+
+plot_rosenbrock()

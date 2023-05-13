@@ -1,27 +1,27 @@
 cmake_minimum_required(VERSION 3.9)
 
-set(USE_ENZYME TRUE)
-
-#set(CMAKE_CXX_STANDARD 20)
-#set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-
 find_package(Enzyme REQUIRED)
-
 message("LLVM Version: " ${Enzyme_LLVM_VERSION_MAJOR})
 message("Found LLVM at: " ${Enzyme_LLVM_BINARY_DIR})
 
 ## C and C++ Compilers can only be configured before project(...)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_C_COMPILER "${Enzyme_LLVM_BINARY_DIR}/bin/clang")
 set(CMAKE_CXX_COMPILER "${Enzyme_LLVM_BINARY_DIR}/bin/clang++")
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
+set(CMAKE_MODULE_PATH
+        ${CMAKE_MODULE_PATH}
+        "${PROJECT_SOURCE_DIR}/cmake")
+
 
 
 project(CHMC_Nested_Sampling)
 
 
+# Find Enzyme Package
 find_package(Enzyme REQUIRED COMPONENTS ClangEnzyme)
 
 get_target_property(ClangEnzyme ClangEnzyme-${Enzyme_LLVM_VERSION_MAJOR} LOCATION)
@@ -30,13 +30,6 @@ message("Found Enzyme at: " ${ClangEnzyme})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
     -Xclang -load -Xclang ${ClangEnzyme} -O2 -fno-vectorize -fno-unroll-loops")
 
-
-#$<$<CONFIG:RELEASE>:-Ofast>
-add_compile_options(
-        $<$<CONFIG:RELEASE>:-funroll-loops>
-        $<$<CONFIG:DEBUG>:-O0>
-        $<$<CONFIG:DEBUG>:-ggdb3>
-)
 
 
 add_subdirectory(extern/eigen)
@@ -59,13 +52,11 @@ target_include_directories(CHMC_Nested_Sampling PUBLIC
         include
         include/CHMC
         app
+        enzyme
         )
 
 target_link_libraries(CHMC_Nested_Sampling
         CHMC_NS_Lib
         EnzymeLikelihoods
         )
-
-target_include_directories(CHMC_Nested_Sampling PUBLIC
-enzyme)
 

@@ -3,16 +3,31 @@
 
 const double RosenbrockLikelihood::LogLikelihood(const Eigen::VectorXd& theta)
 {
-    double loglikelihood = - var.log().sum() - var.size() * std::log(2 * M_PI) / 2;
+    double* data = const_cast<double *>(theta.data());
+    double logL = Likelihood::likelihood(data, mDim, A);
 
-    loglikelihood -= ((theta.array() - mean) / var).pow(2).sum() / 2;
-    return loglikelihood;
+    return logL;
 };
 
 
 const Eigen::VectorXd RosenbrockLikelihood::Gradient(const Eigen::VectorXd& theta)
 {
-    return - ((theta.array() - mean) / var.pow(2)).matrix();
+    double* d_theta = (double*) malloc(mDim * sizeof(double));
+    memset(d_theta, 0, mDim * sizeof(double));
+
+    double* data = const_cast<double *>(theta.data());
+
+    Likelihood::gradient(data, d_theta, mDim, A);
+
+    Eigen::VectorXd grad(mDim);
+
+    for (int i = 0; i < mDim; i++) {
+        grad[i] = d_theta[i];
+    }
+
+    free(d_theta);
+
+    return grad;
 };
 
 

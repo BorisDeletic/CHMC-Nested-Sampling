@@ -1,5 +1,7 @@
 #include "likelihoods/Gaussian.h"
 #include "likelihoods/TopologicalTrap.h"
+#include "likelihoods/Rosenbrock.h"
+#include "LikelihoodPlots.h"
 #include "Logger.h"
 #include "RejectionSampler.h"
 #include "CHMC.h"
@@ -75,7 +77,10 @@ int main() {
     //generateLikelihoodPlot();
  //   runGaussian();
  //   runTopoTrap();
+    RosenbrockLikelihood rosenbrock = RosenbrockLikelihood(4, 10, 5);
+    generateLikelihoodPlot(rosenbrock, {-1, 1}, {-1, 1});
 }
+
 
 
 

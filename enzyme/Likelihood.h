@@ -7,8 +7,8 @@
 
 namespace Likelihood
 {
-    double likelihood(double* theta, int size);
-    double gradient(double* theta, double* d_theta, int size);
+    double likelihood(double* theta, int size, double A);
+    double gradient(double* theta, double* d_theta, int size, double A);
 };
 
 //double likelihood(double* theta, int n);
