@@ -5,13 +5,13 @@ import numpy as np
 import os
 from scipy.optimize import curve_fit
 
-def exp(x, m):
-    return np.exp(-m * x)
+def exp(x, a, m, c):
+    return a * np.exp(-m * x) + c
 
 #path = "/rds/user/bd418/hpc-work/correlation"
 path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/phi4/correlation"
 
-R = 512
+R = 256
 
 file_list = sorted(os.listdir(path))
 files_searched = []
@@ -20,7 +20,7 @@ print(file_list)
 
 def correlationLength(correlations):
 
-    log_correlations = np.log(np.abs(correlations[:len(correlations)]))
+    log_correlations = np.log(np.abs(correlations[:len(correlations)//2]))
 
     print(log_correlations)
 
@@ -64,7 +64,8 @@ def read_correlation_data():
         mean_mag = abs(posterior['mag']).mean()
 
         print("meanmag = {}".format(mean_mag))
-        correlations = [posterior["c_0"].mean()]
+#        correlations = [posterior["c_0"].mean()]
+        correlations = []
         for r in range(1, R):
             c_key = "c_{}".format(r)
 
@@ -82,7 +83,7 @@ def read_correlation_data():
    # mag_df.to_csv("mag_data.csv", index=False)
 
 
-#read_correlation_data()
+read_correlation_data()
 
 correlation_samples = pd.read_csv("correlation_data.csv")
 correlationLength(correlation_samples)
@@ -91,20 +92,26 @@ correlationLength(correlation_samples)
 fig, ax = plt.subplots()
 
 for kappa in correlation_samples.columns.values:
-    init_decay = correlation_samples[kappa][:50]
+    init_period = 64
+    init_decay = correlation_samples[kappa][:init_period]
     ax.plot(correlation_samples[kappa], label="k={:.6f}".format(float(kappa)))
 
         # Fit the function to the data
     popt, pcov = curve_fit(exp, init_decay.index.values, init_decay.values)
 
     # Print the optimal parameters
-    m = popt[0]
-    x = np.arange(0, 50, 1)
+    a, m, c = popt[0], popt[1], popt[2]
+    print(a,m,c)
+    x = np.arange(0, init_period, 1)
+    y = exp(x, a, m, c)
+    ax.plot(x, y)
+
+    break
 
 
 
 
-
+ax.set_title('Lattice = ' + str(R))
 ax.legend(loc="upper right")
 plt.show()
 #ax.figure.savefig('correlations.png')
