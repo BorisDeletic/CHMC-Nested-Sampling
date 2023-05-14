@@ -32,6 +32,7 @@
 \parskip 1mm
 \parindent 2mm
 
+\input{macros.tex} %some personal macros
 
 \usepackage{hyperref}
 \hypersetup{%
@@ -90,6 +91,7 @@
      Further work can be done in parallelising the implementation to fully take advantage of compute clusters.
      Using auto differentiation will also require further investigation to ensure no pathological behaviour arises for
      complex likelihoods.
+
      By exploiting gradients we believe it is possible to use this algorithm for a new class of
      Bayesian problems previously inaccessible to machines.
 

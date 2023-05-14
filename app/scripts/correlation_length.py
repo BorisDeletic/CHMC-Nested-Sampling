@@ -11,7 +11,7 @@ def exp(x, a, m, c):
 #path = "/rds/user/bd418/hpc-work/correlation"
 path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/phi4/correlation"
 
-R = 256
+R = 128
 
 file_list = sorted(os.listdir(path))
 files_searched = []
@@ -106,7 +106,6 @@ for kappa in correlation_samples.columns.values:
     y = exp(x, a, m, c)
     ax.plot(x, y)
 
-    break
 
 
 
