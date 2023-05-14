@@ -28,7 +28,7 @@ params = {
     'ytick.major.size': 6,
     'xtick.minor.size': 4,
     'ytick.minor.size': 4,
-    'axes.grid': False,
+    'axes.grid': True,
     'grid.alpha': 0.5,
     'grid.linewidth': 1,
     'image.cmap': 'viridis',

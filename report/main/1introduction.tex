@@ -13,9 +13,11 @@
     \section{Introduction}\label{Introduction}
     Since the inception of Lattice Field Theory (LFT), numerical Monte-Carlo methods have been used with great success to
     study complex systems.
-    The dominant algorithm used for simulations in LFT over the past decades has been Hamiltonian Monte Carlo
+    The dominant algorithm used for simulations in LFT~\cite{borsanyi2021leading} over the past decades has been
+    Hamiltonian Monte Carlo
     (HMC)~\cite{HMC_Duane}, a Markov-Chain Monte-Carlo (MCMC) method used for \emph{parameter estimation}.
-    HMC has since found wide applications throughout a number of different fields in statistics.
+    HMC has since found wide applications throughout a number of different fields in
+    statistics~\cite{girolami2011riemann, kramer2014hamiltonian}.
 
     To recover the physical behaviour of a lattice system, the continuum limit is taken as the system approaches its
     critical point.
@@ -23,16 +25,16 @@
     \emph{topological freezing}~\cite{Hasenbusch_2018}, where all samples proposed by the algorithm are highly
     autocorrelated.
     Critical slowing down is a significant problem in LFT and Lattice QCD, with large efforts devoted to combating
-    it's effects~\cite{Pawlowski_2020,Jansen_MLMC_2020,Albergo_Flow_LFT_2019, Hackett:2021idh,Abbott:2022hkm,Albergo:2022qfi}.
+    it's effects~\cite{Pawlowski_2020,Jansen_MLMC_2020,Albergo_Flow_LFT_2019, Hackett:2021idh,Abbott:2022hkm,Albergo:2022qfi,gao2017efficient}.
 
-    A different approach to parameter estimation is with Bayesian inference.
+    A different approach to parameter estimation is with Bayesian inference~\cite{van2021bayesian}.
     A contemporary method for Bayesian inference which has found many applications in astrophysics and cosmology
     is with nested sampling~\cite{Skilling2006,Handley_polychord}.
     Nested sampling offers several advantages to classic MCMC algorithms, including simultaneous calculation of model
-    \emph{evidence}, as well as dealing effectively with multimodal distributions.
+    \emph{evidence}, as well as dealing effectively with multimodal distributions~\cite{Skilling2006}.
 
     Current implementations of nested sampling scale poorly with number of dimensions~\cite{Feroz_2009, Handley_2015},
-    with current state-of-the-art solutions limited to around $D \approx 100$ dimensions.
+    with current state-of-the-art solutions limited to around $D \approx 100$ dimensions~\cite{NS_Review_2022}.
     This quickly renders nested sampling ineffective for solving problems in LFT, maxing out at $10 \times 10$ sized
     lattices which are too small to extract observables.
 
@@ -46,7 +48,7 @@
     a computer.
 
     Furthermore, manually supplying gradients of likelihoods can be difficult for large models such as in
-    Cosmology~\cite{plank2018, Handley_2015}.
+    Cosmology~\cite{plank2018, Handley_2015, mukherjee2006nested}.
     The advent of auto differentiation~\cite{NEURIPS2020_9332c513, 10.1145/3458817.3476165, 10.5555/3571885.3571964}
     can overcome this challenge by allowing us to automatically calculate gradients of any function without
     numerical error.
