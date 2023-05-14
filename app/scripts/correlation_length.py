@@ -37,8 +37,9 @@ def correlationLength(correlations):
         ax.plot(log_correlations[kappa], label="k={:.5f}, xi={:.3f}".format(float(kappa), xi))
     #    ax.plot(kappa, , label="k={:.5f}, xi={:.3f}".format(kappa, xi))
 
-    #ax.scatter(kappas, xis)
-    ax.legend(loc="upper right")
+    fig, ax1 = plt.subplots()
+    ax1.scatter(kappas, xis)
+    ax1.legend(loc="upper right")
 
    # ax.figure.savefig('log_corr.png')
 
@@ -83,7 +84,7 @@ def read_correlation_data():
    # mag_df.to_csv("mag_data.csv", index=False)
 
 
-read_correlation_data()
+#read_correlation_data()
 
 correlation_samples = pd.read_csv("correlation_data.csv")
 correlationLength(correlation_samples)
@@ -91,20 +92,33 @@ correlationLength(correlation_samples)
 
 fig, ax = plt.subplots()
 
-for kappa in correlation_samples.columns.values:
-    init_period = 64
-    init_decay = correlation_samples[kappa][:init_period]
-    ax.plot(correlation_samples[kappa], label="k={:.6f}".format(float(kappa)))
+print(correlation_samples.columns.values)
+kappa = '0.11748'
+init_period = R//2
+init_decay = correlation_samples[kappa][:init_period]
+ax.plot(init_decay, label="k={:.6f}".format(float(kappa)))
+kappa = '0.11758'
+init_decay = correlation_samples[kappa][:init_period]
+ax.plot(init_decay, label="k={:.6f}".format(float(kappa)))
+kappa = '0.11754'
+init_decay = correlation_samples[kappa][:init_period]
+ax.plot(init_decay, label="k={:.6f}".format(float(kappa)))
+
+
+#for kappa in correlation_samples.columns.values:
+    # init_period = R//2
+    # init_decay = correlation_samples[kappa][:init_period]
+    # ax.plot(init_decay, label="k={:.6f}".format(float(kappa)))
 
         # Fit the function to the data
-    popt, pcov = curve_fit(exp, init_decay.index.values, init_decay.values)
-
-    # Print the optimal parameters
-    a, m, c = popt[0], popt[1], popt[2]
-    print(a,m,c)
-    x = np.arange(0, init_period, 1)
-    y = exp(x, a, m, c)
-    ax.plot(x, y)
+    # popt, pcov = curve_fit(exp, init_decay.index.values, init_decay.values)
+    #
+    # # Print the optimal parameters
+    # a, m, c = popt[0], popt[1], popt[2]
+    # print(a,m,c)
+    # x = np.arange(0, init_period, 1)
+    # y = exp(x, a, m, c)
+   # ax.plot(x, y)
 
 
 

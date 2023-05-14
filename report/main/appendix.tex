@@ -54,14 +54,16 @@
     check the functionality of each class.
 
 \section{Auto Differentiation}\label{sec:autodiff}
-    Auto differentiation is a modern approach to numerically calculating gradients with no numerical error.
+    Auto differentiation is a modern approach to numerically calculating gradients with no numerical
+    error~\cite{carpenter2015stan}.
     The essential idea is that a compiler can break down a program to its base operations and automatically apply the
     chain-rule repeatedly to calculate its gradient.
     Recent advancements in machine learning have greatly increased the demand for auto differentiation tools and now
     highly optimised frameworks exist to calculate gradients for any code base.
 
-    One such example is \textsc{Enzyme}, a tool that takes arbitrary existing code base in a variety of languages
-    (including C++) and computes the gradient of that function.
+    One such example is \textsc{Enzyme}~\cite{NEURIPS2020_9332c513, 10.1145/3458817.3476165, 10.5555/3571885.3571964},
+    a tool that takes arbitrary existing code base in a variety of languages (including C++) and computes the
+    gradient of that function.
     We demonstrate this capability on the Rosenbrock function which allows CHMC to automatically run without needing to
     specify any gradients.
 
@@ -70,7 +72,8 @@
         f(\theta) = AD + \sum_{i=0}^D\left(\theta_i^2 - A \cos (2 \pi \theta_i) \right)
     \end{equation}
 
-    We show how we can use \textsc{Enzyme} to automatically calculate the gradient of this function and plot the results.
+    In code block below, we show how to use \textsc{Enzyme} to automatically calculate the gradient
+    of the Rosenbrock function.
 
     \begin{widetext}
     \begin{lstlisting}[label={lst:enzyme}]
@@ -94,8 +97,8 @@
     \end{lstlisting}
     \end{widetext}
 
-    The result in figure~\ref{fig:rosenbrock} shows the function contours and auto gradient, demonstrating how auto
-    differentiation is a viable solution for CHMC as there is no numerical rounding error.
+    The result in~\cref{fig:rosenbrock} shows the function contours and auto gradient, demonstrating how auto
+    differentiation is a viable solution for CHMC with no numerical rounding error.
     \begin{figure}[h!]
         \center
         \includegraphics[width=\linewidth]{../figures/RosenbrockAutodiff}

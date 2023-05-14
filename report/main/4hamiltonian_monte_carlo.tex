@@ -70,15 +70,6 @@
     \end{aligned}
     \end{equation}
 
-    For a classical particle with mass $m$ moving through a static potential, the Hamiltonian is given by
-    \begin{equation}\label{eq:classic_hamiltonian}
-    \begin{aligned}
-        H = \frac{p^2}{2m} + U(q).
-    \end{aligned}
-    \end{equation}
-    Given initial conditions $(q_0, p_0)$, we integrate the equations of motion~\eqref{eq:hamiltonian_motion} to find
-    the trajectory of the particle.
-
 \subsection{HMC Algorithm}\label{subsec:hmc_algorithm}
     HMC derives its strengths from incorporating the use of Hamiltonian dynamics to generate new samples in the Markov-Chain.
     The main idea is to treat the parameters $\theta$ as a position and introduce an auxiliary momentum variable $p$.
@@ -108,7 +99,8 @@
     In order to solve the equations of motion we therefore rely on the \emph{gradient} of the
     distribution $\nabla \log \pi(\theta)$.
     This often presents a practical difficult as not many distributions have easily accessible gradients, however this
-    can be alleviated using \emph{auto differentiation} as discussed further in~\cref{sec:autodiff}~\cite{carpenter2015stan}.
+    can be alleviated using \emph{auto differentiation}~\cite{carpenter2015stan, NEURIPS2020_9332c513, 10.5555/3571885.3571964}
+    as discussed further in~\cref{sec:autodiff}.
 
 
 \subsection{Leapfrog Integrator}\label{subsec:integrator}

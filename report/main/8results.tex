@@ -24,8 +24,22 @@
     We use a $32 \times 32$ lattice ($D=1024$) and set $n_{\text{live}}=500$ with precision criteria $p=0.1$.
     For this setup, the average number of nested sampling iterations to converge is $i_{\max} \approx 15,000$.
 
+    The mean magnetisation is calculated as the mean value of absolute field value.
+    We can see the distribution of $\phi(x)$ for an action in the disordered phase in~\cref{fig:magnetisation}.
+\begin{figure}[h!]
+    \center
+    \includegraphics[width=\linewidth]{../figures/Magnetisation}
+    \caption{
+        The posterior distribution of $\phi(x)$ for an action in the disordered phase.
+        For $\kappa = 0.1, \lambda = 0.02$, the distribution is unimodal with narrow variance as it is disordered.
+        The magnetisation is the mean of the absolute field value, where $\langle M \rangle \approx 0$ in the above
+        action.
+    }\label{fig:magnetisation}
+    \end{figure}
+
     We vary the action~\eqref{eq:phi4_action} across the range $\kappa \in (0, 0.3), \quad \lambda \in (0, 0.03)$ for
-    a total of $1,000$ unique actions, and calculate $\langle M \rangle$ for each one to construct a phase diagram.
+    a total of $1,000$ unique actions, and calculate $\langle M \rangle$ for each one, to construct a phase diagram
+    shown in~\cref{fig:phase_diagram}.
 
     \begin{figure}[h!]
         \center
@@ -51,7 +65,7 @@
     The two-point correlation functions are a key quantity related to physical
     observables of the quantum field theory.
     For example, the renormalised mass parameter and correlation length can both be measured with correlation
-    functions~\cite{maas2020lattice,brower2018lattice}.
+    functions~\cite{maas2020lattice, brower2018lattice}.
 
     In the context of a Euclidean $\phi^4$ theory, we define the spatial (equal-time) correlation functions as
     \begin{equation}\label{eq:full_correlation_function}
