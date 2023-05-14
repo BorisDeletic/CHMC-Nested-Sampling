@@ -22,32 +22,31 @@
     As described conceptually by Skilling~\cite{GMC} \& Betancourt~\cite{Betancourt_NS_CHMC}, reflecting
     off the iso-likelihood contours ensures that proposed samples are within the constrained distribution.
     When the next position $\theta_t$ in the trajectory would be below the likelihood constraint, we reflect the
-    momentum off the boundary with normal $\mathbf{n}$
+    momentum off the boundary with normal $\mathbf{n} = - \nabla \log{\mathcal{L}(\theta)}$ as
     \begin{equation}\label{eq:reflection}
     \begin{aligned}
-        \mathbf{n} &= - \nabla \log{\mathcal{L}(\theta)}, \\
         \mathbf{n_R} &= M^{-1} \mathbf{n}, \\
         \mathbf{p'} &= \mathbf{p} - 2 \frac{ \mathbf{p} \cdot \mathbf{n_R} }{\mathbf{n} \cdot \mathbf{n_R}}. \mathbf{n}
     \end{aligned}
     \end{equation}
 
     \begin{figure}[h!]
-        \center
+        \centering
         \includegraphics[width=\linewidth]{../figures/ConstrainedHMC}
         \caption{
-        Hamiltonian Monte Carlo modified to reflect off iso-likelihood boundary $\mathcal{L}_0$.
-        Initial point with randomly sampled
-        momentum (diamond) moving through constrained prior distribution, $\tilde{\pi}(\theta)$, shown in blue.
-        Finite step size $\epsilon$,
-        shows discretisation of integrator with intermediate points (circles). Points which reflect off
-        boundary (squares) do not fall exactly on the boundary due to discretization. After a fixed number of
-        integration steps $L$, we propose a new sample from the constrained distribtion (diamond).
+            Hamiltonian Monte Carlo modified to reflect off iso-likelihood boundary $\mathcal{L}_0$.
+            Initial point with randomly sampled momentum (diamond) moving through constrained prior
+            distribution, $\tilde{\pi}(\theta)$, shown in blue.
+            Finite step size $\epsilon$, shows discretisation of integrator with intermediate points (circles).
+            Points which reflect off boundary (squares) do not fall exactly on the boundary due to discretization.
+            After a fixed number of integration steps $L$, we propose a new sample from the constrained distribtion (diamond).
         }\label{fig:constrainedhmc}
     \end{figure}
 
     This sampling method can now be used for nested sampling, by using the point with the lowest
     likelihood at iteration $i$ with likelihood $\mathcal{L}_i$ to seed the generation of the next sample subject to
     the constraint $\mathcal{L} > \mathcal{L}_i$.
+
     Implementing this algorithm in practice poses new challenges with discretization, clustering, and parameter adaption.
     We propose a novel set of additional algorithms which are essential for a working implementation of
     Constrained HMC (CHMC).
@@ -122,7 +121,7 @@
     cause a systematic bias.
 
     For instance, if there are not enough live points to cover the geometric features of the likelihood, it is
-    possible for modes to `die out` and be missed by nested sampling.
+    possible for modes to `die out' and be missed by nested sampling.
     One solution is to use special measures to identify clusters of live points and treat them separately,
     as explored by \textsc{PolyChord} which uses a k-means algorithm for this purpose~\cite{Handley_polychord}.
 
@@ -146,8 +145,8 @@
     Any live points in a local maxima will be forced to stay there, becoming further and further compressed until there
     is no more space new samples to be generated.
 
-    We propose a new mechanism for sampling through topological traps.
-    Define the \emph{reflection rate} for live point $i$ as
+    We propose a new mechanism for sampling through topological traps based on \emph{reflection rate}.
+    Define the reflection rate for live point $i$ as
     \begin{equation}\label{eq:reflect_rate}
         \mathcal{R}_i = \frac{r_i}{L},
     \end{equation}

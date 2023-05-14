@@ -26,13 +26,20 @@
 \usepackage{listings}
 \usepackage{algorithm}
 \usepackage{algorithmic}
-\usepackage{subcaption}
+\usepackage{caption}
+\usepackage{ragged2e}  % for justification
 \allowdisplaybreaks
 
 \parskip 1mm
 \parindent 2mm
 
 \input{macros.tex} %some personal macros
+
+\captionsetup{
+     singlelinecheck=false,
+     format=plain,
+     justification = Justified
+}
 
 \usepackage{hyperref}
 \hypersetup{%

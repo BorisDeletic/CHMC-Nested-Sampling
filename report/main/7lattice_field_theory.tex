@@ -10,7 +10,7 @@
 
 \section{Lattice Field Theory}\label{sec:LFT}
 
-\subsection{Laattice Field Theory for Markov-Chain Monte Carlo methods}\label{subsec:lft_mcmc}
+\subsection{Lattice Field Theory for Markov-Chain Monte Carlo methods}\label{subsec:lft_mcmc}
     The path integral formalism for quantum mechanics provides a powerful tool for studying relativistic
     quantum field theories~\cite{Feynman1948}.
     It is written as a functional integral
@@ -42,13 +42,15 @@
     This factor is now a well-defined probability distribution as it is bounded and normalised
     $P[\phi] \equiv e^{-S[\phi]} / \mathcal{Z} > 0$.
     Therefore, it is possible to apply MCMC methods to sample from this distribution and calculate observables.
-    Given a proposal field $\phi'$ from initial field $\phi$, we can sample using Metropolis algorithm~\eqref{eq:metropolis}
-    with an acceptance probability
+
+    Given a proposal field $\phi'$ from initial field $\phi$, we can sample using the Metropolis algorithm~\eqref{eq:metropolis}.
+    The acceptance probability is given by
     \begin{equation}\label{eq:accept_prob_lft}
     \begin{aligned}
-        A(\phi'|\phi) = \min \left(1, \frac{\exp(-S[\phi'])}{\exp(-S[\phi])} \right).
+        A(\phi'|\phi) = \min \left(1, \frac{\exp(-S[\phi'])}{\exp(-S[\phi])} \right),
     \end{aligned}
     \end{equation}
+    as the desired probability distribution we are sampling from is $P[\phi]$.
 
 \subsection{Scalar $\phi^4$ Theory}\label{subsec:phi^4_theory}
     We work with a real, scalar $\phi^4$-theory in two-dimensions, discretized to a Euclidean square lattice of length $N$.
