@@ -101,29 +101,43 @@
 
     Just below the critical point, the correlation function decays exponentially as $C(r) \sim \exp(-r / \xi)$,
     where $\xi$ is defined as the correlation length.
-    At the critical point, the correlation length diverges and becomes infinite in the ordered phase.
+    As we approach the critical point, the correlation length diverges and becomes infinite in the ordered phase.
 
-    We measure the correlation functions on a large 512x512 lattice ($D=262,144$) to minimise finite-size effects which
-    will cause significant errors for smaller lattices.
-    Using $n_{\text{live}}=200$ sped up the computation time to average $5,000$ iterations per lattice and still
-    provided high resolution results.
+    We measure the correlation functions on a large $128 \times 128$ lattice ($D=16,384$) to minimise finite-size effects.
+    Using $n_{\text{live}}=1000$ with fixed $\lambda=0.03$, we show the measured correlation functions for different $\kappa$
+    in~\cref{fig:correlation_functions}.
 
-    With fixed $\lambda=0.03$, we show the measured correlation functions for a range
-    of $\kappa$ up to the critical point.
+    \begin{figure}[h!]
+        \center
+        \includegraphics[width=\linewidth]{../figures/CorrelationFunction}
+        \caption{
+            Correlation functions for $128 \times 128$ lattice in $\phi^4$-theory for ordered phase (red) and disordered
+            phase (blue).
+            The fitted exponentials show the expected decay characteristic for both correlation functions.
+            In the ordered phase, the correlation function does not decay to 0, but instead shows there is a mean
+            magnetisation throughout the field.
+        }\label{fig:correlation_functions}
+    \end{figure}
 
-\begin{figure}[h!]
-    \center
-    \includegraphics[width=\linewidth]{../figures/correlations_n64}
-    \caption{
-        64x64 lattice correlation functions.
-    }\label{fig:correlation_functions}
-\end{figure}
+    We can estimate the correlation length $\xi$ for each value of $\kappa$, and plot the results in~\cref{fig:correlation_length}
+    to visualise the phase transition as a divergence in $\xi$.
 
+    \begin{figure}[h!]
+        \center
+        \includegraphics[width=\linewidth]{../figures/CorrelationLength}
+        \caption{
+            Correlation length ($\xi$) vs $\kappa$ shows the second-order phase transition as the correlation length
+            diverges.
+            In the disordered phase the correlation length is 0, then begins to increase until it
+            exceeds the size of the physical lattice, which marks the ordered phase.
+        }\label{fig:correlation_length}
+    \end{figure}
 
-\subsection{Critical Slowing Down}\label{subsec:critical_slowing_down}
-We observe that the number of iterations required to converge is not dramatically higher as we approach criticality.
-The algorithm successfully samples and estimates observables accurately at the critical point, without any
-modifications or difficulty.
-This confirms the expected behaviour that leveraging nested sampling provides strong resistance to topological freezing.
+    The numerical results clearly demonstrate that Constrained HMC with nested sampling is a viable tool for
+    lattice field theory.
+    The algorithm successfully samples and estimates observables accurately at the critical point, without any
+    modifications or difficulty.
+    This confirms that leveraging nested sampling for lattice field theory provides strong resistance to topological freezing.
+
 
 \end{document}

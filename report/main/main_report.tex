@@ -57,20 +57,24 @@
 
 \title{Constrained Hamiltonian Monte Carlo with Nested Sampling for use in Lattice Field Theory}
 
-\author{Candidate \#\#\#\#\#}
+\author{Candidate 8256T}
 \affiliation{Astrophysics Group, Cavendish Laboratory, JJ Thomson Avenue, Cambridge CB3 0HE, UK}
+\affiliation{Kavli Institute for Cosmology, Madingley Road, Cambridge CB3 0HA, UK}
 
 \begin{abstract}
-     Constrained Hamiltonian Monte Carlo is a novel algorithm for nested sampling in high dimensions by using gradients.
-     We introduce a set of novel methods which modify traditional Hamiltonian Monte Carlo to be computationally viable for
-     nested sampling.
-     The algorithm is applied to numerically solve $\phi^4$-theory, a simple model in lattice field theory which
-     exhibits a phase transition.
-     We further demonstrate the resistance of our method to topological freezing and critical slowing down at criticality.
-     In this work, we successfully measure observables on 512x512 sized lattices ($D=262,144$) using nested sampling.
-\end{abstract}
+     Constrained Hamiltonian Monte Carlo is a novel algorithm for high dimensional nested sampling using gradients.
+     We introduce a set of new methods which are used to demonstrate the first
+     practical implementation incorporating gradients into nested sampling.
+     Current state-of-the-art implementations of nested sampling become very limited for dimensions greater
+     than $D > 100$.
+     We show how our algorithm allows exploration of problems with dimension significantly higher, up to $D \sim 500,000$.
 
-\pacs{04.50.Kd, 04.60.-m, 04.20.Fy, or find your PACS numbers~\href{https://ufn.ru/en/pacs/}{here} and elsewhere.}
+     We also use the algorithm in a novel application of nested sampling to $\phi^4$ lattice field theory,
+     a simple model which exhibits a phase transition.
+     We successfully measure observables on $128 \time 128$ sized lattices ($D=16,384$), exploring the behaviour at
+     criticality.
+     We further demonstrate the resistance of our method to topological freezing and critical slowing down.
+\end{abstract}
 
 \maketitle
 

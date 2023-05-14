@@ -8,17 +8,28 @@
 \begin{document}
 
     \section{Conclusion}\label{sec:conclusion}
-    We now have introduced our novel algorithm and implementation for Constrained Hamiltonian Monte Carlo for nested sampling.
-
-
-
+    We have now introduced our new algorithm and implementation for Constrained Hamiltonian Monte Carlo for nested sampling.
     By drawing concepts from classical mechanics together with Bayesian inference we provide a powerful
-    new set of tools which are very effectively applied to lattice field theory.
+    set of tools which are very effectively applied to lattice field theory.
 
-    Further work can be done in parallelising the C++ implementation to fully take advantage of compute clusters.
+    A summary of our novel algorithms and results include
+    \begin{itemize}
+        \item Constrained Hamiltonian Monte Carlo
+        \begin{itemize}
+            \item Epsilon halving: a new algorithm for guaranteeing a valid reflection in discretized solvers.
+            \item Reflection rate hopping: a new mechanism for moving dead points from local to global maxima.
+            \item Epsilon adaption: a dual averaging scheme for continuously adapting the step size throughout evolution.
+            \item Metric adaption: A new method to adapt the kinetic energy metric to maintain efficient sampling at every iteration.
+        \end{itemize}
+        \item First application of nested sampling to $\phi^4$ theory to calculate a numerically verified phase diagram.
+        \item Calculation of magnetisation and correlation functions for $128 \times 128$ sized lattices with nested sampling.
+        \item Demonstrated computationally viable nested sampling for likelihoods up to dimensions $D=500,000$.
+    \end{itemize}
+
+
+    Further work can be done in parallelising the C++ implementation to take full advantage of modern compute clusters.
     Using auto differentiation will also require further investigation to ensure no pathological behaviour arises for
     complex likelihoods.
-
 
     By exploiting gradients we believe it is possible to use this algorithm for a new class of
     Bayesian problems previously inaccessible to machines.

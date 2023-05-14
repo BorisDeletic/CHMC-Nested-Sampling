@@ -51,5 +51,8 @@
     Slice sampling~\cite{neal2003slice}, and Hamiltonian Monte Carlo~\cite{HMC_Duane, neal1996monte} which
     we explore further in section~\ref{sec:hamiltonian_monte_carlo}.
 
-
+    Single chain-based sampling algorithms struggle with multi-modal distributions due to topological freezing.
+    When one sample from the chain falls into a topological feature, it can take a very long time before it escapes and
+    continues to explore the space.
+    This motivates the use of multiple points in parameter space to perform sampling, as introduced by nested sampling.
 \end{document}

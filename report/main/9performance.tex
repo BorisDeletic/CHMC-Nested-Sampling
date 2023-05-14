@@ -8,7 +8,7 @@
 \begin{document}
 
 \section{Performance}\label{sec:performance}
-    We aim to showcase the performance strength of our algorithm as a high dimensional sampler compared to existing
+    We aim to showcase the performance strength of our algorithm as a high dimensional sampler by comparing to existing
     solutions such as PolyChord~\cite{Handley_2015}.
     It is important to note that other samplers do not require the use of gradients unlike CHMC, and can be used for
     likelihoods where no analytic gradient exists, or auto differentiation~\eqref{sec:autodiff} fails.
@@ -20,16 +20,21 @@
     features of the likelihood, leading to longer convergence times.
 
     For certain well-behaved likelihoods, it is not even necessary to scale $n_{\text{live}} \sim D$ as suggested by
-    Handley et al~\cite{Handley_2015} as shown in the results~\eqref{sec:numerical_results} where $D \gg n_{\text{live}}$.
+    Handley et al.~\cite{Handley_2015} as shown in the results~\eqref{sec:numerical_results} where $D \gg n_{\text{live}}$.
+
     Therefore, all the added computational expense comes from longer likelihood evaluation times for more parameters.
     We demonstrate this fact by measuring the average time per sample over a nested sampling run, for a range of
-    dimensions up to $D = 1,000,000$.
+    dimensions up to $D \approx 600,000$ in ~\cref{fig:performance}.
 
-    \begin{figure}[t!]
+    \begin{figure}[h!]
         \center
         \includegraphics[width=\linewidth]{../figures/Performance}
         \caption{
-            64x64 lattice correlation functions.
+            Average time to generate sample vs dimension for a $\phi^4$-theory likelihood.
+            We compare PolyChord nested sampling versus our Constrained HMC algorithm.
+            Our algorithm scales significantly better with dimension, and can generate a sample every second up to
+            $D \approx 5 \times 10^5$.
+            PolyChord exceeds one second per sample after $D \approx 1,000$.
         }\label{fig:performance}
     \end{figure}
 
