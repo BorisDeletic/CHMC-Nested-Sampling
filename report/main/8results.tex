@@ -81,7 +81,7 @@
 
     Directly calculating correlation functions numerically is prohibitively expensive, requiring $\mathcal{O}(N^3)$
     operations for each microstate.
-    Therefore, we use a method of fourier transform and convolution theorem to speed up
+    We use a method of fourier transform and convolution theorem to speed up
     calculation~\cite{Ruge_1994}.
 
     In the continuous limit $N \rightarrow \infty$ we can write the correlation function for a single microstate at
@@ -94,15 +94,13 @@
     \begin{equation}\label{eq:convolution_theorem}
         C_{i}(r) = \mathcal{F}^{-1} \{ |\tilde{\phi}(k)|^2 \}
     \end{equation}
-    providing a new way to evaluate the correlation function.
-    Using a discrete fast fourier transform, we can therefore calculate the correlation function in
-    $\mathcal{O}(N^2 \log N)$.
+    providing a new way to evaluate the correlation function in $\mathcal{O}(N^2 \log N)$ using fast fourier transform.
 
-    Just below the critical point, the correlation function decays exponentially as $C(r) \sim \exp(-r / \xi)$,
+    Below the critical point, the correlation function decays exponentially as $C(r) \sim \exp(-r / \xi)$,
     where $\xi$ is defined as the correlation length.
     As we approach the critical point, the correlation length diverges and becomes infinite in the ordered phase.
 
-    We measure the correlation functions on a $128 \times 128$ lattice ($D=16,384$) to minimise finite-size effects.
+    We measure the correlation functions on a $128 \times 128$ lattice ($D=16,384$).
     Using $n_{\text{live}}=1000$ with fixed $\lambda=0.03$, we show the measured correlation functions for different $\kappa$
     in~\cref{fig:correlation_functions_128}.
 
