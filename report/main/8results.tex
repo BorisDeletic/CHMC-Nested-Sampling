@@ -11,10 +11,10 @@
     The CHMC for nested sampling algorithm was implemented as an optimised C++ library in order to run large scale,
     high dimensional tests.
     We provide a novel application of nested sampling to $\phi^4$-theory to perform experiments.
-    The $\phi^4$ action was given as the likelihood function as defined in section~\ref{subsec:nested-sampling-phi4}.
+    The $\phi^4$ action was given as the likelihood function as defined in~\cref{subsec:nested-sampling-phi4}.
 
-    All input parameter values are listed in appendix~\ref{sec:param_table} and full details about the implementation
-    can be found in appendix~\ref{sec:code_implementation}.
+    All input parameter values are listed in~\cref{sec:param_table} and full details about the implementation
+    can be found in~\cref{sec:code_implementation}.
     All results were gathered using a single core on the CSD3 compute cluster.
 
 \subsection{Phase Transitions}\label{subsec:phase_transition}
@@ -31,9 +31,8 @@
     \includegraphics[width=\linewidth]{../figures/Magnetisation}
     \caption{
         The posterior distribution of $\phi(x)$ for an action in the disordered phase.
-        For $\kappa = 0.1, \lambda = 0.02$, the distribution is unimodal with narrow variance as it is disordered.
-        The magnetisation is the mean of the absolute field value, where $\langle M \rangle \approx 0$ in the above
-        action.
+        For $\kappa = 0.1, \lambda = 0.02$, the distribution is unimodal with narrow variance.
+        The magnetisation is the mean of the absolute field value, where $\langle M \rangle \approx 0$ for the above action.
     }\label{fig:magnetisation}
     \end{figure}
 
