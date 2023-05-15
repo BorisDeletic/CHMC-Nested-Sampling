@@ -19,7 +19,8 @@
             \item Epsilon halving: a new algorithm for guaranteeing a valid reflection in discretized solvers.
             \item Reflection rate hopping: a new mechanism for moving dead points from local to global maxima.
             \item Epsilon adaption: a dual averaging scheme for continuously adapting the step size throughout evolution.
-            \item Metric adaption: A new method to adapt the kinetic energy metric to maintain efficient sampling at every iteration.
+            \item Metric adaption: A new method to adapt the kinetic energy metric based off the equipartition theorem,
+            outperforming existing adaption schemes such as BFMI\@.
         \end{itemize}
         \item First application of nested sampling to $\phi^4$ theory to calculate a numerically verified phase diagram.
         \item Accurate calculation of magnetisation and correlation functions for $512 \times 512$ sized lattices with nested sampling.
@@ -36,15 +37,4 @@
     By exploiting gradients we believe it is possible to use this algorithm for a new class of
     Bayesian problems previously inaccessible to machines.
 
-\section*{Acknowledgements}
-    I would like to acknowledge my supervisors, Dr. Will Barker and Dr. David Yallup, who have provided invaluable
-    guidance and support throughout my foray into physics research.
-
-    I would also like to acknowledge Dr. Will Handley for his helpful insights
-    and for staying to answer my questions after his lectures.
-
-    I would like to thank Dr. Tyson Jones, who first hooked me to the beautiful pursuit of physics many years ago.
-
-    Finally, I would like to thank my housemates, who all also study physics.
-    They have proved invaluable friends who are always there to make you laugh while debugging code together at midnight.
 \end{document}

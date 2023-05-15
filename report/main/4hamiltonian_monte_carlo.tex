@@ -66,9 +66,10 @@
     Using the Euler--Lagrange equations to solve for the stationary point of the action yields the equations of motion
     \begin{equation}\label{eq:hamiltonian_motion}
     \begin{aligned}
-        \frac{dq_i}{dt} = \frac{\partial H}{\partial p_i}, \quad \frac{dp_i}{dt} = -\frac{\partial H}{\partial q_i}.
+        \frac{dq_i}{dt} = \frac{\partial H}{\partial p_i}, \quad \frac{dp_i}{dt} = -\frac{\partial H}{\partial q_i},
     \end{aligned}
     \end{equation}
+    which can be integrated to find the trajectory.
 
 \subsection{HMC Algorithm}\label{subsec:hmc_algorithm}
     HMC derives its strengths from incorporating the use of Hamiltonian dynamics to generate new samples in the Markov-Chain.
@@ -85,14 +86,14 @@
         H = \frac{1}{2} \mathbf{p}^T M^{-1} \mathbf{p} - \log \pi,
     \end{aligned}
     \end{equation}
-    where $M$ is a mass matrix known as the \emph{metric}, and $\mathbf{p}$ is a new auxiliary momentum variable we have introduced.
+    where $M$ is a mass matrix known as the \emph{metric}, and $\mathbf{p}$ is a new momentum variable we have introduced.
     Intuitively, this treats the Markov-Chain point as a $D$ dimensional particle moving through a
     potential well $U(\theta) = -\log \pi(\theta)$.
 
-    For each Hamiltonian, the momentum is stochastically drawn from a normal distribution,
+    The momentum is stochastically drawn from a normal distribution,
     $\mathbf{p} \sim \mathcal{N}(0, \sigma = M)$.
     The metric therefore defines the region of phase space HMC explores and is an important input parameter to
-    tune for effective sampling exploration~\cite{betancourt2016energymetric}.
+    tune for effective sampling~\cite{betancourt2016energymetric}.
 
     Once the Hamiltonian is obtained, the equations of motion~\eqref{eq:hamiltonian_motion} are numerically integrated
     to give a new sample $(\theta_0, p_0)$ \rightarrow $(\theta_1, p_1)$.
@@ -108,12 +109,11 @@
     To maintain detailed balance in HMC, our system must exhibit time-reversibility so that the proposal distribution
     remains symmetric.
     Under T-symmetry where all momenta are reversed $\mathbf{p} \rightarrow -\mathbf{p}$, the equations of motion are
-    theoretically time-reversible, therefore the probability of generating any two points is
+    time-reversible, therefore the probability of generating any two points is
     symmetric $(\theta_0, p_0) \leftrightarrow (\theta_1, p_1)$.
 
-    In practice, not all numerical solvers preserve time-reversibility, and we must take care which algorithm to use.
-    One such class of solvers is \emph{symplectic integrators}, which do not
-    maintain energy conservation, but instead guarantees time-reversibility.
+    In practice however, not all numerical solvers preserve time-reversibility, and we must take care which algorithm to use.
+    One such class of solvers is \emph{symplectic integrators}, which guarantee time-reversibility.
 
     The leapfrog integrator is a symplectic integrator and proves an attractive candidate due to its simplicity.
     Given a step size $\epsilon$ and path length $L$, we can update the position $\theta$ and momentum $p$ at each iteration $t$.
@@ -132,11 +132,11 @@
     \end{algorithmic}
     \end{algorithm}
 
-    While theoretically the Hamiltonian satisfies the principle of energy conservation, the use of numerical
+    While theoretically the Hamiltonian satisfies the principle of energy conservation, the use of the leapfrog
     integration introduces an energy drift and the total energy can change during the evolution.
 
     To correct for this, a Metropolis step is performed to choose whether to accept or reject the sample in
-    the Markov-Chain.
+    the Markov-Chain based on it's change in energy.
     The acceptance probability is given by
     \begin{equation}\label{eq:hmc_accept_prob}
     \begin{aligned}

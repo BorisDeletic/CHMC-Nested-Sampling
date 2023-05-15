@@ -9,14 +9,15 @@
     \section{Nested Sampling}\label{sec:nested_sampling}
     Nested sampling is an algorithm which simultaneously computes
     the evidence and posterior~\cite{Skilling2006, Handley_polychord, NS_Review_2022}.
-    For a set of parameters $\theta$ with dimension $D$, calculating the evidence through direct evaluation of the
-    high-dimensional integral~\eqref{eq:evidence} becomes exponentially more expensive as $D$ is increased.
+    For a set of parameters $\theta$, calculating the evidence through direct evaluation of the
+    high-dimensional integral~\eqref{eq:evidence} becomes exponentially more expensive as the number of dimensions,
+    $D$, is increased.
 
     We define the \emph{prior volume} as the fraction of prior contained within an iso-likelihood contour
     \begin{equation}\label{eq:prior_volume}
     X(\lambda) = \int_{\mathcal{L}(\theta)>\lambda} \pi(\theta) d\theta.
     \end{equation}
-    Using a change of variable allows us to write the evidence as a one-dimensional integral more feasible to calculate
+    Using a change of variable we write the evidence as a one-dimensional integral more feasible to calculate
     \begin{equation}\label{eq:evidence_ns}
     \mathcal{Z} = \int_0^1 {\mathcal{L}(X)} dX.
     \end{equation}
@@ -52,7 +53,7 @@
         }\label{fig:nested_sampling}
     \end{figure}
 
-    Current state-of-the-art algorithms for nested sampling are able to calculate model evidences up to $D \sim 500$
+    Current state-of-the-art algorithms for nested sampling are able to calculate model evidences up to $D \sim 1,000$
     dimensions before the computational costs become overwhelming~\cite{Handley_2015, Feroz_2009, brewer2010diffusive}.
 
     \subsection{Evidence and Parameter Estimation}\label{subsec:evidence_param_estimation}
@@ -62,48 +63,14 @@
     \mathcal{Z} = \sum_{i \in \text{dead}} w_i \mathcal{L}_i,
     \end{equation}
     where $w_i = (X_{i-1} - X_{i+1})/2$ is the weight factor estimating the change in prior volume per iteration.
-    Further discussion of this estimation and the associated errors can be found in
-    Handley et al.~\cite{Handley_2015, NS_Review_2022}.
 
     We can also use the dead points as samples from the posterior.
     Given that the $i$-th sample is assigned an importance weighting $w_i$, the posterior samples are
     \begin{equation}\label{eq:posterior_ns}
     p_i = \frac{w_i \mathcal{L}_i}{\mathcal{Z}} \propto w_i \mathcal{L}_i.
     \end{equation}
-    Most MCMC algorithms are not concerned with the evidence and therefore only generate un-normalised posterior samples.
 
-    \subsection{Termination criteria}\label{subsec:termination_criteria}
-    The stopping criteria for nested sampling as suggested by Handley et al.~\cite{Handley_2015}, is determined by
-    the remaining evidence in the live points.
-    We terminate the algorithm once the evidence in the live points is a small fraction of the total accumulated evidence,
-    determined by the precision criterion $\mathcal{Z}_{\text{live}} / \mathcal{Z}$.
-
-    The remaining evidence can be estimated by assuming all the live points have the same prior volume at iteration $i$
-    \begin{equation}\label{eq:remaining_evidence}
-    \mathcal{Z}_{\text{live}} \approx \langle \mathcal{L} \rangle_{\text{live}} X_i.
-    \end{equation}
-    As this approximation will overestimate the live evidence, this will generally not cause early stopping of the algorithm.
-    Further discussion of this can be found in Feroz~\cite{Feroz_2009}, Handley~\cite{Handley_2015}, and
-    Keeton~\cite{keeton2011statistical}.
-
-    \subsection{Choosing $n_{\text{live}}$}\label{subsec:ns_termination}
-    The input parameter for the number of live points $n_{\text{live}}$, has a significant impact on the quality of results generated.
-    More live points will increase the precision of the evidence calculation~\eqref{eq:evidence_estimation} and force more
-    iterations to contract onto the posterior.
-    However, more computational time will be required to complete the algorithm.
-
-    The remaining evidence $\mathcal{Z}_{\text{live}}$ can be used to calculate the error in final
-    evidence~\cite{keeton2011statistical, Handley_2015} which will also be influenced by $n_{\text{live}}$.
-    Therefore, a balance for choosing $n_{\text{live}}$ must be found between accuracy and computational resources.
-
-    Furthermore, we argue that the required number of live points is dependent on the topology of the posterior.
-    For uni-modal geometries, all live points are guaranteed to be in the global likelihood maximum.
-    However, for topologies with multi-modal distributions and topological traps in high dimensions,
-    it is possible for live points to miss features of the posterior.
-    As we discuss in~\cref{subsec:topological_trap}, for certain geometries it is important to
-    set $n_{\text{live}}$ sufficiently high such that the global features are not completely missed.
-
-
-
+    We provide a further discussion of tuning nested sampling input parameters, and its effects on
+    and evidence calculation and errors in~\cref{sec:ns_parameters}.
 
 \end{document}

@@ -108,26 +108,23 @@
 
     Adaptive techniques in MCMC methods have been shown to still converge to the required
     distribution~\cite{MCMC_Ergodicity}.
-    Therefore, we argue that so long as our non-ergodic techniques are used infrequently, CHMC will be sufficiently
+    We argue that so long as our non-ergodic techniques are used infrequently, CHMC will be sufficiently
     ergodic to pass all statistical tests.
 
 \subsection{Clustering}\label{subsec:clustering}
 
     Multi-modal posteriors pose a challenging problem for many MCMC sampling algorithms, with topological freezing
     causing significant complications~\cite{mangoubi2018_HMC_Multimodal}.
-    In theory, nested sampling solves multi-modal distributions just as easily as uni-modal ones, hence
-    its appeal as a tool for Bayesian inference.
-    It is still important to carefully consider the sampling method used, to ensure that they do not
-    cause a systematic bias.
+    In theory, nested sampling solves multi-modal distributions just as easily as uni-modal ones, however it is
+    still important to consider the sampling method used to ensure it does not introduce a systematic bias.
 
-    For instance, if there are not enough live points to cover the geometric features of the likelihood, it is
-    possible for modes to `die out' and be missed by nested sampling.
-    One solution is to use special measures to identify clusters of live points and treat them separately,
-    as explored by \textsc{PolyChord} which uses a k-means algorithm for this purpose~\cite{Handley_polychord}.
+    For instance, if $n_{\text{live}}$ is too low, it is possible for modes to `die out' and be missed by nested sampling.
+    One existing solution is to manually identify clusters of live points and treat them separately,
+    as explored by \textsc{PolyChord} which uses a k-means algorithm for clustering~\cite{Handley_polychord}.
 
     We illustrate how CHMC naturally solves clustering in multimodal distributions.
     Once the likelihood constraint is increased to the point where the contour splits into isolated volumes,
-    all live points in the separate modes evolve completely independently of each other.
+    all live points in the separate modes evolve completely independently of each other as shown in~\cref{fig:clustering}.
 
     \begin{figure}[h!]
         \center
@@ -177,7 +174,7 @@
     \end{algorithm}
 
     If the lowest likelihood live point has a reflection rate above some threshold, $\mathcal{R}_0$, we use a
-    random live point as the seed for the next live point, instead of the current lowest likelihood live point.
+    random live point as the seed for the next live point, instead of the lowest likelihood live point.
     This ensures that given at least one live point is in the global maximum, eventually all the new live points will move
     into this mode where there is more `space`.
 

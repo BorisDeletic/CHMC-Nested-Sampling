@@ -33,41 +33,40 @@
     Nested sampling offers several advantages to classic MCMC algorithms, including simultaneous calculation of model
     \emph{evidence}, as well as dealing effectively with multimodal distributions~\cite{Skilling2006}.
 
-    Current implementations of nested sampling scale poorly with number of dimensions~\cite{Feroz_2009, Handley_2015},
-    with current state-of-the-art solutions limited to around $D \approx 100$ dimensions~\cite{NS_Review_2022}.
-    This quickly renders nested sampling ineffective for solving problems in LFT, maxing out at $10 \times 10$ sized
-    lattices which are too small to extract observables.
+    Modern implementations of nested sampling scale poorly with number of dimensions~\cite{Feroz_2009, Handley_2015},
+    with current state-of-the-art limited to around $D \approx 1000$ dimensions~\cite{NS_Review_2022}.
+    This quickly renders nested sampling ineffective for solving problems in LFT, maxing out at small lattices.
 
     We propose a novel algorithm, based off combining nested sampling with a modified constrained HMC, which aims
     to effectively sample in very high-dimensional parameter space, while being resistant to multimodal distributions
     and topological freezing.
 
     Incorporating gradients into nested sampling poses a challenging problem which has not had significant development
-    since the introduction of the idea a decade ago~\cite{Betancourt_NS_CHMC, GMC}.
+    since the introduction of the idea over a decade ago~\cite{Betancourt_NS_CHMC, GMC}.
     Sampling within an iso-likelihood contour, while conceptually simple, poses a practical challenge to do reliably on
     a computer.
 
     Furthermore, manually supplying gradients of likelihoods can be difficult for large models such as in
     Cosmology~\cite{plank2018, Handley_2015, mukherjee2006nested}.
     The advent of auto differentiation~\cite{NEURIPS2020_9332c513, 10.1145/3458817.3476165, 10.5555/3571885.3571964}
-    can overcome this challenge by allowing us to automatically calculate gradients of any function without
+    can overcome this challenge by allowing us to automatically calculate gradients without
     numerical error.
 
     Section~\ref{sec:bayesian_inference} of this paper is an introduction to Bayesian inference and lays out conventions
     and definitions used.
-    In Section~\ref{sec:nested_sampling} we explain the nested sampling algorithm and comment on its
+    In Section~\ref{sec:nested_sampling} we explain the nested sampling algorithm and comment
     previous implementations.
-    Section~\ref{sec:hamiltonian_monte_carlo} introduces Hamiltonian Monte Carlo and describes how it works as a sampler.
+    Section~\ref{sec:hamiltonian_monte_carlo} explains Hamiltonian Monte Carlo and describes how it works as a sampler.
     In Section~\ref{sec:chmc} we introduce our novel algorithm which modifies HMC for use in nested sampling.
-    Here we also introduce our new methods for epsilon halving, clustering, and sampling through topological traps.
+    We also introduce our new methods for epsilon halving, clustering, and sampling through topological traps.
     Section~\ref{sec:param_adaption} discusses the necessity for adaptive parameters and describes
     the novel solutions we propose to achieve this.
 
     We introduce the theoretical background of lattice field theory in Section~\ref{sec:LFT} and how it can be
     solved computationally with Bayesian inference.
-    Then in Section~\ref{sec:numerical_results} we give the numerical results for our novel application of nested
-    sampling to $\phi^4$-theory using our algorithm.
-    Finally, a discussion of the performance and its comparison to other methods is given in Section~\ref{sec:performance}.
+    In Section~\ref{sec:numerical_results} we give the numerical results for our novel application of nested
+    sampling to $\phi^4$-theory.
+    Finally, a discussion of the performance and its comparison to existing methods is given in Section~\ref{sec:performance}.
 
     Further details such as the input parameters used are given in~\cref{sec:param_table},
     C++ code implementation in~\cref{sec:code_implementation}, and results with auto differentation in~\cref{sec:autodiff}.
