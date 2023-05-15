@@ -47,6 +47,7 @@ def exp(x, a, m, c):
 
 #path = "/rds/user/bd418/hpc-work/correlation"
 path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/phi4/correlation"
+path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/phi4/correlation_exact"
 
 R = 128
 
@@ -161,8 +162,8 @@ def plot_correlation(correlation_samples):
     ax.plot(x, y1, linestyle='--', color='tab:blue')
     ax.plot(x, y2, linestyle='--', color='tab:red')
 
-    ax.plot(init_decay1, label="k={:.5f}".format(float(kappa1)), linestyle='', marker='x', color='tab:blue')
-    ax.plot(init_decay2, label="k={:.5f}".format(float(kappa2)), linestyle='', marker='x', color='tab:red')
+    ax.plot(init_decay1, label=r"$\kappa$={:.5f}".format(float(kappa1)), linestyle='', marker='x', color='tab:blue')
+    ax.plot(init_decay2, label=r"$\kappa$={:.5f}".format(float(kappa2)), linestyle='', marker='x', color='tab:red')
 
     ax.set_title('Correlation functions\n128x128 Lattice')
     ax.set_xlabel('r')
@@ -170,14 +171,64 @@ def plot_correlation(correlation_samples):
     ax.legend(loc="upper right")
 
 
-#read_correlation_data()
+def plot_all_correlation(correlation_samples):
+    fig, ax = plt.subplots()
+
+    init_period = R//2
+    for kappa in correlation_samples.columns.values:
+        init_decay = correlation_samples[kappa][:init_period]
+
+        x = np.arange(0, init_period, 1)
+        popt, pcov = curve_fit(exp, init_decay.index.values, init_decay.values)
+        a, m, c = popt[0], popt[1], popt[2]
+        y1 = exp(x, a, m, c)
+
+        ax.plot(x, y1, linestyle='--', color='tab:blue')
+
+        ax.plot(init_decay, label="k={:.6f}".format(float(kappa)), linestyle='', marker='.', color='tab:blue')
+
+    ax.set_title('Correlation functions\n128x128 Lattice')
+    ax.set_xlabel('r')
+    ax.set_ylabel('C(r)')
+    ax.legend(loc="upper right")
+
+
+def plot_512_correlation(correlation_samples, kappas):
+    fig, ax = plt.subplots()
+
+    color = iter(['tab:blue', 'tab:red'])
+    for kappa in kappas:
+        init_period = R//2
+        init_decay = correlation_samples[kappa][:init_period]
+
+        x = np.arange(0, init_period, 1)
+        popt, pcov = curve_fit(exp, init_decay.index.values, init_decay.values)
+        a, m, c = popt[0], popt[1], popt[2]
+        y1 = exp(x, a, m, c)
+
+        c = next(color)
+        ax.plot(x, y1, linestyle='--', color=c)
+
+        ax.plot(init_decay, label=r"$\kappa$={:.6f}".format(float(kappa)), linestyle='', marker='x', markersize = 2, color=c)
+
+    ax.set_title('Correlation functions\n512x512 Lattice')
+    ax.set_xlabel('r')
+    ax.set_ylabel('C(r)')
+    ax.legend(loc="upper right")
+
+
+read_correlation_data()
 
 correlation_samples = pd.read_csv("correlation_data.csv")
-xis = correlationLength(correlation_samples)
 
-#plot_correlation(correlation_samples)
+plot_correlation(correlation_samples)
+#plot_all_correlation(correlation_samples)
 
-plot_xi(xis)
+kappas = ['0.1175', '0.117502']
+#plot_512_correlation(correlation_samples, kappas)
+
+#xis = correlationLength(correlation_samples)
+#plot_xi(xis)
 # kappa = '0.1174'
 # kappa = '0.1175'
 # kappa = '0.1173'

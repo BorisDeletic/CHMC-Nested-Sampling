@@ -22,12 +22,14 @@
             \item Metric adaption: A new method to adapt the kinetic energy metric to maintain efficient sampling at every iteration.
         \end{itemize}
         \item First application of nested sampling to $\phi^4$ theory to calculate a numerically verified phase diagram.
-        \item Calculation of magnetisation and correlation functions for $128 \times 128$ sized lattices with nested sampling.
+        \item Accurate calculation of magnetisation and correlation functions for $512 \times 512$ sized lattices with nested sampling.
         \item Demonstrated computationally viable nested sampling for likelihoods up to dimensions $D=500,000$.
     \end{itemize}
 
-
-    Further work can be done in parallelising the C++ implementation to take full advantage of modern compute clusters.
+    Further work can be done to investigate the cause of cyclic decay in correlation functions
+    in~\cref{fig:correlation_func_512}, whether it be due to boundary conditions, or computational methods.
+    The C++ implementation would greatly benefit from parallelisation, allowing it to take full advantage of
+    modern compute clusters.
     Using auto differentiation will also require further investigation to ensure no pathological behaviour arises for
     complex likelihoods.
 

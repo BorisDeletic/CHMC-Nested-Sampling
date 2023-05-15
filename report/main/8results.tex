@@ -38,7 +38,7 @@
     \end{figure}
 
     We vary the action~\eqref{eq:phi4_action} across the range $\kappa \in (0, 0.3), \lambda \in (0, 0.03)$ for
-    a total of $1,000$ unique actions, and calculate $\langle M \rangle$ for each one, to construct a phase diagram
+    a total of $1,000$ unique actions, and calculate $\langle M \rangle$ for each one~\cite{anesthetic}, to construct a phase diagram
     shown in~\cref{fig:phase_diagram}.
 
     \begin{figure}[h!]
@@ -103,24 +103,24 @@
     where $\xi$ is defined as the correlation length.
     As we approach the critical point, the correlation length diverges and becomes infinite in the ordered phase.
 
-    We measure the correlation functions on a large $128 \times 128$ lattice ($D=16,384$) to minimise finite-size effects.
+    We measure the correlation functions on a $128 \times 128$ lattice ($D=16,384$) to minimise finite-size effects.
     Using $n_{\text{live}}=1000$ with fixed $\lambda=0.03$, we show the measured correlation functions for different $\kappa$
-    in~\cref{fig:correlation_functions}.
+    in~\cref{fig:correlation_functions_128}.
 
     \begin{figure}[h!]
         \center
-        \includegraphics[width=\linewidth]{../figures/CorrelationFunction}
+        \includegraphics[width=\linewidth]{../figures/CorrelationFunction128}
         \caption{
             Correlation functions for $128 \times 128$ lattice in $\phi^4$-theory for ordered phase (red) and disordered
             phase (blue).
             The fitted exponentials show the expected decay characteristic for both correlation functions.
             In the ordered phase, the correlation function does not decay to 0, but instead shows there is a mean
             magnetisation throughout the field.
-        }\label{fig:correlation_functions}
+        }\label{fig:correlation_functions_128}
     \end{figure}
 
-    We can estimate the correlation length $\xi$ for each value of $\kappa$, and plot the results in~\cref{fig:correlation_length}
-    to visualise the phase transition as a divergence in $\xi$.
+    We can estimate the correlation length $\xi$ for each value of $\kappa$, and plot the results
+    in~\cref{fig:correlation_length} to visualise the phase transition as a divergence in $\xi$.
 
     \begin{figure}[h!]
         \center
@@ -131,6 +131,27 @@
             In the disordered phase the correlation length is 0, then begins to increase until it
             exceeds the size of the physical lattice, which marks the ordered phase.
         }\label{fig:correlation_length}
+    \end{figure}
+
+    We also calculate the correlation function for a larger lattice of size $512 \times 512$ ($D=262,144$), shown
+    in~\cref{fig:correlation_func_512}.
+    The phase transition for such a large lattice is very sharp, with the change between ordered and disordered phase
+    occurring over $\Delta \kappa \approx 2 \times 10^{-6}$, which our algorithm correctly identifies.
+
+    For the correlation functions on this lattice, there is unexpected cyclic behaviour in the decay.
+    We are not sure as to the cause of this phenomenon and further work is required to full understand it.
+    \begin{figure}[h!]
+        \center
+        \includegraphics[width=\linewidth]{../figures/CorrelationFunction512}
+        \caption{
+            Correlation functions for $512 \times 512$ lattice for ordered phase (red) and disordered
+            phase (blue).
+            Note the phase transition is very sharp, occuring over a range $\Delta \kappa \approx 2 \times 10^{-6}$.
+            The correlation functions exhibit cyclic behaviour in decay, which is unexpected and the
+            cause is not well understood.
+            The calculation of these results demonstrate it is possible to perform nested sampling in dimensions much
+            larger ($D=262,144$) than explored previously.
+        }\label{fig:correlation_func_512}
     \end{figure}
 
     The numerical results clearly demonstrate that Constrained HMC with nested sampling is a viable tool for
