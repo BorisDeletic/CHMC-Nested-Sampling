@@ -55,61 +55,6 @@
 
     The full C++ code can be found at \url{https://github.com/BorisDeletic/CHMC-Nested-Sampling}.
 
-\section{Auto Differentiation}\label{sec:autodiff}
-    Auto differentiation is a modern approach to numerically calculating gradients with no numerical
-    error~\cite{carpenter2015stan}.
-    The essential idea is that a compiler can break down a program to its base operations and automatically apply the
-    chain-rule repeatedly to calculate its gradient.
-    Recent advancements in machine learning have greatly increased the demand for auto differentiation tools and now
-    highly optimised frameworks exist to calculate gradients for any code base.
-
-    One such example is \textsc{Enzyme}~\cite{NEURIPS2020_9332c513, 10.1145/3458817.3476165, 10.5555/3571885.3571964},
-    a tool that takes arbitrary existing code base in a variety of languages (including C++) and computes the
-    gradient of that function.
-    We demonstrate this capability on the Rosenbrock function which allows CHMC to automatically run without needing to
-    specify any gradients.
-
-    The D-dimensional Rosenbrock function is defined as
-    \begin{equation}\label{eq:rosenbrock}
-        f(\theta) = AD + \sum_{i=0}^D\left(\theta_i^2 - A \cos (2 \pi \theta_i) \right)
-    \end{equation}
-
-    In code block below, we show how to use \textsc{Enzyme} to automatically calculate the gradient
-    of the Rosenbrock function.
-
-    \begin{widetext}
-    \begin{lstlisting}[label={lst:enzyme}]
-    //Rosenbrock Likelihood
-    double Likelihood::likelihood(double* theta, int size, double A) {
-        double f = A * size;
-        for (int i = 0; i < size; i++) {
-            f += pow(theta[i], 2) - A * cos(2 * M_PI * theta[i]);
-        }
-        return f;
-    }
-
-    \\ Rosenbrock Autogradient
-    int enzyme_dup, enzyme_const;
-    extern double __enzyme_autodiff(...);
-    double Likelihood::gradient(double* theta, double* d_theta, int size, double A) {
-        return __enzyme_autodiff(likelihood,
-                                 enzyme_dup, theta, d_theta,
-                                 enzyme_const, size, A);
-    }
-    \end{lstlisting}
-    \end{widetext}
-
-    The result in~\cref{fig:rosenbrock} shows the function contours and auto gradient, demonstrating how auto
-    differentiation is a viable solution for CHMC with no numerical rounding error.
-    \begin{figure}[h!]
-        \center
-        \includegraphics[width=\linewidth]{../figures/RosenbrockAutodiff}
-        \caption{
-            Rosenbrock function~\eqref{eq:rosenbrock} and automatic differentiation gradient field plot.
-            We demonstrate the validity of auto differentiation as a viable solution for any CHMC likelihood function.
-        }\label{fig:rosenbrock}
-    \end{figure}
-
 
 \section{Metric Adaption with the Equipartition Theorem}\label{sec:metric_derivation}
     Consider a $D$ dimensional Hamiltonian with kinetic and potential energy
@@ -175,6 +120,61 @@
     Further discussion of the effect of parameters on evidence calculation and the associated errors can be found in
     Handley et al.~\cite{Handley_2015, NS_Review_2022}.
 
+
+\section{Auto Differentiation}\label{sec:autodiff}
+    Auto differentiation is a modern approach to numerically calculating gradients with no numerical
+    error~\cite{carpenter2015stan}.
+    The essential idea is that a compiler can break down a program to its base operations and automatically apply the
+    chain-rule repeatedly to calculate its gradient.
+    Recent advancements in machine learning have greatly increased the demand for auto differentiation tools and now
+    highly optimised frameworks exist to calculate gradients for any code base.
+
+    One such example is \textsc{Enzyme}~\cite{NEURIPS2020_9332c513, 10.1145/3458817.3476165, 10.5555/3571885.3571964},
+    a tool that takes arbitrary existing code base in a variety of languages (including C++) and computes the
+    gradient of that function.
+    We demonstrate this capability on the Rosenbrock function which allows CHMC to automatically run without needing to
+    specify any gradients.
+
+    The D-dimensional Rosenbrock function is defined as
+    \begin{equation}\label{eq:rosenbrock}
+    f(\theta) = AD + \sum_{i=0}^D\left(\theta_i^2 - A \cos (2 \pi \theta_i) \right)
+    \end{equation}
+
+    In code block below, we show how to use \textsc{Enzyme} to automatically calculate the gradient
+    of the Rosenbrock function.
+
+    \begin{widetext}
+        \begin{lstlisting}[label={lst:enzyme}]
+        //Rosenbrock Likelihood
+        double Likelihood::likelihood(double* theta, int size, double A) {
+            double f = A * size;
+            for (int i = 0; i < size; i++) {
+                f += pow(theta[i], 2) - A * cos(2 * M_PI * theta[i]);
+            }
+            return f;
+        }
+
+        \\ Rosenbrock Autogradient
+        int enzyme_dup, enzyme_const;
+        extern double __enzyme_autodiff(...);
+        double Likelihood::gradient(double* theta, double* d_theta, int size, double A) {
+            return __enzyme_autodiff(likelihood,
+                                     enzyme_dup, theta, d_theta,
+                                     enzyme_const, size, A);
+        }
+        \end{lstlisting}
+    \end{widetext}
+
+    The result in~\cref{fig:rosenbrock} shows the function contours and auto gradient, demonstrating how auto
+    differentiation is a viable solution for CHMC with no numerical rounding error.
+    \begin{figure}[h!]
+        \center
+        \includegraphics[width=\linewidth]{../figures/RosenbrockAutodiff}
+        \caption{
+            Rosenbrock function~\eqref{eq:rosenbrock} and automatic differentiation gradient field plot.
+            We demonstrate the validity of auto differentiation as a viable solution for any CHMC likelihood function.
+        }\label{fig:rosenbrock}
+    \end{figure}
 
 
 \end{document}
