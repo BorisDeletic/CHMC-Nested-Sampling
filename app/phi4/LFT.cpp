@@ -105,11 +105,11 @@ void generateCorrelationData() {
 
 int main() {
 
-    Phi4Likelihood likelihood = Phi4Likelihood(2, 0.05, 1.5, priorWidth);
-    generateLikelihoodPlot(likelihood, {-4, 4}, {-4, 4});
+//    Phi4Likelihood likelihood = Phi4Likelihood(2, 0.05, 1.5, priorWidth);
+//    generateLikelihoodPlot(likelihood, {-4, 4}, {-4, 4});
    // generatePhaseDiagramData();
 
  //  generateCorrelationData();
- //   runPhi4("Phi4_0.16_0.50", 0.16, 0.5);
+    runPhi4("Phi4_posterior_weightings", 32, 0.16, 0.5);
     std::cout << "help";
 }

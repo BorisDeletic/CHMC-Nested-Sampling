@@ -22,6 +22,7 @@ void Logger::WritePoint(const MCPoint& point, const double logWeight) {
 
     double posteriorWeight = exp(logWeight + point.likelihood);
     mPosteriorFile << posteriorWeight << " ";
+    mPosteriorFile << logWeight << " ";
     mPosteriorFile << -point.likelihood << " ";
 
     for (const double phi : point.derived) {
