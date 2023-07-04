@@ -16,8 +16,6 @@ NestedSampler::NestedSampler(ISampler& sampler, ILikelihood& likelihood, Logger&
     mUniform(0,1),
     mLogWeight(log(exp(1.0L/mConfig.numLive) - 1.0L))
 {
-    mReflections = 0;
-    mIntegrationSteps=0;
 }
 
 
@@ -37,7 +35,6 @@ void NestedSampler::Initialise() {
 void NestedSampler::SetAdaption(Adapter* adapter) {
     mAdapter = adapter;
 }
-
 
 
 void NestedSampler::Run() {
@@ -92,16 +89,6 @@ void NestedSampler::NestedSamplingStep() {
 
     //kill point.
     mLivePoints.erase(lowestIt);
-
-    if ((mAdapter != nullptr) && (mIter % 50 == 0)) {
-        //mAdapter->AdaptEpsilon((double)mReflections / mIntegrationSteps);
-        const double reflectionRate = (double) mReflections / mIntegrationSteps * 100;
-    //    std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << reflectionRate << ", iter=" << mIter
-    //              << std::endl;
-
-        mReflections = 0;
-        mIntegrationSteps = 0;
-    }
 }
 
 
@@ -113,8 +100,6 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
         if (mAdapter != nullptr)
         {
             mAdapter->AdaptEpsilon(newPoint.acceptProbability);
-            mReflections += newPoint.reflections;
-            mIntegrationSteps += newPoint.steps;
         }
 
         if (!newPoint.rejected)
@@ -123,9 +108,7 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
             mLivePoints.insert(newPoint);
 
             if (mLivePoints.size() > mConfig.numLive)
-            {
                 return;
-            }
         }
     }
 }
@@ -180,7 +163,7 @@ const double NestedSampler::EstimateLogEvidenceRemaining() {
 
     double logMeanLiveLikelihood = logAdd(logLikelihoodLive) - log(mConfig.numLive);
 
-    double logEvidenceLive = logMeanLiveLikelihood - mIter / mConfig.numLive;
+    double logEvidenceLive = logMeanLiveLikelihood - (double)mIter / mConfig.numLive;
     return logEvidenceLive;
 }
 
@@ -188,19 +171,16 @@ const double NestedSampler::EstimateLogEvidenceRemaining() {
 const bool NestedSampler::TerminateSampling() {
     if (mAdapter != nullptr)
     {
-        const double reflectionRate = (double) mReflections / mIntegrationSteps * 100;
-        std::cout << "NS Step: " << mIter << ", Num Live = " << mLivePoints.size() << std::endl;
-        std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << reflectionRate << std::endl;
-
-        mReflections = 0;
-        mIntegrationSteps = 0;
+//        const double reflectionRate = (double) mReflections / mIntegrationSteps * 100;
+//        std::cout << "NS Step: " << mIter << ", Num Live = " << mLivePoints.size() << std::endl;
+//        std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << reflectionRate << std::endl;
 
         mAdapter->AdaptMetric(mLivePoints);
-      //  mAdapter->Restart();
     }
 
     double remainingEvidence = EstimateLogEvidenceRemaining();
-    std::cout << "Log(Z)=" << mLogZ << " ,LogZlive=" << remainingEvidence << std::endl;
+    std::cout << "Step: " << mIter << std::endl;
+    std::cout << "Log(Z)=" << mLogZ << " ,LogZlive=" << remainingEvidence << std::endl << std::endl;
 
     if (remainingEvidence < mLogZ + log10(mConfig.precisionCriterion)) {
         return true;

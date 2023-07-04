@@ -11,6 +11,7 @@ Logger::Logger(std::string name)
 }
 
 
+// Log weight is prior volume shell w_i = X_{i-1} - X_i
 void Logger::WritePoint(const MCPoint& point, const double logWeight) {
     if (!mDeadFile.is_open()) {
         mDeadFile.open(mDeadFilename, std::ios::app);
@@ -20,14 +21,14 @@ void Logger::WritePoint(const MCPoint& point, const double logWeight) {
         mPosteriorFile.open(mName + ".posterior_dead-birth.txt", std::ios::app);
     }
 
-    double posteriorWeight = exp(logWeight + point.likelihood);
-    mPosteriorFile << posteriorWeight << " ";
+    double logPosteriorWeight = logWeight + point.likelihood;
+    mPosteriorFile << logPosteriorWeight << " ";
     mPosteriorFile << logWeight << " ";
     mPosteriorFile << -point.likelihood << " ";
 
     for (const double phi : point.derived) {
         mDeadFile << phi << " ";
-    //    mPosteriorFile << phi << " ";
+        mPosteriorFile << phi << " ";
     }
 
     for (const double theta : point.theta) {

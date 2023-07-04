@@ -31,6 +31,7 @@ Eigen::VectorXd CHMC::SampleP(const int size) {
 
 const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint) {
     mIters++;
+
     const Eigen::VectorXd p = SampleP(old.theta.size());
 
     mHamiltonian.SetHamiltonian(old.theta, p, likelihoodConstraint);
@@ -45,22 +46,19 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
     const double r = mUniform(gen);
     bool rejected = mHamiltonian.GetRejected();
 
-   // std::cout << "e=" << mParams.GetEpsilon() << ", prob=" << acceptProb << ", ";
-
     if (rejected) {
         rejected = true;
         acceptProb = 0;
-       // std::cout << "!reflect=" << reflectionRate << std::endl;
     }
 
     if (acceptProb < r) {
         rejected = true;
     }
 
-    const double reflectionRate = (double)mHamiltonian.GetReflections() / mHamiltonian.GetIntegrationSteps();
-    if (reflectionRate > 0.9) {
-        acceptProb = 0;
-    }
+//    const double reflectionRate = (double)mHamiltonian.GetReflections() / mHamiltonian.GetIntegrationSteps();
+//    if (reflectionRate > 0.9) {
+//        acceptProb = 0;
+//    }
 
     MCPoint newPoint = {
             mHamiltonian.GetX(),
@@ -70,8 +68,7 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
             mHamiltonian.GetReflections(),
             mHamiltonian.GetIntegrationSteps(),
             acceptProb,
-            rejected,
-            newEnergy
+            rejected
     };
 
     return newPoint;

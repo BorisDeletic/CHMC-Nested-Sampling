@@ -13,7 +13,6 @@ typedef struct MCPoint {
     const int steps = 0;
     const double acceptProbability = 1;
     bool rejected = false;
-    double energy = 0;
 } MCPoint;
 
 
@@ -23,9 +22,10 @@ inline bool operator<(const MCPoint& a, const MCPoint& b) {
 
 
 typedef struct NSConfig {
-    const int numLive;
-    const int maxIters;
-    const double precisionCriterion;
+    int numLive;
+    int maxIters;
+    double precisionCriterion;
+    double reflectionRate;
 } NSConfig;
 
 
