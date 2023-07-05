@@ -2,6 +2,7 @@
 #define CHMC_NESTED_SAMPLING_NESTEDSAMPLING_H
 
 #include "ISampler.h"
+#include "IPrior.h"
 #include "ILikelihood.h"
 #include "Adapter.h"
 #include "types.h"
@@ -14,7 +15,7 @@ class Logger;
 
 class NestedSampler {
 public:
-    NestedSampler(ISampler&, ILikelihood&, Logger&, NSConfig config);
+    NestedSampler(ISampler&, IPrior&, ILikelihood&, Logger&, NSConfig config);
 
     void SetAdaption(Adapter* adapter);
     void Initialise();
@@ -22,18 +23,21 @@ public:
 
 private:
     void NestedSamplingStep();
-    void SampleNewPoint(const MCPoint& deadPoint, const double likelihoodConstraint);
+    void SampleNewPoint(const MCPoint& deadPoint, double likelihoodConstraint);
     const MCPoint SampleFromPrior();
     const MCPoint& GetRandomPoint();
 
     void UpdateLogEvidence(const MCPoint&);
     const double EstimateLogEvidenceRemaining();
+    const double GetReflectRate();
 
     const bool TerminateSampling();
+
     const double logAdd(double logA, double logB);
     const double logAdd(const Eigen::ArrayXd& logV);
 
     ISampler& mSampler;
+    IPrior& mPrior;
     ILikelihood& mLikelihood;
     Logger& mLogger;
     Adapter* mAdapter = nullptr;
@@ -44,8 +48,6 @@ private:
 //    double mLogZRemaining; // estimate of evidence remaining in live points
 
     int mIter;
-    int mReflections;
-    int mIntegrationSteps;
 
     double mLogZ; // log evidence
     double mLogWeight = 0;
@@ -56,7 +58,7 @@ private:
 
     std::random_device rd;
     std::mt19937 gen;
-    std::uniform_real_distribution<double> mUniform;
+    std::uniform_real_distribution<double> mUniformRng;
 };
 
 #endif //CHMC_NESTED_SAMPLING_NESTEDSAMPLING_H

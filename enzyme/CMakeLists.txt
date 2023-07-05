@@ -1,6 +1,7 @@
 
 
 add_library(EnzymeLikelihoods
-        Likelihood.cpp)
+        Likelihood.cpp
+        Rosenbrock.cpp)
 
 

@@ -2,6 +2,7 @@
 #define CHMC_NESTED_SAMPLING_CHMC_H
 
 #include "ISampler.h"
+#include "IPrior.h"
 #include "ILikelihood.h"
 #include "Hamiltonian.h"
 #include "types.h"
@@ -13,7 +14,7 @@ class Hamiltonian;
 // Constrained HMC
 class CHMC : public ISampler {
 public:
-    CHMC(ILikelihood&, IParams&);
+    CHMC(IPrior&, ILikelihood&, IParams&);
 
     const MCPoint SamplePoint(const MCPoint& old, double likelihoodConstraint) override;
 

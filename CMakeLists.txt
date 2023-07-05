@@ -44,31 +44,11 @@ add_compile_options(
         $<$<CONFIG:DEBUG>:-ggdb3>
 )
 
-
 add_subdirectory(extern/eigen)
 add_subdirectory(extern/googletest)
 add_subdirectory(test)
 add_subdirectory(src)
-add_subdirectory(app/phi4)
-
-add_executable(CHMC_Nested_Sampling
-        main.cpp
-        app/likelihoods/Gaussian.cpp
-        app/phi4/Phi4Likelihood.cpp
-        app/likelihoods/TopologicalTrap.cpp
-        app/likelihoods/Rosenbrock.cpp
-        app/LikelihoodPlots.cpp
-        )
-
-target_include_directories(CHMC_Nested_Sampling PUBLIC
-        include
-        include/CHMC
-        app
-        )
-
-target_link_libraries(CHMC_Nested_Sampling
-        CHMC_NS_Lib
-        )
+add_subdirectory(app)
 
 if(USE_ENZYME)
     target_include_directories(CHMC_Nested_Sampling PUBLIC

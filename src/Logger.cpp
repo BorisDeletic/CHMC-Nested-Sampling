@@ -27,14 +27,15 @@ void Logger::WritePoint(const MCPoint& point, const double logWeight) {
     mPosteriorFile << -point.likelihood << " ";
 
     for (const double phi : point.derived) {
-        mDeadFile << phi << " ";
-        mPosteriorFile << phi << " ";
+       // mDeadFile << phi << " ";
+      //  mPosteriorFile << phi << " ";
     }
 
     for (const double theta : point.theta) {
-   //     mDeadFile << theta << " ";
+        mDeadFile << theta << " ";
   //      mPosteriorFile << theta << " ";
     }
+
 
     mDeadFile << point.likelihood << " " << point.birthLikelihood << std::endl;
     mPosteriorFile << std::endl;
@@ -58,15 +59,15 @@ void Logger::WriteSummary(const NSSummary& summary) {
 
 void Logger::WriteParamNames(const std::vector<std::string> &names, int totalParams)
 {
-    mParamNameFile.open(mName + ".paramnames");
+   // mParamNameFile.open(mName + ".paramnames");
 
     for (const auto& name : names) {
-        mParamNameFile << name << " " << name << std::endl;
+    //    mParamNameFile << name << " " << name << std::endl;
     }
 
     for (int i = 1; i < totalParams - names.size() + 1; i++) {
     //    mParamNameFile << "p" << i << " \\theta{" << i << "}\n";
     }
 
-    mParamNameFile.close();
+  //  mParamNameFile.close();
 }

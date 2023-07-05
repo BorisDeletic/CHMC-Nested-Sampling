@@ -2,8 +2,9 @@
 #include "Hamiltonian.h"
 
 
-Hamiltonian::Hamiltonian(ILikelihood& likelihood, IParams& params)
+Hamiltonian::Hamiltonian(IPrior& prior, ILikelihood& likelihood, IParams& params)
     :
+        mPrior(prior),
         mLikelihood(likelihood),
         mParams(params),
         mIntegrator(mParams)
@@ -18,9 +19,10 @@ void Hamiltonian::SetHamiltonian(const Eigen::VectorXd &x, const Eigen::VectorXd
     mIters = 0;
 
     mLikelihoodConstraint = likelihoodConstraint;
-
     mLogLikelihood = mLikelihood.LogLikelihood(x);
-    mGradient = mLikelihood.Gradient(x);
+
+    mLikelihoodGradient = mLikelihood.Gradient(x);
+    mPriorGradient = mPrior.Gradient(x);
 }
 
 
@@ -29,15 +31,17 @@ void Hamiltonian::Evolve()
     if (mRejected) return;
     mIters++;
 
-    Eigen::VectorXd newX = mIntegrator.UpdateX(mX, mP, mGradient);
+    Eigen::VectorXd newX = mIntegrator.UpdateX(mX, mP, mPriorGradient);
     const double newLikelihood = mLikelihood.LogLikelihood(newX);
 
     if (newLikelihood <= mLikelihoodConstraint) {
         // Reflect off iso-likelihood contour.
         mReflections++;
 
-        ReflectP(mGradient);
-        ReflectX(mGradient);
+        mLikelihoodGradient = mLikelihood.Gradient(mX);
+
+        ReflectP(mLikelihoodGradient);
+        ReflectX(mLikelihoodGradient);
     }
     else
     {
@@ -45,9 +49,9 @@ void Hamiltonian::Evolve()
         mLogLikelihood = newLikelihood;
     }
 
-    mGradient = mLikelihood.Gradient(mX);
+    mPriorGradient = mPrior.Gradient(mX);
 
-    mP = mIntegrator.UpdateP( mGradient);
+    mP = mIntegrator.UpdateP( mPriorGradient);
 }
 
 
@@ -56,10 +60,8 @@ void Hamiltonian::ReflectP(const Eigen::VectorXd &normal) {
     const Eigen::VectorXd invMetric = mParams.GetMetric().cwiseInverse();
 
     Eigen::VectorXd nRot = invMetric.asDiagonal() * normal;
-  //  Eigen::VectorXd nHat = normal.normalized();
 
     Eigen::VectorXd reflectedP = mP - 2 * mP.dot(nRot) / normal.dot(nRot) * normal;
-  //  Eigen::VectorXd reflectedP = mP - 2 * mP.dot(nHat) * nHat;
 
     mIntegrator.ChangeP(mP, reflectedP);
     mP = reflectedP;
@@ -71,7 +73,7 @@ void Hamiltonian::ReflectX(const Eigen::VectorXd &normal) {
     for (int i = 0; i < mEpsilonReflectionLimit; i++) {
         const double epsilonFactor = 1.0 / pow(2, i);
 
-        Eigen::VectorXd nextX = mIntegrator.UpdateX(mX, mP, mGradient, epsilonFactor);
+        Eigen::VectorXd nextX = mIntegrator.UpdateX(mX, mP, mPriorGradient, epsilonFactor);
         const double nextLikelihood = mLikelihood.LogLikelihood(nextX);
 
         if (nextLikelihood > mLikelihoodConstraint) {
@@ -82,11 +84,10 @@ void Hamiltonian::ReflectX(const Eigen::VectorXd &normal) {
 
             return;
         }
-        ReflectP(normal);
+       // ReflectP(normal);
     }
 
     mRejected = true;
-  //  throw std::runtime_error("NO VALID REFLECTION");
 }
 
 

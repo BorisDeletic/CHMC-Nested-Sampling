@@ -5,10 +5,9 @@
 
 class Phi4Likelihood : public ILikelihood {
 public:
-    inline Phi4Likelihood(int n, double kappa, double lambda, double width)
-    : n(n), mKappa(kappa), mLambda(lambda), priorWidth(width) {}
+    inline Phi4Likelihood(int n, double kappa, double lambda)
+    : n(n), mKappa(kappa), mLambda(lambda) {}
 
-    const Eigen::VectorXd PriorTransform(const Eigen::VectorXd &cube) override;
     const double LogLikelihood(const Eigen::VectorXd& theta) override;
     const Eigen::VectorXd Gradient(const Eigen::VectorXd& theta) override;
 
@@ -26,7 +25,6 @@ private:
 
 
     const int n;
-    const double priorWidth;
 
     const double mKappa;
     const double mLambda;

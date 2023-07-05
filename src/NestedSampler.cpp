@@ -2,20 +2,25 @@
 #include "Logger.h"
 #include <iostream>
 #include <cfloat>
+#include <exception>
 
 
-NestedSampler::NestedSampler(ISampler& sampler, ILikelihood& likelihood, Logger& logger,
+NestedSampler::NestedSampler(ISampler& sampler, IPrior& prior, ILikelihood& likelihood, Logger& logger,
                              NSConfig config)
     :
-    mSampler(sampler),
-    mLikelihood(likelihood),
-    mLogger(logger),
-    mConfig(config),
-    mDimension(mLikelihood.GetDimension()),
-    gen(rd()),
-    mUniform(0,1),
-    mLogWeight(log(exp(1.0L/mConfig.numLive) - 1.0L))
+        mSampler(sampler),
+        mPrior(prior),
+        mLikelihood(likelihood),
+        mLogger(logger),
+        mConfig(config),
+        mDimension(mLikelihood.GetDimension()),
+        gen(rd()),
+        mUniformRng(0, 1),
+        mLogWeight(log(exp(1.0L/mConfig.numLive) - 1.0L))
 {
+    if (mPrior.GetDimension() != mLikelihood.GetDimension()) {
+        throw std::runtime_error("Prior dimension and likelihood dimensions do not match");
+    }
 }
 
 
@@ -116,9 +121,9 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
 
 const MCPoint NestedSampler::SampleFromPrior() {
     Eigen::VectorXd cube = Eigen::VectorXd::NullaryExpr(mDimension, [&](){
-        return mUniform(gen);
+        return mUniformRng(gen);
     });
-    Eigen::VectorXd theta = mLikelihood.PriorTransform(cube);
+    Eigen::VectorXd theta = mPrior.PriorTransform(cube);
 
     MCPoint pointFromPrior = {
             theta,
@@ -132,7 +137,7 @@ const MCPoint NestedSampler::SampleFromPrior() {
 
 
 const MCPoint& NestedSampler::GetRandomPoint() {
-    const int randomIndex = std::floor(mUniform(gen) * mLivePoints.size());
+    const int randomIndex = std::floor(mUniformRng(gen) * mLivePoints.size());
 
     auto It = mLivePoints.begin();
     std::advance(It, randomIndex);
@@ -167,13 +172,25 @@ const double NestedSampler::EstimateLogEvidenceRemaining() {
     return logEvidenceLive;
 }
 
+const double NestedSampler::GetReflectRate() {
+    double reflections = 0;
+    double steps = 0;
+
+    for (auto& point : mLivePoints) {
+        reflections += point.reflections;
+        steps += point.steps;
+    }
+
+    return reflections / steps;
+}
+
+
 
 const bool NestedSampler::TerminateSampling() {
     if (mAdapter != nullptr)
     {
-//        const double reflectionRate = (double) mReflections / mIntegrationSteps * 100;
-//        std::cout << "NS Step: " << mIter << ", Num Live = " << mLivePoints.size() << std::endl;
-//        std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << reflectionRate << std::endl;
+        std::cout << "NS Step: " << mIter << ", Num Live = " << mLivePoints.size() << std::endl;
+        std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << GetReflectRate() * 100 << std::endl;
 
         mAdapter->AdaptMetric(mLivePoints);
     }
@@ -192,6 +209,8 @@ const bool NestedSampler::TerminateSampling() {
 
     return false;
 }
+
+
 
 
 // returns log(A + B)

@@ -30,8 +30,3 @@ const Eigen::VectorXd RosenbrockLikelihood::Gradient(const Eigen::VectorXd& thet
     return grad;
 };
 
-
-const Eigen::VectorXd RosenbrockLikelihood::PriorTransform(const Eigen::VectorXd &cube)
-{
-    return cube.array() * priorWidth - priorWidth / 2;
-}

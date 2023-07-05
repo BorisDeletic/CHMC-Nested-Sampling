@@ -2,11 +2,6 @@
 #include <unsupported/Eigen/FFT>
 #include <iostream>
 
-const Eigen::VectorXd Phi4Likelihood::PriorTransform(const Eigen::VectorXd &cube)
-{
-    return cube.array() * priorWidth - priorWidth / 2;
-}
-
 
 const double Phi4Likelihood::LogLikelihood(const Eigen::VectorXd &theta) {
     double fieldAction = 0.0;

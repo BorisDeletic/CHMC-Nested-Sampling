@@ -2,11 +2,11 @@
 #include "Hamiltonian.h"
 #include <iostream>
 
-CHMC::CHMC(ILikelihood& likelihood, IParams& params)
+CHMC::CHMC(IPrior& prior, ILikelihood& likelihood, IParams& params)
     :
     mParams(params),
     mLikelihood(likelihood),
-    mHamiltonian(likelihood, params),
+    mHamiltonian(prior, likelihood, params),
     gen(rd()),
     mNorm(0, 1),
     mUniform(0, 1)
@@ -55,10 +55,10 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
         rejected = true;
     }
 
-//    const double reflectionRate = (double)mHamiltonian.GetReflections() / mHamiltonian.GetIntegrationSteps();
-//    if (reflectionRate > 0.9) {
-//        acceptProb = 0;
-//    }
+    const double reflectionRate = (double)mHamiltonian.GetReflections() / mHamiltonian.GetIntegrationSteps();
+    if (reflectionRate > 0.9) {
+        acceptProb = 0;
+    }
 
     MCPoint newPoint = {
             mHamiltonian.GetX(),

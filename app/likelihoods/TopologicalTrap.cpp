@@ -27,7 +27,3 @@ const Eigen::VectorXd TopologicalTrap::Gradient(const Eigen::VectorXd &x) {
 
     return grad;
 }
-
-const Eigen::VectorXd TopologicalTrap::PriorTransform(const Eigen::VectorXd &cube) {
-    return cube.array() * priorWidth - priorWidth / 2;
-}

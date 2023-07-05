@@ -1,16 +1,16 @@
 #ifndef CHMC_NESTED_SAMPLING_HAMILTONIAN_H
 #define CHMC_NESTED_SAMPLING_HAMILTONIAN_H
 
-#include "LeapfrogIntegrator.h"
+#include "IPrior.h"
 #include "ILikelihood.h"
 #include "IParams.h"
+#include "LeapfrogIntegrator.h"
 #include <Eigen/Dense>
-#include <functional>
 
 // Constrained Hamiltonian class. Trajectory reflects off likelihood constraint boundary.
 class Hamiltonian {
 public:
-    Hamiltonian(ILikelihood&, IParams&);
+    Hamiltonian(IPrior&, ILikelihood&, IParams&);
 
     const Eigen::VectorXd& GetX() const { return mX; };
     const Eigen::VectorXd& GetP() const { return mP; };
@@ -28,11 +28,15 @@ private:
     void ReflectP(const Eigen::VectorXd& normal);
     void ReflectX(const Eigen::VectorXd& normal);
 
+    IPrior& mPrior;
     ILikelihood& mLikelihood;
     IParams& mParams;
+
     LeapfrogIntegrator mIntegrator;
 
-    Eigen::VectorXd mGradient;
+    Eigen::VectorXd mPriorGradient;
+    Eigen::VectorXd mLikelihoodGradient;
+
     double mLogLikelihood;
     double mLikelihoodConstraint;
 

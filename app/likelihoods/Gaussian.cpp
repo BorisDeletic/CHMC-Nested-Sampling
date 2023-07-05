@@ -7,16 +7,10 @@ const double GaussianLikelihood::LogLikelihood(const Eigen::VectorXd& theta)
 
     loglikelihood -= ((theta.array() - mean) / var).pow(2).sum() / 2;
     return loglikelihood;
-};
+}
 
 
 const Eigen::VectorXd GaussianLikelihood::Gradient(const Eigen::VectorXd& theta)
 {
     return - ((theta.array() - mean) / var.pow(2)).matrix();
-};
-
-
-const Eigen::VectorXd GaussianLikelihood::PriorTransform(const Eigen::VectorXd &cube)
-{
-    return cube.array() * priorWidth - priorWidth / 2;
 }
