@@ -52,6 +52,7 @@ private:
     double mLogZ; // log evidence
     double mLogWeight = 0;
 
+    const double reflectionRateThreshold = 0.99;
     const double minLikelihood = -1e30;
     const int mDimension;
     const int mSampleRetries = 5;

@@ -1,4 +1,5 @@
 #include "Benchmark.h"
+#include "UniformPrior.h"
 #include "Phi4Likelihood.h"
 #include "Logger.h"
 #include "Adapter.h"
@@ -29,14 +30,15 @@ NSConfig config = {
 
 void runPhi4(std::string fname, int n, double kappa, double lambda)
 {
-    Phi4Likelihood likelihood = Phi4Likelihood(n, kappa, lambda, priorWidth);
+    UniformPrior prior = UniformPrior(n*n, priorWidth);
+    Phi4Likelihood likelihood = Phi4Likelihood(n, kappa, lambda);
     Logger logger = Logger(fname);
 
     Adapter params = Adapter(epsilon, pathLength, n*n);
 
-    CHMC sampler = CHMC(likelihood, params);
+    CHMC sampler = CHMC(prior, likelihood, params);
 
-    NestedSampler NS = NestedSampler(sampler, likelihood, logger, config);
+    NestedSampler NS = NestedSampler(sampler, prior, likelihood, logger, config);
 
     NS.SetAdaption(&params);
     NS.Initialise();

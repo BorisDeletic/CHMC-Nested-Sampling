@@ -31,6 +31,8 @@ private:
     std::mt19937 gen;
 
     int mIters = 0;
+
+    const double reflectionRateThreshold = 0.99;
 };
 
 #endif //CHMC_NESTED_SAMPLING_CHMC_H

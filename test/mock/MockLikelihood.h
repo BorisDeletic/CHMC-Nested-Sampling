@@ -6,7 +6,6 @@
 
 class MockLikelihood : public ILikelihood {
 public:
-    MOCK_METHOD(const Eigen::VectorXd, PriorTransform, (const Eigen::VectorXd&), (override));
     MOCK_METHOD(const double, LogLikelihood, (const Eigen::VectorXd&), (override));
     MOCK_METHOD(const Eigen::VectorXd, Gradient, (const Eigen::VectorXd&), (override));
     MOCK_METHOD(const int, GetDimension, (), (override));
@@ -17,8 +16,6 @@ class GaussianLikelihood : public ILikelihood {
 public:
     inline GaussianLikelihood(const Eigen::ArrayXd& mean, const Eigen::ArrayXd& var) :
         mean(mean), var(var) {};
-
-    const Eigen::VectorXd PriorTransform(const Eigen::VectorXd& cube) override { return cube; };
 
     const double LogLikelihood(const Eigen::VectorXd& theta) override
     {

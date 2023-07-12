@@ -15,14 +15,14 @@ std::string phase_dir = "phase_diagram";
 std::string correlation_dir = "correlation";
 
 
-const double priorWidth = 6;
+const double priorWidth = 4;
 
 const double epsilon = 0.1;
 const int pathLength = 100;
 
 const int numLive = 100;
-const int maxIters = 100000;
-const double precisionCriterion = 0.001;
+const int maxIters = 500000;
+const double precisionCriterion = 1e-4;
 
 NSConfig config = {
         numLive,
@@ -112,6 +112,6 @@ int main() {
    // generatePhaseDiagramData();
 
  //  generateCorrelationData();
-    runPhi4("Phi4_posterior_weightings_n10", 5, 0.2, 0.2);
+    runPhi4("Phi4_posterior_weightings", 20, 0.3, 0.2);
     std::cout << "help";
 }

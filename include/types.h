@@ -25,13 +25,15 @@ typedef struct NSConfig {
     int numLive;
     int maxIters;
     double precisionCriterion;
-    double reflectionRate;
+    double reflectionRateThreshold;
 } NSConfig;
 
 
 typedef struct NSSummary {
-    const double logZ;
-    const double logZRemaining;
+    double logZ;
+    double logZRemaining;
+    double acceptRate;
+    double reflectionRate;
 } NSSummary;
 
 

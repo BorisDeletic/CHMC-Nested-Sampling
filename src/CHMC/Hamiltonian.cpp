@@ -21,7 +21,7 @@ void Hamiltonian::SetHamiltonian(const Eigen::VectorXd &x, const Eigen::VectorXd
     mLikelihoodConstraint = likelihoodConstraint;
     mLogLikelihood = mLikelihood.LogLikelihood(x);
 
-    mLikelihoodGradient = mLikelihood.Gradient(x);
+   // mLikelihoodGradient = mLikelihood.Gradient(x);
     mPriorGradient = mPrior.Gradient(x);
 }
 
@@ -94,7 +94,9 @@ void Hamiltonian::ReflectX(const Eigen::VectorXd &normal) {
 const double Hamiltonian::GetEnergy() const {
     const Eigen::VectorXd invMetric = mParams.GetMetric().cwiseInverse();
 
-    const double energy = 0.5 * mP.dot(invMetric.asDiagonal() * mP) - mLogLikelihood;
+//    const double energy = 0.5 * mP.dot(invMetric.asDiagonal() * mP) - mLogLikelihood;
+    const double energy = 0.5 * mP.dot(invMetric.asDiagonal() * mP);
+
     return energy;
 }
 

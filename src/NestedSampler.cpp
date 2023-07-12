@@ -82,7 +82,7 @@ void NestedSampler::NestedSamplingStep() {
     mLogger.WritePoint(deadPoint, mLogWeight);
 
     // Generate new point(s)
-    if ((double)deadPoint.reflections / deadPoint.steps > 0.9)
+    if ((double)deadPoint.reflections / deadPoint.steps > reflectionRateThreshold)
     {
         const MCPoint& randPoint = GetRandomPoint();
         SampleNewPoint(randPoint, deadPoint.likelihood);
@@ -181,7 +181,7 @@ const double NestedSampler::GetReflectRate() {
         steps += point.steps;
     }
 
-    return reflections / steps;
+    return 100 * reflections / steps;
 }
 
 
@@ -190,7 +190,7 @@ const bool NestedSampler::TerminateSampling() {
     if (mAdapter != nullptr)
     {
         std::cout << "NS Step: " << mIter << ", Num Live = " << mLivePoints.size() << std::endl;
-        std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << GetReflectRate() * 100 << std::endl;
+        std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << GetReflectRate() << std::endl;
 
         mAdapter->AdaptMetric(mLivePoints);
     }
