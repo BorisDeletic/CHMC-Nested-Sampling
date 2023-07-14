@@ -15,8 +15,9 @@ class Logger;
 
 class NestedSampler {
 public:
-    NestedSampler(ISampler&, IPrior&, ILikelihood&, Adapter&, Logger&, NSConfig config);
+    NestedSampler(ISampler&, IPrior&, ILikelihood&, Logger&, NSConfig config);
 
+    void SetAdaption(Adapter* adapter);
     void Initialise();
     void Run();
 
@@ -40,7 +41,7 @@ private:
     IPrior& mPrior;
     ILikelihood& mLikelihood;
     Logger& mLogger;
-    Adapter& mAdapter;
+    Adapter* mAdapter = nullptr;
 
     const NSConfig mConfig;
 

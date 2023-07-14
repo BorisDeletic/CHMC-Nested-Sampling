@@ -83,7 +83,7 @@ void Logger::WriteSummary(const NSInfo& summary) {
 }
 
 
-void Logger::WriteDiagnostics(const NSInfo& info, const MCPoint& point, IParams& params)
+void Logger::WriteDiagnostics(const NSInfo& info, const MCPoint& point, const IParams& params)
 {
     if (!mDiagnosticFile.is_open()) {
         mDiagnosticFile.open(mName + ".diagnostic", std::ios::app);

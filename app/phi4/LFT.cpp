@@ -44,8 +44,9 @@ void runPhi4(std::string fname, int n, double kappa, double lambda)
 
     CHMC sampler = CHMC(prior, likelihood, params, config.reflectionRateThreshold);
 
-    NestedSampler NS = NestedSampler(sampler, prior, likelihood, params, logger, config);
+    NestedSampler NS = NestedSampler(sampler, prior, likelihood, logger, config);
 
+    NS.SetAdaption(&params);
     NS.Initialise();
     NS.Run();
 }

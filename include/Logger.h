@@ -14,7 +14,7 @@ public:
     virtual void WritePoint(const MCPoint&, double logWeight);
     void WriteSummary(const NSInfo&);
     void WriteParamNames(const std::vector<std::string>& names, int totalParams);
-    void WriteDiagnostics(const NSInfo&, const MCPoint&, IParams&);
+    void WriteDiagnostics(const NSInfo&, const MCPoint&, const IParams&);
 
   //  void WriteLivePoints();
   //  void ReadLivePoints();

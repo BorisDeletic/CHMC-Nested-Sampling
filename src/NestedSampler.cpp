@@ -5,13 +5,12 @@
 #include <exception>
 
 
-NestedSampler::NestedSampler(ISampler& sampler, IPrior& prior, ILikelihood& likelihood,
-                             Adapter& adapter, Logger& logger, NSConfig config)
+NestedSampler::NestedSampler(ISampler& sampler, IPrior& prior, ILikelihood& likelihood, Logger& logger,
+                             NSConfig config)
     :
         mSampler(sampler),
         mPrior(prior),
         mLikelihood(likelihood),
-        mAdapter(adapter),
         mLogger(logger),
         mConfig(config),
         mDimension(mLikelihood.GetDimension()),
@@ -35,6 +34,11 @@ void NestedSampler::Initialise() {
     }
 
     mLogZ = -DBL_MAX; // Z = 0 initially
+}
+
+
+void NestedSampler::SetAdaption(Adapter* adapter) {
+    mAdapter = adapter;
 }
 
 
@@ -84,7 +88,9 @@ void NestedSampler::NestedSamplingStep() {
     }
 
     if (mConfig.logDiagnostics) {
-      //  mLogger.WriteDiagnostics(GetInfo(), deadPoint, mAdapter);
+        assert(mAdapter != nullptr);
+        NSInfo info = {1,1,1.0,1.0,1.0};
+        mLogger.WriteDiagnostics(info, deadPoint, *mAdapter);
     }
 
     //kill point.
@@ -97,7 +103,10 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
     for (int i = 0; i < mSampleRetries; i++) {
         const MCPoint newPoint = mSampler.SamplePoint(deadPoint, likelihoodConstraint);
 
-        mAdapter.AdaptEpsilon(newPoint.acceptProbability);
+        if (mAdapter != nullptr)
+        {
+            mAdapter->AdaptEpsilon(newPoint.acceptProbability);
+        }
 
         if (!newPoint.rejected)
         {
@@ -192,10 +201,13 @@ const NSInfo NestedSampler::GetInfo() {
 
 
 const bool NestedSampler::TerminateSampling() {
-    std::cout << "NS Step: " << mIter << ", Num Live = " << mLivePoints.size() << std::endl;
-    std::cout << "e=" << mAdapter.GetEpsilon() << ", reflectionrate=" << GetReflectRate() << std::endl;
+    if (mAdapter != nullptr)
+    {
+        std::cout << "NS Step: " << mIter << ", Num Live = " << mLivePoints.size() << std::endl;
+        std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << GetReflectRate() << std::endl;
 
-    mAdapter.AdaptMetric(mLivePoints);
+        mAdapter->AdaptMetric(mLivePoints);
+    }
 
     double remainingEvidence = EstimateLogEvidenceRemaining();
     std::cout << "Step: " << mIter << std::endl;
