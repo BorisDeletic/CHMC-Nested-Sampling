@@ -61,7 +61,8 @@ void NestedSampler::Run() {
         mLogger.WritePoint(point, mLogImportanceWeight);
     }
 
-    mLogger.WriteSummary(GetInfo());
+    NSInfo summary = GetInfo();
+    mLogger.WriteSummary(summary);
 
     int totalParams = mDimension + mLikelihood.DerivedParams(Eigen::VectorXd::Ones(mDimension)).size();
     mLogger.WriteParamNames(mLikelihood.ParamNames(), totalParams);
@@ -75,6 +76,10 @@ void NestedSampler::NestedSamplingStep() {
     // Analysis and log dead point
     UpdateLogEvidence(deadPoint);
     mLogger.WritePoint(deadPoint, mLogImportanceWeight);
+    if (mConfig.logDiagnostics) {
+        assert(mAdapter != nullptr);
+        mLogger.WriteDiagnostics(GetInfo(), deadPoint, *mAdapter);
+    }
 
     // Generate new point(s)
     if ((double)deadPoint.reflections / deadPoint.steps > reflectionRateThreshold)
@@ -87,11 +92,6 @@ void NestedSampler::NestedSamplingStep() {
         SampleNewPoint(deadPoint, deadPoint.likelihood);
     }
 
-    if (mConfig.logDiagnostics) {
-        assert(mAdapter != nullptr);
-        NSInfo info = {1,1,1.0,1.0,1.0};
-        mLogger.WriteDiagnostics(info, deadPoint, *mAdapter);
-    }
 
     //kill point.
     mLivePoints.erase(lowestIt);
@@ -148,7 +148,7 @@ void NestedSampler::UpdateLogEvidence(const MCPoint& point) {
 
 // Estimate Log evidence remaining in live points
 const double NestedSampler::EstimateLogEvidenceRemaining() {
-    Eigen::ArrayXd logLikelihoodLive(mConfig.numLive);
+    Eigen::ArrayXd logLikelihoodLive(mLivePoints.size());
 
     int i = 0;
     for (auto& point : mLivePoints) {
@@ -188,7 +188,7 @@ const double NestedSampler::GetReflectRate() {
 
 const NSInfo NestedSampler::GetInfo() {
 
-    const NSInfo info = {
+    NSInfo info = {
             mIter,
             mConfig.numLive,
             mConfig.reflectionRateThreshold,

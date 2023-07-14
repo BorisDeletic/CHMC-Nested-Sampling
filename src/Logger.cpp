@@ -89,19 +89,21 @@ void Logger::WriteDiagnostics(const NSInfo& info, const MCPoint& point, const IP
         mDiagnosticFile.open(mName + ".diagnostic", std::ios::app);
     }
 
-    mDiagnosticFile << info.iter;
-    mDiagnosticFile << info.numLive;
-    mDiagnosticFile << info.logZ;
-    mDiagnosticFile << info.logZLive;
+    mDiagnosticFile << info.iter << ", ";
+    mDiagnosticFile << info.numLive << ", ";
+    mDiagnosticFile << info.logZ << ", ";
+    mDiagnosticFile << info.logZLive << ", ";
 
-    mDiagnosticFile << point.likelihood;
-    mDiagnosticFile << point.birthLikelihood;
-    mDiagnosticFile << (point.rejected ? 1 : 0);
-    mDiagnosticFile << point.acceptProbability;
-    mDiagnosticFile << point.reflections;
-    mDiagnosticFile << point.steps;
+    mDiagnosticFile << point.likelihood << ", ";
+    mDiagnosticFile << point.birthLikelihood << ", ";
+    mDiagnosticFile << (point.rejected ? 1 : 0) << ", ";
+    mDiagnosticFile << point.acceptProbability << ", ";
+    mDiagnosticFile << point.reflections << ", ";
+    mDiagnosticFile << point.steps << ", ";
 
-    mDiagnosticFile << params.GetEpsilon();
-    mDiagnosticFile << params.GetPathLength();
+    mDiagnosticFile << params.GetEpsilon() << ", ";
+    mDiagnosticFile << params.GetPathLength() << ", ";
     mDiagnosticFile << params.GetMetric()[0];
+
+    mDiagnosticFile << std::endl;
 }
