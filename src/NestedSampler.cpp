@@ -61,8 +61,7 @@ void NestedSampler::Run() {
         mLogger.WritePoint(point, mLogImportanceWeight);
     }
 
-    NSInfo summary = GetInfo();
-    mLogger.WriteSummary(summary);
+    mLogger.WriteSummary(GetInfo());
 
     int totalParams = mDimension + mLikelihood.DerivedParams(Eigen::VectorXd::Ones(mDimension)).size();
     mLogger.WriteParamNames(mLikelihood.ParamNames(), totalParams);
