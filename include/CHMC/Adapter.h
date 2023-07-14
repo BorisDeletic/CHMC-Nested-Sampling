@@ -11,9 +11,9 @@ class Adapter : public IParams {
 public:
     Adapter(double initEpsilon, int initPathLength, int dimension);
 
-    double GetEpsilon() override { return mEpsilon; };
-    int GetPathLength() override { return mPathLength; };
-    const Eigen::VectorXd& GetMetric() override { return mMetric; };
+    double GetEpsilon() const override { return mEpsilon; };
+    int GetPathLength() const override { return mPathLength; };
+    const Eigen::VectorXd& GetMetric() const override { return mMetric; };
 
     void Restart();
     void SetMu(double m) { mMu = m; };

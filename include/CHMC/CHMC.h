@@ -14,7 +14,7 @@ class Hamiltonian;
 // Constrained HMC
 class CHMC : public ISampler {
 public:
-    CHMC(IPrior&, ILikelihood&, IParams&);
+    CHMC(IPrior&, ILikelihood&, IParams&, double reflectionRateThreshold);
 
     const MCPoint SamplePoint(const MCPoint& old, double likelihoodConstraint) override;
 
@@ -32,7 +32,7 @@ private:
 
     int mIters = 0;
 
-    const double reflectionRateThreshold = 0.99;
+    const double reflectionRateThreshold;
 };
 
 #endif //CHMC_NESTED_SAMPLING_CHMC_H

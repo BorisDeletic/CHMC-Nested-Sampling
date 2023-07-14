@@ -26,14 +26,16 @@ typedef struct NSConfig {
     int maxIters;
     double precisionCriterion;
     double reflectionRateThreshold;
+    bool logDiagnostics;
 } NSConfig;
 
 
-typedef struct NSSummary {
+typedef struct NSInfo {
+    int iter;
+    int numLive;
+    double reflectRateThreshold;
     double logZ;
-    double logZRemaining;
-    double acceptRate;
-    double reflectionRate;
+    double logZLive;
 } NSSummary;
 
 

@@ -5,9 +5,9 @@
 
 class IParams {
 public:
-    virtual double GetEpsilon() = 0;
-    virtual int GetPathLength() = 0;
-    virtual const Eigen::VectorXd& GetMetric() = 0;
+    virtual double GetEpsilon() const = 0;
+    virtual int GetPathLength() const = 0;
+    virtual const Eigen::VectorXd& GetMetric() const = 0;
 };
 
 #endif //CHMC_NESTED_SAMPLING_IPARAMS_H

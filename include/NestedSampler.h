@@ -15,9 +15,8 @@ class Logger;
 
 class NestedSampler {
 public:
-    NestedSampler(ISampler&, IPrior&, ILikelihood&, Logger&, NSConfig config);
+    NestedSampler(ISampler&, IPrior&, ILikelihood&, Adapter&, Logger&, NSConfig config);
 
-    void SetAdaption(Adapter* adapter);
     void Initialise();
     void Run();
 
@@ -25,11 +24,12 @@ private:
     void NestedSamplingStep();
     void SampleNewPoint(const MCPoint& deadPoint, double likelihoodConstraint);
     const MCPoint SampleFromPrior();
-    const MCPoint& GetRandomPoint();
+    const MCPoint& GetRandomLivePoint();
 
     void UpdateLogEvidence(const MCPoint&);
     const double EstimateLogEvidenceRemaining();
     const double GetReflectRate();
+    const NSInfo GetInfo();
 
     const bool TerminateSampling();
 
@@ -40,9 +40,9 @@ private:
     IPrior& mPrior;
     ILikelihood& mLikelihood;
     Logger& mLogger;
-    Adapter* mAdapter = nullptr;
+    Adapter& mAdapter;
 
-    NSConfig mConfig;
+    const NSConfig mConfig;
 
     std::multiset<MCPoint> mLivePoints;
 //    double mLogZRemaining; // estimate of evidence remaining in live points
@@ -50,7 +50,7 @@ private:
     int mIter;
 
     double mLogZ; // log evidence
-    double mLogWeight = 0;
+    double mLogImportanceWeight = 0;
 
     const double reflectionRateThreshold = 0.99;
     const double minLikelihood = -1e30;

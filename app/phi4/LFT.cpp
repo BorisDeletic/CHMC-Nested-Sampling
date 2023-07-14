@@ -14,7 +14,7 @@
 std::string phase_dir = "phase_diagram";
 std::string correlation_dir = "correlation";
 
-
+const bool logDiagnostics = true;
 const double priorWidth = 4;
 
 const double epsilon = 0.1;
@@ -23,11 +23,14 @@ const int pathLength = 100;
 const int numLive = 100;
 const int maxIters = 500000;
 const double precisionCriterion = 1e-4;
+const double reflectionRateThreshold = 0.99;
 
 NSConfig config = {
         numLive,
         maxIters,
         precisionCriterion,
+        reflectionRateThreshold,
+        logDiagnostics
 };
 
 
@@ -35,15 +38,14 @@ void runPhi4(std::string fname, int n, double kappa, double lambda)
 {
     UniformPrior prior = UniformPrior(n*n, priorWidth);
     Phi4Likelihood likelihood = Phi4Likelihood(n, kappa, lambda);
-    Logger logger = Logger(fname);
+    Logger logger = Logger(fname, true);
 
     Adapter params = Adapter(epsilon, pathLength, n*n);
 
-    CHMC sampler = CHMC(prior, likelihood, params);
+    CHMC sampler = CHMC(prior, likelihood, params, config.reflectionRateThreshold);
 
-    NestedSampler NS = NestedSampler(sampler, prior, likelihood, logger, config);
+    NestedSampler NS = NestedSampler(sampler, prior, likelihood, params, logger, config);
 
-    NS.SetAdaption(&params);
     NS.Initialise();
     NS.Run();
 }

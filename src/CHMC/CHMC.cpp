@@ -2,14 +2,15 @@
 #include "Hamiltonian.h"
 #include <iostream>
 
-CHMC::CHMC(IPrior& prior, ILikelihood& likelihood, IParams& params)
+CHMC::CHMC(IPrior& prior, ILikelihood& likelihood, IParams& params, double reflectRateThresh)
     :
     mParams(params),
     mLikelihood(likelihood),
     mHamiltonian(prior, likelihood, params),
     gen(rd()),
     mNorm(0, 1),
-    mUniform(0, 1)
+    mUniform(0, 1),
+    reflectionRateThreshold(reflectRateThresh)
 {
 }
 
