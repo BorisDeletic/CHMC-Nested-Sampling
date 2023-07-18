@@ -16,6 +16,7 @@ NestedSampler::NestedSampler(ISampler& sampler, IPrior& prior, ILikelihood& like
         mDimension(mLikelihood.GetDimension()),
         gen(rd()),
         mUniformRng(0, 1),
+        mReflectionRateThreshold(config.reflectionRateThreshold),
         mLogImportanceWeight(log(exp(1.0L / mConfig.numLive) - 1.0L))
 {
     if (mPrior.GetDimension() != mLikelihood.GetDimension()) {
@@ -77,7 +78,7 @@ void NestedSampler::NestedSamplingStep() {
     mLogger.WritePoint(deadPoint, mLogImportanceWeight);
 
     // Generate new point(s)
-    if ((double)deadPoint.reflections / deadPoint.steps > reflectionRateThreshold)
+    if ((double)deadPoint.reflections / deadPoint.steps > mReflectionRateThreshold)
     {
         const MCPoint& randPoint = GetRandomLivePoint();
         SampleNewPoint(randPoint, deadPoint.likelihood);
@@ -101,6 +102,8 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
         if (mAdapter != nullptr)
         {
             mAdapter->AdaptEpsilon(newPoint.acceptProbability);
+            // added for debugging
+            mAdapter->AdaptMetric(mLivePoints);
         }
 
         if (mConfig.logDiagnostics) {

@@ -53,10 +53,10 @@ private:
     double mLogZ; // log evidence
     double mLogImportanceWeight = 0;
 
-    const double reflectionRateThreshold = 0.99;
     const double minLikelihood = -1e30;
+    const double mReflectionRateThreshold;
     const int mDimension;
-    const int mSampleRetries = 1;
+    const int mSampleRetries = 2;
 
     std::random_device rd;
     std::mt19937 gen;

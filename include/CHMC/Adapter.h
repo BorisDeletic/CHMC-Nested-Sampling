@@ -37,7 +37,7 @@ private:
     double mKappa = 0.75;    // Adaptation shrinkage
     double mT0 = 10;       // Effective starting iteration
 
-    double mAlpha = 1;
+    double mAlpha = 0.1;
 };
 
 #endif //CHMC_NESTED_SAMPLING_ADAPTER_H
