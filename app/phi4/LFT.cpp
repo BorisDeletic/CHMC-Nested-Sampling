@@ -23,7 +23,7 @@ const int pathLength = 100;
 const int numLive = 100;
 const int maxIters = 500000;
 const double precisionCriterion = 1e-4;
-const double reflectionRateThreshold = 0.99;
+const double reflectionRateThreshold = 1.99;
 
 NSConfig config = {
         numLive,

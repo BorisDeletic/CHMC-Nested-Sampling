@@ -75,10 +75,6 @@ void NestedSampler::NestedSamplingStep() {
     // Analysis and log dead point
     UpdateLogEvidence(deadPoint);
     mLogger.WritePoint(deadPoint, mLogImportanceWeight);
-    if (mConfig.logDiagnostics) {
-        assert(mAdapter != nullptr);
-        mLogger.WriteDiagnostics(GetInfo(), deadPoint, *mAdapter);
-    }
 
     // Generate new point(s)
     if ((double)deadPoint.reflections / deadPoint.steps > reflectionRateThreshold)
@@ -105,6 +101,11 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
         if (mAdapter != nullptr)
         {
             mAdapter->AdaptEpsilon(newPoint.acceptProbability);
+        }
+
+        if (mConfig.logDiagnostics) {
+            assert(mAdapter != nullptr);
+            mLogger.WriteDiagnostics(GetInfo(), newPoint, *mAdapter);
         }
 
         if (!newPoint.rejected)

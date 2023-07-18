@@ -12,7 +12,7 @@ Logger::Logger(std::string name, bool logDiagnostics)
         mDiagnosticFile.open(mName + ".diagnostics");
 
         mDiagnosticFile
-            << "iter,numlive,logZ,logZlive,likelihood,birth_likelihood,rejected,accept_prob,reflections,steps"
+            << "iter,numlive,logZ,logZlive,likelihood,birth_likelihood,rejected,accept_prob,reflections,steps,"
             << "epsilon,path_length,metric" << std::endl;
     }
 }
