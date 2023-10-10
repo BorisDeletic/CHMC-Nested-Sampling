@@ -10,10 +10,13 @@ Logger::Logger(std::string name, bool logDiagnostics)
 
     if (logDiagnostics) {
         mDiagnosticFile.open(mName + ".diagnostics");
+        mLivePointsFile.open(mName + ".live_points");
 
         mDiagnosticFile
             << "iter,numlive,logZ,logZlive,likelihood,birth_likelihood,rejected,accept_prob,reflections,steps,"
-            << "epsilon,path_length,metric" << std::endl;
+            << "epsilon,path_length,metric,pdotn" << std::endl;
+
+        mLivePointsFile << "iter,ID,likelihood,reflections,steps" << std::endl;
     }
 }
 
@@ -106,4 +109,18 @@ void Logger::WriteDiagnostics(const NSInfo& info, const MCPoint& point, const IP
     mDiagnosticFile << params.GetMetric()[0];
 
     mDiagnosticFile << std::endl;
+}
+
+void Logger::WriteLivePoints(const NSInfo& info, const std::multiset<MCPoint> &points) {
+    if (!mLivePointsFile.is_open()) {
+        mLivePointsFile.open(mName + ".live_points", std::ios::app);
+    }
+
+    for (const auto& point : points) {
+        mLivePointsFile << info.iter << ",";
+        mLivePointsFile << point.ID << ",";
+        mLivePointsFile << point.likelihood << ",";
+        mLivePointsFile << point.reflections << ",";
+        mLivePointsFile << point.steps << std::endl;
+    }
 }

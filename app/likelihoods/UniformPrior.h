@@ -2,6 +2,7 @@
 #define CHMC_NESTED_SAMPLING_UNIFORMPRIOR_H
 
 #include "IPrior.h"
+#include "Phi4Likelihood.h"
 
 class UniformPrior : public IPrior {
 public:
@@ -17,6 +18,8 @@ private:
     const double mWidth;
 
     const double boundaryGradient = 10000;
+
+    Phi4Likelihood phi4;
 };
 
 

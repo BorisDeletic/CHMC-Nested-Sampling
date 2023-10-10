@@ -1,10 +1,11 @@
 #include "UniformPrior.h"
-
+#include "Phi4Likelihood.h"
 
 UniformPrior::UniformPrior(int dim, double width)
     :
     mDim(dim),
-    mWidth(width)
+    mWidth(width),
+    phi4(20,0.4,0.2)
 {
 }
 
@@ -22,8 +23,10 @@ const Eigen::VectorXd UniformPrior::Gradient(const Eigen::VectorXd &theta) {
 //        return 0.0;
 //    });
 
-    Eigen::VectorXd gradient = Eigen::VectorXd::Zero(mDim);
+   // Eigen::VectorXd gradient = Eigen::VectorXd::Zero(mDim);
     // make this reflect off the boundaries
+
+    Eigen::VectorXd gradient = -phi4.Gradient(theta);
     return gradient;
 }
 

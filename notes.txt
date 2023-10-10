@@ -1,0 +1,14 @@
+Diagonstics logging:
+Have some kind of NSInfo type which contains all data on the current NS iteration.
+diagnostics file will have param values, point data, ns info, for each iteration.
+
+Next:
+Do analysis on diagnostics, see how well reflection rate hopping works etc.
+
+all rejections are from reflection rate rejections - none from metropolis steps. -
+update: lots of rejections from points getting stuck and not finding a valid reflection immediately.
+lots of 0,1,2 path length points.
+
+when we reject a point, we can resample from a random live point.
+this way we can target an acceptance rate such that clusters do not die out.
+it looks like points are getting stuck in local minima and causing epsilon to freeze.

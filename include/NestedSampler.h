@@ -56,7 +56,7 @@ private:
     const double minLikelihood = -1e30;
     const double mReflectionRateThreshold;
     const int mDimension;
-    const int mSampleRetries = 2;
+    const int mSampleRetries = 5;
 
     std::random_device rd;
     std::mt19937 gen;

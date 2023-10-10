@@ -31,6 +31,7 @@ private:
     std::mt19937 gen;
 
     int mIters = 0;
+    int mPointID = 1;
 
     const double reflectionRateThreshold;
 };

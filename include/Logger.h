@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <set>
 
 class Logger {
 public:
@@ -16,7 +17,7 @@ public:
     void WriteParamNames(const std::vector<std::string>& names, int totalParams);
     void WriteDiagnostics(const NSInfo&, const MCPoint&, const IParams&);
 
-  //  void WriteLivePoints();
+    void WriteLivePoints(const NSInfo& info, const std::multiset<MCPoint>& points);
   //  void ReadLivePoints();
 
 private:
@@ -27,6 +28,7 @@ private:
     std::ofstream mSummaryFile;
     std::ofstream mParamNameFile;
     std::ofstream mDiagnosticFile;
+    std::ofstream mLivePointsFile;
 };
 
 #endif //CHMC_NESTED_SAMPLING_LOGGER_H

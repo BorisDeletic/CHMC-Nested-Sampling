@@ -51,7 +51,6 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
     //", " << mHamiltonian.GetReflections() << std::endl;
 
     if (rejected) {
-        rejected = true;
         acceptProb = 0;
     }
 
@@ -61,8 +60,12 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
 
     const double reflectionRate = (double)mHamiltonian.GetReflections() / mHamiltonian.GetIntegrationSteps();
     if (reflectionRate > reflectionRateThreshold) {
-        acceptProb = 0;
+      //  acceptProb = 0;
     }
+
+ //   if (mHamiltonian.GetIntegrationSteps() < 5) {
+ //       acceptProb = -1;
+//    }
 
     MCPoint newPoint = {
             mHamiltonian.GetX(),
@@ -72,9 +75,11 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
             mHamiltonian.GetReflections(),
             mHamiltonian.GetIntegrationSteps(),
             acceptProb,
-            rejected
+            rejected,
+            mPointID
     };
 
+    mPointID++;
     return newPoint;
 }
 

@@ -99,6 +99,8 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
     for (int i = 0; i < mSampleRetries; i++) {
         const MCPoint newPoint = mSampler.SamplePoint(deadPoint, likelihoodConstraint);
 
+      //  if (newPoint.acceptProbability == -1) continue;
+
         if (mAdapter != nullptr)
         {
             mAdapter->AdaptEpsilon(newPoint.acceptProbability);
@@ -215,6 +217,10 @@ const bool NestedSampler::TerminateSampling() {
     double remainingEvidence = EstimateLogEvidenceRemaining();
     std::cout << "Step: " << mIter << std::endl;
     std::cout << "Log(Z)=" << mLogZ << " ,LogZlive=" << remainingEvidence << std::endl << std::endl;
+
+    if (mConfig.logDiagnostics) {
+        mLogger.WriteLivePoints(GetInfo(), mLivePoints);
+    }
 
     if (remainingEvidence < mLogZ + log10(mConfig.precisionCriterion)) {
         return true;

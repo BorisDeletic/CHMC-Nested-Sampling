@@ -17,13 +17,13 @@ std::string correlation_dir = "correlation";
 const bool logDiagnostics = true;
 const double priorWidth = 4;
 
-const double epsilon = 0.1;
+const double epsilon = 0.01;
 const int pathLength = 100;
 
 const int numLive = 100;
 const int maxIters = 500000;
-const double precisionCriterion = 1e-4;
-const double reflectionRateThreshold = 1.99;
+const double precisionCriterion = 1e-2;
+const double reflectionRateThreshold = 0.9;
 
 NSConfig config = {
         numLive,
@@ -115,6 +115,6 @@ int main() {
    // generatePhaseDiagramData();
 
  //  generateCorrelationData();
-    runPhi4("Phi4_posterior_weightings", 20, 0.3, 0.2);
+    runPhi4("Phi4_posterior_sampling", 20, 0.4, 0.2);
     std::cout << "help";
 }

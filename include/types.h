@@ -9,10 +9,11 @@ typedef struct MCPoint {
     const Eigen::VectorXd derived;
     const double likelihood;
     const double birthLikelihood;
-    const int reflections = 0;
-    const int steps = 0;
-    const double acceptProbability = 1;
+    const int reflections = 1;
+    const int steps = 100;
+    const double acceptProbability = -1;
     bool rejected = false;
+    const int ID = 0;
 } MCPoint;
 
 
