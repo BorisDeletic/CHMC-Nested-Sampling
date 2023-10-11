@@ -37,13 +37,13 @@ void Logger::WritePoint(const MCPoint& point, const double logWeight) {
     mPosteriorFile << -point.likelihood << " ";
 
     for (const double phi : point.derived) {
-        mDeadFile << phi << " ";
-        mPosteriorFile << phi << " ";
+      //  mDeadFile << phi << " ";
+      //  mPosteriorFile << phi << " ";
     }
 
     for (const double theta : point.theta) {
-        mDeadFile << theta << " ";
-        mPosteriorFile << theta << " ";
+      //  mDeadFile << theta << " ";
+      //  mPosteriorFile << theta << " ";
     }
 
     mDeadFile << point.theta[0] << " ";

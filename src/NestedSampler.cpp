@@ -80,15 +80,18 @@ void NestedSampler::NestedSamplingStep() {
     mLogger.WritePoint(deadPoint, mLogImportanceWeight);
 
     // Generate new point(s)
-   // if ((double)deadPoint.reflections / deadPoint.steps > mReflectionRateThreshold)
-    //{
-    const MCPoint& randPoint = GetRandomLivePoint();
-    SampleNewPoint(randPoint, deadPoint.likelihood);
-   /* }
+  /*  if ((double)deadPoint.reflections / deadPoint.steps > mReflectionRateThreshold)
+    {
+        const MCPoint& randPoint = GetRandomLivePoint();
+        SampleNewPoint(randPoint, deadPoint.likelihood);
+    }
     else
     {
         SampleNewPoint(deadPoint, deadPoint.likelihood);
     } */
+
+    const MCPoint& randPoint = GetRandomLivePoint();
+    SampleNewPoint(randPoint, deadPoint.likelihood);
 
     //kill point.
     mLivePoints.erase(lowestIt);
@@ -102,7 +105,7 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
 
         if (mAdapter != nullptr)
         {
-           // std::cout << newPoint.acceptProbability << std::endl;
+//            std::cout << newPoint.acceptProbability << std::endl;
             mAdapter->AdaptEpsilon(newPoint.acceptProbability);
         }
 

@@ -2,6 +2,7 @@
 #include "Clustering.h"
 #include <algorithm>
 #include <iostream>
+#include <numeric>
 
 
 Clustering::Clustering(std::multiset<MCPoint> &points)
@@ -19,6 +20,7 @@ void Clustering::AssignClusters() {
     std::vector<std::vector<int>> allNN = FindAllNN();
 
     for (int k = 2; k < numLive; k++) {
+        std::cout << "k = " << k << std::endl;
         std::vector<int> newClusters = CalculateClusters(allNN, k);
 
         // no changes in clusters means we are finished
@@ -72,8 +74,12 @@ std::vector<int> Clustering::CalculateClusters(std::vector<std::vector<int>>& al
 std::vector<std::vector<int>> Clustering::FindAllNN() {
     int numLive = mLivePoints.size();
 
-    std::vector<std::vector<int>> allNN(numLive, std::vector<int>(numLive));
     std::vector<std::vector<double>> allDistances(numLive);
+    std::vector<std::vector<int>> allNN(numLive, std::vector<int>(numLive));
+
+    for (int i = 0; i < allNN.size(); i++) {
+        std::iota(allNN[i].begin(), allNN[i].end(), 0);
+    }
 
     for (int i = 0; i < allDistances.size(); i++) {
         auto point_i = mLivePoints.begin();
@@ -94,7 +100,7 @@ std::vector<std::vector<int>> Clustering::FindAllNN() {
 
     for (int i = 0; i < allNN.size(); i++)
     {
-        std::sort(std::begin(allNN[i]), std::end(allNN[i]),
+        std::sort(allNN[i].begin(), allNN[i].end(),
                   [&allDistances, i](const auto & lhs, const auto & rhs)
                   {
                       return allDistances[i][lhs] < allDistances[i][rhs];

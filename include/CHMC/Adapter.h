@@ -22,7 +22,6 @@ public:
     void AdaptMetric(const std::multiset<MCPoint>& livePoints);
 
 private:
-
     double mEpsilon;
     int mPathLength;
     int mDimension;
@@ -32,7 +31,7 @@ private:
     double mSBar;    // Moving average statistic
     double mXBar;    // Moving average parameter
     double mMu;       // Asymptotic mean of parameter
-    double mDelta = 0.9;    // Target value of statistic
+    double mDelta = 0.99;    // Target value of statistic
     double mGamma = 0.05;    // Adaptation scaling
     double mKappa = 0.75;    // Adaptation shrinkage
     double mT0 = 10;       // Effective starting iteration
