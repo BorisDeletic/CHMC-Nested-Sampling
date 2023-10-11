@@ -14,6 +14,7 @@ typedef struct MCPoint {
     const double acceptProbability = -1;
     bool rejected = false;
     const int ID = 0;
+    int cluster = 0;
 } MCPoint;
 
 

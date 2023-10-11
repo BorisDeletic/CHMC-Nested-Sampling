@@ -10,6 +10,7 @@ set(LIB_SOURCES
         RejectionSampler.cpp
         Logger.cpp
         NestedSampler.cpp
+        Clustering.cpp
         )
 
 add_library(CHMC_NS_Lib ${LIB_SOURCES})

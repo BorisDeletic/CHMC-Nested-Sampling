@@ -15,7 +15,7 @@ std::string phase_dir = "phase_diagram";
 std::string correlation_dir = "correlation";
 
 const bool logDiagnostics = true;
-const double priorWidth = 4;
+const double priorWidth = 2;
 
 const double epsilon = 0.01;
 const int pathLength = 100;
@@ -38,7 +38,7 @@ void runPhi4(std::string fname, int n, double kappa, double lambda)
 {
     UniformPrior prior = UniformPrior(n*n, priorWidth);
     Phi4Likelihood likelihood = Phi4Likelihood(n, kappa, lambda);
-    Logger logger = Logger(fname, true);
+    Logger logger = Logger(fname, false);
 
     Adapter params = Adapter(epsilon, pathLength, n*n);
 
@@ -115,6 +115,6 @@ int main() {
    // generatePhaseDiagramData();
 
  //  generateCorrelationData();
-    runPhi4("Phi4_posterior_sampling", 20, 0.4, 0.2);
+    runPhi4("Phi4_posterior_sampling", 20, 0.4, 0.02);
     std::cout << "help";
 }

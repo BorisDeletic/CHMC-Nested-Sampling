@@ -13,6 +13,7 @@ NestedSampler::NestedSampler(ISampler& sampler, IPrior& prior, ILikelihood& like
         mLikelihood(likelihood),
         mLogger(logger),
         mConfig(config),
+        mClustering(mLivePoints),
         mDimension(mLikelihood.GetDimension()),
         gen(rd()),
         mUniformRng(0, 1),
@@ -52,6 +53,7 @@ void NestedSampler::Run() {
 
         if (mIter % mConfig.numLive == 0) {
             terminationCondition = TerminateSampling();
+            mClustering.AssignClusters();
         }
     }
 
@@ -78,16 +80,15 @@ void NestedSampler::NestedSamplingStep() {
     mLogger.WritePoint(deadPoint, mLogImportanceWeight);
 
     // Generate new point(s)
-    if ((double)deadPoint.reflections / deadPoint.steps > mReflectionRateThreshold)
-    {
-        const MCPoint& randPoint = GetRandomLivePoint();
-        SampleNewPoint(randPoint, deadPoint.likelihood);
-    }
+   // if ((double)deadPoint.reflections / deadPoint.steps > mReflectionRateThreshold)
+    //{
+    const MCPoint& randPoint = GetRandomLivePoint();
+    SampleNewPoint(randPoint, deadPoint.likelihood);
+   /* }
     else
     {
         SampleNewPoint(deadPoint, deadPoint.likelihood);
-    }
-
+    } */
 
     //kill point.
     mLivePoints.erase(lowestIt);
@@ -99,13 +100,10 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
     for (int i = 0; i < mSampleRetries; i++) {
         const MCPoint newPoint = mSampler.SamplePoint(deadPoint, likelihoodConstraint);
 
-      //  if (newPoint.acceptProbability == -1) continue;
-
         if (mAdapter != nullptr)
         {
+           // std::cout << newPoint.acceptProbability << std::endl;
             mAdapter->AdaptEpsilon(newPoint.acceptProbability);
-            // added for debugging
-            mAdapter->AdaptMetric(mLivePoints);
         }
 
         if (mConfig.logDiagnostics) {

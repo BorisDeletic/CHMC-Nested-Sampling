@@ -4,14 +4,14 @@
 #include "ISampler.h"
 #include "IPrior.h"
 #include "ILikelihood.h"
+#include "Logger.h"
+#include "Clustering.h"
 #include "Adapter.h"
 #include "types.h"
 #include <random>
 #include <memory>
 #include <string>
 #include <set>
-
-class Logger;
 
 class NestedSampler {
 public:
@@ -42,6 +42,7 @@ private:
     ILikelihood& mLikelihood;
     Logger& mLogger;
     Adapter* mAdapter = nullptr;
+    Clustering mClustering;
 
     const NSConfig mConfig;
 

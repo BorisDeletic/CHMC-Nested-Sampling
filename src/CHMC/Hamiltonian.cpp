@@ -59,10 +59,10 @@ void Hamiltonian::Evolve()
 void Hamiltonian::ReflectP(const Eigen::VectorXd &normal) {
     const Eigen::VectorXd invMetric = mParams.GetMetric().cwiseInverse();
 
- //   Eigen::VectorXd nRot = invMetric.asDiagonal() * normal;
+    Eigen::VectorXd nRot = invMetric.asDiagonal() * normal;
 
-//    Eigen::VectorXd reflectedP = mP - 2 * mP.dot(nRot) / normal.dot(nRot) * normal;
-    Eigen::VectorXd reflectedP = mP - 2 * mP.dot(normal) / normal.dot(normal) * normal;
+    Eigen::VectorXd reflectedP = mP - 2 * mP.dot(nRot) / normal.dot(nRot) * normal;
+ //   Eigen::VectorXd reflectedP = mP - 2 * mP.dot(normal) / normal.dot(normal) * normal;
 
     mIntegrator.ChangeP(mP, reflectedP);
     mP = reflectedP;

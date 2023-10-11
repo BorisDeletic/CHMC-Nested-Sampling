@@ -54,12 +54,9 @@ void Adapter::AdaptMetric(const std::multiset<MCPoint> &livePoints) {
 
     // Scale metric alpha.
     mAlpha = sqrt(2 * var) / mDimension;
-    //  made metric smaller
-   // mAlpha = 1 / (double)(mIter*mIter);
-
     mMetric = mAlpha * Eigen::VectorXd::Ones(mDimension);
 
-    //std::cout << "alpha = " << mAlpha << std::endl;
+    std::cout << "alpha = " << mAlpha << std::endl;
 }
 
 
