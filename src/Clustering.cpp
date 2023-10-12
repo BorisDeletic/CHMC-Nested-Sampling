@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include <numeric>
+#include <map>
 
 
 Clustering::Clustering(std::multiset<MCPoint> &points)
@@ -65,7 +66,8 @@ std::vector<int> Clustering::CalculateClusters(std::vector<std::vector<int>>& al
         }
     }
 
-    return clusters;
+
+    return Relabel(clusters);
 }
 
 
@@ -112,19 +114,41 @@ std::vector<std::vector<int>> Clustering::FindAllNN() {
 }
 
 
+std::vector<int> Clustering::Relabel(std::vector<int> clusters) {
+    std::vector<int> relabelClusters;
+
+//    int numClusters = std::set<int>( clusters.begin(), clusters.end() ).size();
+
+    // Create a map to store counts of each element.
+    std::map<int, int> elementCounts;
+
+    int counter = 0;
+
+    for (int c : clusters) {
+        if (elementCounts.find(c) == elementCounts.end()) {
+            // If the element is encountered for the first time, assign a new number.
+            elementCounts[c] = counter;
+            counter++;
+        }
+        // Add the assigned number to the new vector.
+        relabelClusters.push_back(elementCounts[c]);
+    }
+
+    return relabelClusters;
+}
+
+
 // Are A & B mutually within k nearest neighbours
 bool Clustering::KNeighbours(std::vector<int> &A, std::vector<int> &B, int k) {
     if (k >= A.size()) return true;
 
     // Search for point B (given by B[0]) in first k neighbours of A
-    bool ANN = std::find(A.begin(), A.begin() + k, B[0]) != A.begin() + k;
-    bool BNN = std::find(B.begin(), B.begin() + k, A[0]) != B.begin() + k;
+    bool ANN = std::find(A.begin(), A.begin() + k, B[0]) != (A.begin() + k);
+    bool BNN = std::find(B.begin(), B.begin() + k, A[0]) != (B.begin() + k);
 
-    if (ANN && BNN)
+    if (ANN || BNN)
         return true;
     else
-       return false;
+        return false;
 }
-
-
 

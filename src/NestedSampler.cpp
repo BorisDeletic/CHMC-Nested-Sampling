@@ -90,6 +90,8 @@ void NestedSampler::NestedSamplingStep() {
         SampleNewPoint(deadPoint, deadPoint.likelihood);
     } */
 
+//    SampleNewPoint(deadPoint, deadPoint.likelihood);
+
     const MCPoint& randPoint = GetRandomLivePoint();
     SampleNewPoint(randPoint, deadPoint.likelihood);
 
@@ -170,7 +172,7 @@ const double NestedSampler::EstimateLogEvidenceRemaining() {
 
 
 const MCPoint& NestedSampler::GetRandomLivePoint() {
-    const int randomIndex = std::floor(mUniformRng(gen) * mLivePoints.size());
+    const int randomIndex = std::floor(mUniformRng(gen) * mLivePoints.size() / 10);
 
     auto It = mLivePoints.begin();
     std::advance(It, randomIndex);

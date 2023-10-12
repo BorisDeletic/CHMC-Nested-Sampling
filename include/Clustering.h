@@ -15,6 +15,8 @@ private:
     std::vector<std::vector<int>> FindAllNN();
 
     std::vector<int> CalculateClusters(std::vector<std::vector<int>>& allNN, int k);
+    std::vector<int> Relabel(std::vector<int> clusters);
+
     bool KNeighbours(std::vector<int>& A, std::vector<int>& B, int k);
 
     std::multiset<MCPoint>& mLivePoints;

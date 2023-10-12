@@ -15,12 +15,12 @@ std::string phase_dir = "phase_diagram";
 std::string correlation_dir = "correlation";
 
 const bool logDiagnostics = true;
-const double priorWidth = 4;
+const double priorWidth = 12;
 
 const double epsilon = 0.01;
 const int pathLength = 100;
 
-const int numLive = 100;
+const int numLive = 200;
 const int maxIters = 500000;
 const double precisionCriterion = 1e-2;
 const double reflectionRateThreshold = 0.9;
@@ -115,6 +115,6 @@ int main() {
    // generatePhaseDiagramData();
 
  //  generateCorrelationData();
-    runPhi4("Phi4_posterior_sampling", 2, 0.3, 0.01);
+    runPhi4("Phi4_posterior_sampling", 20, 0.3, 0.01);
     std::cout << "help";
 }
