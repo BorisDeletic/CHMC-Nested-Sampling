@@ -21,7 +21,6 @@ void Clustering::AssignClusters() {
     std::vector<std::vector<int>> allNN = FindAllNN();
 
     for (int k = 2; k < numLive; k++) {
-        std::cout << "k = " << k << std::endl;
         std::vector<int> newClusters = CalculateClusters(allNN, k);
 
         // no changes in clusters means we are finished
@@ -40,8 +39,6 @@ void Clustering::AssignClusters() {
         point.cluster = clusters[i];
 
         pointIt++;
-
-        std::cout << i << ": " << clusters[i] << std::endl;
     }
 }
 
