@@ -115,6 +115,6 @@ int main() {
    // generatePhaseDiagramData();
 
  //  generateCorrelationData();
-    runPhi4("Phi4_posterior_sampling", 20, 0.4, 0.2);
+    runPhi4("Phi4_posterior_sampling", 4, 0.4, 0.2);
     std::cout << "help";
 }

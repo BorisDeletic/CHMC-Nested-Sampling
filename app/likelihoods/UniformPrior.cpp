@@ -15,6 +15,7 @@ const Eigen::VectorXd UniformPrior::PriorTransform(const Eigen::VectorXd &cube)
     return cube.array() * mWidth - mWidth / 2;
 }
 
+
 const Eigen::VectorXd UniformPrior::Gradient(const Eigen::VectorXd &theta) {
 
 //    Eigen::VectorXd gradient = theta.unaryExpr([&](double x){
@@ -23,10 +24,9 @@ const Eigen::VectorXd UniformPrior::Gradient(const Eigen::VectorXd &theta) {
 //        return 0.0;
 //    });
 
-   // Eigen::VectorXd gradient = Eigen::VectorXd::Zero(mDim);
+    Eigen::VectorXd gradient = Eigen::VectorXd::Zero(mDim);
     // make this reflect off the boundaries
 
-    Eigen::VectorXd gradient = -phi4.Gradient(theta);
     return gradient;
 }
 

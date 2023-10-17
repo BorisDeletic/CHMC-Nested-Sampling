@@ -59,13 +59,6 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
     }
 
     const double reflectionRate = (double)mHamiltonian.GetReflections() / mHamiltonian.GetIntegrationSteps();
-    if (reflectionRate > reflectionRateThreshold) {
-      //  acceptProb = 0;
-    }
-
- //   if (mHamiltonian.GetIntegrationSteps() < 5) {
- //       acceptProb = -1;
-//    }
 
     MCPoint newPoint = {
             mHamiltonian.GetX(),

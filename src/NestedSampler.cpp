@@ -77,17 +77,8 @@ void NestedSampler::NestedSamplingStep() {
     UpdateLogEvidence(deadPoint);
     mLogger.WritePoint(deadPoint, mLogImportanceWeight);
 
-    // Generate new point(s)
-    if ((double)deadPoint.reflections / deadPoint.steps > mReflectionRateThreshold)
-    {
-        const MCPoint& randPoint = GetRandomLivePoint();
-        SampleNewPoint(randPoint, deadPoint.likelihood);
-    }
-    else
-    {
-        SampleNewPoint(deadPoint, deadPoint.likelihood);
-    }
-
+    const MCPoint& randPoint = GetRandomLivePoint();
+    SampleNewPoint(randPoint, deadPoint.likelihood);
 
     //kill point.
     mLivePoints.erase(lowestIt);
@@ -99,13 +90,9 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
     for (int i = 0; i < mSampleRetries; i++) {
         const MCPoint newPoint = mSampler.SamplePoint(deadPoint, likelihoodConstraint);
 
-      //  if (newPoint.acceptProbability == -1) continue;
-
         if (mAdapter != nullptr)
         {
             mAdapter->AdaptEpsilon(newPoint.acceptProbability);
-            // added for debugging
-            mAdapter->AdaptMetric(mLivePoints);
         }
 
         if (mConfig.logDiagnostics) {

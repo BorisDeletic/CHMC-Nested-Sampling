@@ -43,3 +43,5 @@ target_link_libraries(Phi4Benchmark
         CHMC_NS_Lib
         Eigen3::Eigen
         )
+
+add_subdirectory(tests)
