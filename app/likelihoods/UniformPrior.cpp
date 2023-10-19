@@ -1,19 +1,18 @@
 #include "UniformPrior.h"
-#include "Phi4Likelihood.h"
 
-UniformPrior::UniformPrior(int dim, double width)
+UniformPrior::UniformPrior(int dim, double width, double center)
     :
     mDim(dim),
     mWidth(width),
-    phi4(20,0.4,0.2)
+    mCenter(center)
 {
 }
 
 
 const Eigen::VectorXd UniformPrior::PriorTransform(const Eigen::VectorXd &cube)
 {
-    return cube;
-   // return cube.array() * mWidth - mWidth / 2;
+//    return cube;
+    return cube.array() * mWidth - mWidth / 2 + mCenter;
 }
 
 

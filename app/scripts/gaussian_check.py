@@ -25,6 +25,9 @@ def main():
     with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
         print(vals_df)
 
+        df = nestcheck.diagnostics_tables.run_list_error_summary(run_list, estimator_list, estimator_names, 100)
+        print(df)
+
 
 if __name__ ==  '__main__':
     main()

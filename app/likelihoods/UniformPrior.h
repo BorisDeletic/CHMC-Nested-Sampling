@@ -2,11 +2,10 @@
 #define CHMC_NESTED_SAMPLING_UNIFORMPRIOR_H
 
 #include "IPrior.h"
-#include "Phi4Likelihood.h"
 
 class UniformPrior : public IPrior {
 public:
-    UniformPrior(int dim, double width);
+    UniformPrior(int dim, double width, double center = 0);
 
     const Eigen::VectorXd PriorTransform(const Eigen::VectorXd &cube) override;
     const Eigen::VectorXd Gradient(const Eigen::VectorXd &theta) override;
@@ -16,10 +15,9 @@ public:
 private:
     const int mDim;
     const double mWidth;
+    const double mCenter;
 
     const double boundaryGradient = 10000;
-
-    Phi4Likelihood phi4;
 };
 
 
