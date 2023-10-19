@@ -12,7 +12,8 @@ UniformPrior::UniformPrior(int dim, double width)
 
 const Eigen::VectorXd UniformPrior::PriorTransform(const Eigen::VectorXd &cube)
 {
-    return cube.array() * mWidth - mWidth / 2;
+    return cube;
+   // return cube.array() * mWidth - mWidth / 2;
 }
 
 

@@ -92,7 +92,8 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
 
         if (mAdapter != nullptr)
         {
-            mAdapter->AdaptEpsilon(newPoint.acceptProbability);
+            const double reflectRate = (double)newPoint.reflections / newPoint.steps;
+            mAdapter->AdaptEpsilon(reflectRate);
         }
 
         if (mConfig.logDiagnostics) {

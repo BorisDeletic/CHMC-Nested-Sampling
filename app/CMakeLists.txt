@@ -7,6 +7,8 @@ set(LIKELIHOOD_SOURCES
         likelihoods/Phi4Likelihood.cpp
         likelihoods/TopologicalTrap.cpp
         likelihoods/UniformPrior.cpp
+        likelihoods/GaussianPrior.cpp
+        likelihoods/Eggbox.cpp
         )
 
 

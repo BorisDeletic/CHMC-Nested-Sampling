@@ -19,15 +19,15 @@ void Adapter::Restart() {
     mXBar = 0;
 }
 
-void Adapter::AdaptEpsilon(double acceptProb) {
+void Adapter::AdaptEpsilon(double reflectRate) {
     mIter++;
 
-    acceptProb = acceptProb > 1 ? 1 : acceptProb;
+    //acceptProb = acceptProb > 1 ? 1 : acceptProb;
 
     // Nesterov Dual-Averaging of log(epsilon)
     const double eta = 1.0 / (mIter + mT0);
 
-    mSBar = (1.0 - eta) * mSBar + eta * (mDelta - acceptProb);
+    mSBar = (1.0 - eta) * mSBar + eta * (reflectRate - mDelta);
 
     const double x = mMu - mSBar * std::sqrt(mIter) / mGamma;
     const double x_eta = std::pow(mIter, -mKappa);

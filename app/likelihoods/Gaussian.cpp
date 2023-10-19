@@ -3,7 +3,7 @@
 
 const double GaussianLikelihood::LogLikelihood(const Eigen::VectorXd& theta)
 {
-    double loglikelihood = - var.log().sum() - var.size() * std::log(2 * M_PI) / 2;
+    double loglikelihood = - var.log().sum() - 0.5 * var.size() * std::log(2 * M_PI);
 
     loglikelihood -= ((theta.array() - mean) / var).pow(2).sum() / 2;
     return loglikelihood;

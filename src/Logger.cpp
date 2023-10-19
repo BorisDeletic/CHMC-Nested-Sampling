@@ -48,7 +48,7 @@ void Logger::WritePoint(const MCPoint& point, const double logWeight) {
 
     mDeadFile << point.theta[0] << " ";
     mDeadFile << point.theta[1] << " ";
-    mDeadFile << point.theta[2] << " ";
+ //   mDeadFile << point.theta[2] << " ";
 
     mDeadFile << point.likelihood << " " << point.birthLikelihood << std::endl;
     mPosteriorFile << std::endl;

@@ -42,7 +42,7 @@ void generateGradientField(ILikelihood& likelihood, std::pair<float, float>& xra
             theta[0] = i;
             theta[1] = j;
 
-            Eigen::VectorXd grad = likelihood.Gradient(theta).normalized() / 6;
+            Eigen::VectorXd grad = likelihood.Gradient(theta).normalized() / 15;
 
             file << std::setprecision(3) << std::fixed << i << " " << j << " " <<
                  std::setprecision(4) << std::fixed << grad[0] << " " << grad[1] << std::endl;
