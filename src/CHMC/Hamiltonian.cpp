@@ -36,12 +36,16 @@ void Hamiltonian::Evolve()
 
     if (newLikelihood <= mLikelihoodConstraint) {
         // Reflect off iso-likelihood contour.
-        mReflections++;
 
         mLikelihoodGradient = mLikelihood.Gradient(mX);
 
         ReflectP(mLikelihoodGradient);
         ReflectX(mLikelihoodGradient);
+    }
+    if (OutsidePriorBounds(newX)) {
+        Eigen::VectorXd reflect = GetPriorReflection(newX);
+        ReflectP(reflect);
+        ReflectX(reflect);
     }
     else
     {
@@ -57,6 +61,8 @@ void Hamiltonian::Evolve()
 
 //incident momentum and normal vector to reflection boundary
 void Hamiltonian::ReflectP(const Eigen::VectorXd &normal) {
+    mReflections++;
+
     const Eigen::VectorXd invMetric = mParams.GetMetric().cwiseInverse();
 
  //   Eigen::VectorXd nRot = invMetric.asDiagonal() * normal;
@@ -77,7 +83,7 @@ void Hamiltonian::ReflectX(const Eigen::VectorXd &normal) {
         Eigen::VectorXd nextX = mIntegrator.UpdateX(mX, mP, mPriorGradient, epsilonFactor);
         const double nextLikelihood = mLikelihood.LogLikelihood(nextX);
 
-        if (nextLikelihood > mLikelihoodConstraint) {
+        if ((nextLikelihood > mLikelihoodConstraint) && (!OutsidePriorBounds(nextX))) {
             // found valid reflection
 
             mX = nextX;
@@ -88,6 +94,9 @@ void Hamiltonian::ReflectX(const Eigen::VectorXd &normal) {
         ReflectP(normal);
     }
 
+    std::cout  << normal.norm() << std::endl;
+ //   std::cout << "x = ";
+ //   std::cout << mX << std::endl;
     mRejected = true;
 }
 
@@ -95,10 +104,47 @@ void Hamiltonian::ReflectX(const Eigen::VectorXd &normal) {
 const double Hamiltonian::GetEnergy() const {
     const Eigen::VectorXd invMetric = mParams.GetMetric().cwiseInverse();
 
+//  need to make this function work with pi(theta) not being uniform
+
 //    const double energy = 0.5 * mP.dot(invMetric.asDiagonal() * mP) - mLogLikelihood;
     const double energy = 0.5 * mP.dot(invMetric.asDiagonal() * mP);
 
     return energy;
+}
+
+
+bool Hamiltonian::OutsidePriorBounds(const Eigen::VectorXd &theta) {
+    // this is a hack which assumes the prior function is min@0 and max@1
+
+    Eigen::ArrayXd lowerBound = mPrior.PriorTransform(Eigen::VectorXd::Zero(mPrior.GetDimension()));
+    Eigen::ArrayXd upperBound = mPrior.PriorTransform(Eigen::VectorXd::Ones(mPrior.GetDimension()));
+
+    if ((theta.array() < lowerBound).any()) {
+        return true;
+    }
+    if ((theta.array() > upperBound).any()) {
+        return true;
+    }
+
+    return false;
+}
+
+
+const Eigen::VectorXd Hamiltonian::GetPriorReflection(const Eigen::VectorXd &theta) {
+    Eigen::ArrayXd lowerBound = mPrior.PriorTransform(Eigen::VectorXd::Zero(mPrior.GetDimension()));
+    Eigen::ArrayXd upperBound = mPrior.PriorTransform(Eigen::VectorXd::Ones(mPrior.GetDimension()));
+
+    Eigen::VectorXd gradient = Eigen::VectorXd::Zero(mPrior.GetDimension());
+
+    for (int i = 0; i < theta.size(); i++) {
+        if (theta[i] < lowerBound[i])
+            gradient[i] = 1;
+
+        if (theta[i] > upperBound[i])
+            gradient[i] = -1;
+    }
+
+    return gradient;
 }
 
 

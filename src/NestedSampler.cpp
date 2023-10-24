@@ -109,6 +109,13 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
             if (mLivePoints.size() > mConfig.numLive)
                 return;
         }
+
+        if (newPoint.rejected) {
+            std::cout << "rejected, ";
+            std::cout << newPoint.steps << ", ";
+            std::cout << newPoint.reflections << ", ";
+            std::cout << newPoint.acceptProbability << std::endl;
+        }
     }
 }
 

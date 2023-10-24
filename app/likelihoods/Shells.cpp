@@ -1,4 +1,5 @@
 #include "Shells.h"
+#include <iostream>
 
 Shells::Shells(int dim, double radius, double width, double center)
     :
@@ -31,6 +32,7 @@ const Eigen::VectorXd Shells::Gradient(const Eigen::VectorXd &theta) {
 
     Eigen::VectorXd grad = (GradientCircle(theta, c) + GradientCircle(theta, -c));
 
+
     return grad;
 }
 
@@ -43,7 +45,7 @@ const Eigen::VectorXd Shells::GradientCircle(const Eigen::VectorXd &theta, doubl
 
     double d = (theta - center_vec).norm();
 
-    Eigen::VectorXd grad = -(theta - center_vec) / d * (d - r) / (w * w) * exp(LogCircle(theta, center));
+    Eigen::VectorXd grad = -(theta - center_vec) * (d - r) / d * exp(LogCircle(theta, center));
 
     return grad;
 }

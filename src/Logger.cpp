@@ -25,10 +25,12 @@ Logger::Logger(std::string name, bool logDiagnostics)
 void Logger::WritePoint(const MCPoint& point, const double logWeight) {
     if (!mDeadFile.is_open()) {
         mDeadFile.open(mName + "_dead-birth.txt", std::ios::app);
+        mDeadFile;
     }
 
     if (!mPosteriorFile.is_open()) {
         mPosteriorFile.open(mName + ".posterior", std::ios::app);
+        mPosteriorFile << std::setprecision(10);
     }
 
     double logPosteriorWeight = logWeight + point.likelihood;
@@ -42,15 +44,15 @@ void Logger::WritePoint(const MCPoint& point, const double logWeight) {
     }
 
     for (const double theta : point.theta) {
-        //      mDeadFile << theta << " ";
-        //      mPosteriorFile << theta << " ";
+              mDeadFile << std::setprecision(10) << theta << " ";
+              mPosteriorFile << theta << " ";
     }
 
-    mDeadFile << point.theta[0] << " ";
-    mDeadFile << point.theta[1] << " ";
+//    mDeadFile << point.theta[0] << " ";
+//    mDeadFile << point.theta[1] << " ";
  //   mDeadFile << point.theta[2] << " ";
 
-    mDeadFile << point.likelihood << " " << point.birthLikelihood << std::endl;
+    mDeadFile << std::setprecision(10) << point.likelihood << " " << point.birthLikelihood << std::endl;
     mPosteriorFile << std::endl;
 }
 

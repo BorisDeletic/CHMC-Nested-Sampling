@@ -28,6 +28,9 @@ private:
     void ReflectP(const Eigen::VectorXd& normal);
     void ReflectX(const Eigen::VectorXd& normal);
 
+    bool OutsidePriorBounds(const Eigen::VectorXd& theta);
+    const Eigen::VectorXd GetPriorReflection(const Eigen::VectorXd& theta);
+
     IPrior& mPrior;
     ILikelihood& mLikelihood;
     IParams& mParams;
@@ -47,7 +50,7 @@ private:
     Eigen::VectorXd mX;
     Eigen::VectorXd mP;
 
-    const int mEpsilonReflectionLimit = 4; // Number of times Epsilon can be halved.
+    const int mEpsilonReflectionLimit = 10; // Number of times Epsilon can be halved.
 };
 
 

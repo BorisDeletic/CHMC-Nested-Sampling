@@ -73,7 +73,7 @@ prior_samples = samples.prior()
 
 print(samples.columns.values)
 
-fig, axes = ns.make_2d_axes(['p1', 'p2'])
+fig, axes = ns.make_2d_axes(['p1', 'p2', 'p3'])
 prior_samples.plot_2d(axes, label="prior")
 samples.plot_2d(axes, label="posterior")
 axes.iloc[-1, 0].legend(bbox_to_anchor=(len(axes)/2, len(axes)), loc='lower center', ncol=2)
@@ -87,7 +87,7 @@ samples['logZ'] = np.logaddexp.accumulate(samples.logw())
 
 print(samples['logZ'])
 fig, ax = plt.subplots()
-ax.set_ylim([-2,-1.5])
+# ax.set_ylim([-2,-1.5])
 # ax.plot(samples['logX'].get_weights())
 ax.plot(samples['logZ'].values)
 

@@ -10,9 +10,9 @@
 const double priorWidth = 12;
 
 const double epsilon = 0.1;
-const int pathLength = 500;
+const int pathLength = 5000;
 
-const int numLive = 500;
+const int numLive = 1000;
 const int maxIters = 500000;
 const double precisionCriterion = 1e-6;
 const double reflectionRateThreshold = 0.9;
@@ -29,7 +29,7 @@ NSConfig config = {
 
 
 void runShells(std::string fname) {
-    const int d = 2;
+    const int d = 4;
 
     Logger logger = Logger(fname);
 

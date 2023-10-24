@@ -25,6 +25,14 @@ const Eigen::VectorXd UniformPrior::Gradient(const Eigen::VectorXd &theta) {
 //    });
 
     Eigen::VectorXd gradient = Eigen::VectorXd::Zero(mDim);
+
+//    for (int i = 0; i < theta.size(); i++) {
+//        if (theta[i] < -mWidth/2 + mCenter)
+//            gradient[i] = boundaryGradient;
+//
+//        if (theta[i] > mWidth/2 + mCenter)
+//            gradient[i] = boundaryGradient;
+//    }
     // make this reflect off the boundaries
 
     return gradient;
