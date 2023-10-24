@@ -1,4 +1,3 @@
-#include "GaussianTest.h"
 #include "UniformPrior.h"
 #include "GaussianPrior.h"
 #include "NestedSampler.h"
@@ -6,14 +5,14 @@
 #include "Gaussian.h"
 #include <Eigen/Dense>
 
-const double priorWidth = 20;
+const double priorWidth = 60;
 
 const double epsilon = 0.1;
-const int pathLength = 100;
+const int pathLength = 1000;
 
-const int numLive = 100;
-const int maxIters = 50000;
-const double precisionCriterion = 1e-5;
+const int numLive = 3000;
+const int maxIters = 2000000;
+const double precisionCriterion = 1e-8;
 const double reflectionRateThreshold = 0.9;
 const bool logDiagnostics = false;
 
@@ -28,9 +27,9 @@ NSConfig config = {
 
 
 void runUniformGaussian(std::string fname) {
-    const int d = 2;
+    const int d = 200;
     const Eigen::VectorXd mean = Eigen::VectorXd::Zero(d);
-    const Eigen::VectorXd var  = 0.5 * Eigen::VectorXd::Ones(d);
+    const Eigen::VectorXd var  = Eigen::VectorXd::Ones(d);
 
     Logger logger = Logger(fname);
 
@@ -46,6 +45,9 @@ void runUniformGaussian(std::string fname) {
     NS.SetAdaption(&params);
     NS.Initialise();
     NS.Run();
+
+    double analytic = -d * log(priorWidth);
+    std::cout << "Analytic evidence value: " << analytic;
 
 }
 
@@ -74,16 +76,15 @@ void runNormalGaussian(std::string fname) {
 
 int main() {
     runUniformGaussian("gaussian_2d_100nlive_r1");
-    runUniformGaussian("gaussian_2d_100nlive_r2");
-    runUniformGaussian("gaussian_2d_100nlive_r3");
-    runUniformGaussian("gaussian_2d_100nlive_r4");
-    runUniformGaussian("gaussian_2d_100nlive_r5");
+//    runUniformGaussian("gaussian_2d_100nlive_r2");
+//    runUniformGaussian("gaussian_2d_100nlive_r3");
+//    runUniformGaussian("gaussian_2d_100nlive_r4");
+//    runUniformGaussian("gaussian_2d_100nlive_r5");
 
 //    runNormalGaussian("gaussian_normal200d_100nlive_r1");
 //    runNormalGaussian("gaussian_normal200d_100nlive_r2");
 //    runNormalGaussian("gaussian_normal200d_100nlive_r3");
 //    runNormalGaussian("gaussian_normal200d_100nlive_r4");
 //    runNormalGaussian("gaussian_normal200d_100nlive_r5");
-
 }
 

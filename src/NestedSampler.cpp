@@ -196,10 +196,11 @@ const NSInfo NestedSampler::GetInfo() {
 const bool NestedSampler::TerminateSampling() {
     if (mAdapter != nullptr)
     {
+        mAdapter->AdaptMetric(mLivePoints);
+
         std::cout << "NS Step: " << mIter << ", Num Live = " << mLivePoints.size() << std::endl;
         std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << GetReflectRate() << std::endl;
-
-        mAdapter->AdaptMetric(mLivePoints);
+        std::cout << "alpha=" << mAdapter->GetMetric()[0] << std::endl;
     }
 
     double remainingEvidence = EstimateLogEvidenceRemaining();
