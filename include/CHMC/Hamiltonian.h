@@ -14,11 +14,15 @@ public:
 
     const Eigen::VectorXd& GetX() const { return mX; };
     const Eigen::VectorXd& GetP() const { return mP; };
-    const double GetLikelihood() const { return mLogLikelihood; };
-    const double GetEnergy() const;
-    const bool GetRejected() const { return mRejected; };
-    const int GetReflections() const { return mReflections; };
-    const int GetIntegrationSteps() const { return mIters; };
+    double GetLikelihood() const { return mLogLikelihood; };
+    double GetEnergy() const;
+    bool GetRejected() const { return mRejected; };
+    int GetReflections() const { return mReflections; };
+    int GetIntegrationSteps() const { return mIters; };
+
+    const std::vector<double>& GetDxs() const { return dxs; };
+    const std::vector<double>& GetLikes() const { return likes; };
+    const std::vector<double>& GetProposedLikes() const { return proposed_likes; };
 
     void SetHamiltonian(const Eigen::VectorXd& x, const Eigen::VectorXd& p, double likelihoodConstraint);
 
@@ -26,7 +30,7 @@ public:
 
 private:
     void ReflectP(const Eigen::VectorXd& normal);
-    void ReflectX(const Eigen::VectorXd& normal);
+    void Reflection();
 
     bool OutsidePriorBounds(const Eigen::VectorXd& theta);
     const Eigen::VectorXd GetPriorReflection(const Eigen::VectorXd& theta);
@@ -51,6 +55,11 @@ private:
     Eigen::VectorXd mP;
 
     const int mEpsilonReflectionLimit = 10; // Number of times Epsilon can be halved.
+
+    // FOR DIAGNOSTICS
+    std::vector<double> dxs;
+    std::vector<double> likes;
+    std::vector<double> proposed_likes;
 };
 
 

@@ -11,12 +11,15 @@ Logger::Logger(std::string name, bool logDiagnostics)
     if (logDiagnostics) {
         mDiagnosticFile.open(mName + ".diagnostics");
         mLivePointsFile.open(mName + ".live_points");
+        mRejectedPointsFile.open(mName + ".rejected_points");
 
         mDiagnosticFile
             << "iter,numlive,logZ,logZlive,likelihood,birth_likelihood,rejected,accept_prob,reflections,steps,"
             << "epsilon,path_length,metric,pdotn" << std::endl;
 
         mLivePointsFile << "iter,ID,likelihood,reflections,steps" << std::endl;
+
+        mRejectedPointsFile << "accept_prob,birth_likelihood,reflections,steps,epsilon,path_length,metric" << std::endl;
     }
 }
 
@@ -88,6 +91,22 @@ void Logger::WriteSummary(const NSInfo& summary) {
 }
 
 
+
+void Logger::WriteLivePoints(const NSInfo& info, const std::multiset<MCPoint> &points) {
+    if (!mLivePointsFile.is_open()) {
+        mLivePointsFile.open(mName + ".live_points", std::ios::app);
+    }
+
+    for (const auto& point : points) {
+        mLivePointsFile << info.iter << ",";
+        mLivePointsFile << point.ID << ",";
+        mLivePointsFile << point.likelihood << ",";
+        mLivePointsFile << point.reflections << ",";
+        mLivePointsFile << point.steps << std::endl;
+    }
+}
+
+
 void Logger::WriteDiagnostics(const NSInfo& info, const MCPoint& point, const IParams& params)
 {
     if (!mDiagnosticFile.is_open()) {
@@ -113,16 +132,30 @@ void Logger::WriteDiagnostics(const NSInfo& info, const MCPoint& point, const IP
     mDiagnosticFile << std::endl;
 }
 
-void Logger::WriteLivePoints(const NSInfo& info, const std::multiset<MCPoint> &points) {
-    if (!mLivePointsFile.is_open()) {
-        mLivePointsFile.open(mName + ".live_points", std::ios::app);
+
+void Logger::WriteRejectedPoint(const MCPoint &point, const IParams &params) {
+    if (!mRejectedPointsFile.is_open()) {
+        mRejectedPointsFile.open(mName + ".rejected_points", std::ios::app);
     }
 
-    for (const auto& point : points) {
-        mLivePointsFile << info.iter << ",";
-        mLivePointsFile << point.ID << ",";
-        mLivePointsFile << point.likelihood << ",";
-        mLivePointsFile << point.reflections << ",";
-        mLivePointsFile << point.steps << std::endl;
+    mRejectedPointsFile << point.acceptProbability << ", ";
+    mRejectedPointsFile << point.birthLikelihood << ", ";
+    mRejectedPointsFile << point.reflections << ", ";
+    mRejectedPointsFile << point.steps << ", ";
+
+    mRejectedPointsFile << params.GetEpsilon() << ", ";
+    mRejectedPointsFile << params.GetPathLength() << ", ";
+    mRejectedPointsFile << params.GetMetric()[0] << std::endl;
+
+    for (double dx : point.deltaX) {
+        mRejectedPointsFile << dx << ", ";
     }
+    mRejectedPointsFile << std::endl;
+
+    for (double like : point.pathLikelihood) {
+        mRejectedPointsFile << like << ", ";
+    }
+    mRejectedPointsFile << std::endl;
+
+    mRejectedPointsFile.close();
 }

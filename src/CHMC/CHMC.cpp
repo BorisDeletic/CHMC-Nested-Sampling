@@ -50,9 +50,9 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
     //std::cout << initEnergy << ", " << newEnergy << ", " << acceptProb <<
     //", " << mHamiltonian.GetReflections() << std::endl;
 
-    if (rejected) {
-        acceptProb = 0;
-    }
+//    if (rejected) {
+//     //   acceptProb = 0;
+//    }
 
     if (acceptProb < r) {
         rejected = true;
@@ -69,7 +69,9 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
             mHamiltonian.GetIntegrationSteps(),
             acceptProb,
             rejected,
-            mPointID
+            mPointID,
+            mHamiltonian.GetDxs(),
+            mHamiltonian.GetLikes()
     };
 
     mPointID++;

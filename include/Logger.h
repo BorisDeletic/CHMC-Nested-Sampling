@@ -16,6 +16,7 @@ public:
     void WriteSummary(const NSInfo&);
     void WriteParamNames(const std::vector<std::string>& names, int totalParams);
     void WriteDiagnostics(const NSInfo&, const MCPoint&, const IParams&);
+    void WriteRejectedPoint(const MCPoint&, const IParams&);
 
     void WriteLivePoints(const NSInfo& info, const std::multiset<MCPoint>& points);
   //  void ReadLivePoints();
@@ -29,6 +30,7 @@ private:
     std::ofstream mParamNameFile;
     std::ofstream mDiagnosticFile;
     std::ofstream mLivePointsFile;
+    std::ofstream mRejectedPointsFile;
 };
 
 #endif //CHMC_NESTED_SAMPLING_LOGGER_H

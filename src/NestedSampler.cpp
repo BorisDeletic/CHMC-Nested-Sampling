@@ -110,11 +110,10 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
                 return;
         }
 
-        if (newPoint.rejected) {
-            std::cout << "rejected, ";
-            std::cout << newPoint.steps << ", ";
-            std::cout << newPoint.reflections << ", ";
-            std::cout << newPoint.acceptProbability << std::endl;
+        if (mConfig.logDiagnostics && newPoint.rejected) {
+            std::cout << "rejected" << std::endl;
+//            std::cout << "e = " << mAdapter->GetEpsilon() << std::endl;
+            mLogger.WriteRejectedPoint(newPoint, *mAdapter);
         }
     }
 }

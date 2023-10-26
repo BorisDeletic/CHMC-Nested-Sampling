@@ -2,6 +2,7 @@
 #define CHMC_NESTED_SAMPLING_TYPES_H
 
 #include <Eigen/Dense>
+#include <vector>
 
 // Markov Chain point
 typedef struct MCPoint {
@@ -14,6 +15,8 @@ typedef struct MCPoint {
     const double acceptProbability = -1;
     bool rejected = false;
     const int ID = 0;
+    std::vector<double> deltaX;
+    std::vector<double> pathLikelihood;
 } MCPoint;
 
 
