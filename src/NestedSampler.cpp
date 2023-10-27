@@ -1,6 +1,7 @@
 #include "NestedSampler.h"
 #include "Logger.h"
 #include <iostream>
+#include <cassert>
 #include <exception>
 
 

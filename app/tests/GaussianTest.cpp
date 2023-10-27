@@ -142,9 +142,11 @@ void runGaussianBatch() {
     for (double d = 5; d < maxDim; d *= 1.5) {
         int numPoints = 20 * floor(d);
 
-        // parallelise this loop
-        for (int i = 0; i < repetitions; i++) {
-            runUniformGaussian(fname, floor(d), numPoints, i);
+        #pragma omp parallel
+        {
+            for (int i = 0; i < repetitions; i++) {
+                runUniformGaussian(fname, floor(d), numPoints, i);
+            }
         }
     }
 }

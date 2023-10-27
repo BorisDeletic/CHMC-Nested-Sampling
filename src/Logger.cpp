@@ -1,5 +1,6 @@
 #include "Logger.h"
 #include <iostream>
+#include <iomanip>
 
 Logger::Logger(std::string name, bool logDiagnostics)
     :

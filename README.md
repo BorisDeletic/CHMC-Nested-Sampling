@@ -5,3 +5,19 @@ This project was the focus of my Physics Part III thesis.
 You can read the full report which describes the details how the algorithm works
 [here](https://github.com/BorisDeletic/CHMC-Nested-Sampling/blob/main/boris_deletic_report.pdf).
 
+## Getting Started
+
+```angular2html
+git clone https://github.com/BorisDeletic/CHMC-Nested-Sampling.git
+git submodule update --init --recursive
+```
+
+## Compiling
+
+This will build all binaries
+
+```angular2html
+mkdir cmake-build-release && cd cmake-build-release
+cmake -G Ninja .. -DCMAKE_BUILD_TYPE=Release
+ninja
+```

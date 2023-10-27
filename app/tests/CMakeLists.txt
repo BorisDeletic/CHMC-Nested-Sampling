@@ -1,5 +1,6 @@
 find_package(Eigen3)
 
+
 set(LIKELIHOOD_SOURCES
         ${PROJECT_SOURCE_DIR}/app/likelihoods/Gaussian.cpp
         ${PROJECT_SOURCE_DIR}/app/likelihoods/Phi4Likelihood.cpp
@@ -48,7 +49,7 @@ target_include_directories(ShellsTest PRIVATE
         )
 
 
-target_link_libraries(GaussianTest
+target_link_libraries(GaussianTest PRIVATE
         CHMC_NS_Lib
         Eigen3::Eigen
         )
