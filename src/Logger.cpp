@@ -25,21 +25,20 @@ Logger::Logger(std::string name, bool logDiagnostics)
 
 
 // Log weight is prior volume shell w_i = X_{i-1} - X_i
-void Logger::WritePoint(const MCPoint& point, const double logWeight) {
+void Logger::WritePoint(const MCPoint& point) {
     if (!mDeadFile.is_open()) {
         mDeadFile.open(mName + "_dead-birth.txt", std::ios::app);
-        mDeadFile;
     }
 
     if (!mPosteriorFile.is_open()) {
-        mPosteriorFile.open(mName + ".posterior", std::ios::app);
-        mPosteriorFile << std::setprecision(10);
+//        mPosteriorFile.open(mName + ".posterior", std::ios::app);
+//        mPosteriorFile << std::setprecision(10);
     }
 
-    double logPosteriorWeight = logWeight + point.likelihood;
-    mPosteriorFile << logPosteriorWeight << " ";
-    mPosteriorFile << logWeight << " ";
-    mPosteriorFile << -point.likelihood << " ";
+//    double logPosteriorWeight = logWeight + point.likelihood;
+//    mPosteriorFile << logPosteriorWeight << " ";
+//    mPosteriorFile << logWeight << " ";
+//    mPosteriorFile << -point.likelihood << " ";
 
     for (const double phi : point.derived) {
        // mDeadFile << phi << " ";
@@ -48,7 +47,7 @@ void Logger::WritePoint(const MCPoint& point, const double logWeight) {
 
     for (const double theta : point.theta) {
               mDeadFile << std::setprecision(10) << theta << " ";
-              mPosteriorFile << theta << " ";
+//              mPosteriorFile << theta << " ";
     }
 
 //    mDeadFile << point.theta[0] << " ";
@@ -56,7 +55,7 @@ void Logger::WritePoint(const MCPoint& point, const double logWeight) {
  //   mDeadFile << point.theta[2] << " ";
 
     mDeadFile << std::setprecision(10) << point.likelihood << " " << point.birthLikelihood << std::endl;
-    mPosteriorFile << std::endl;
+//    mPosteriorFile << std::endl;
 }
 
 

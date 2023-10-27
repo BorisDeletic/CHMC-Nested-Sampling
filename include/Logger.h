@@ -12,7 +12,7 @@ class Logger {
 public:
     Logger(std::string name, bool logDiagnostics = false);
 
-    virtual void WritePoint(const MCPoint&, double logWeight);
+    virtual void WritePoint(const MCPoint&);
     void WriteSummary(const NSInfo&);
     void WriteParamNames(const std::vector<std::string>& names, int totalParams);
     void WriteDiagnostics(const NSInfo&, const MCPoint&, const IParams&);

@@ -1,7 +1,6 @@
 #include "NestedSampler.h"
 #include "Logger.h"
 #include <iostream>
-#include <cfloat>
 #include <exception>
 
 
@@ -16,8 +15,7 @@ NestedSampler::NestedSampler(ISampler& sampler, IPrior& prior, ILikelihood& like
         mDimension(mLikelihood.GetDimension()),
         gen(rd()),
         mUniformRng(0, 1),
-        mReflectionRateThreshold(config.reflectionRateThreshold),
-        mLogImportanceWeight(log(exp(1.0L / mConfig.numLive) - 1.0L))
+        mReflectionRateThreshold(config.reflectionRateThreshold)
 {
     if (mPrior.GetDimension() != mLikelihood.GetDimension()) {
         throw std::runtime_error("Prior dimension and likelihood dimensions do not match");
@@ -34,7 +32,6 @@ void NestedSampler::Initialise() {
         mLivePoints.insert(newPoint);
     }
 
-    mLogZ = -DBL_MAX; // Z = 0 initially
 }
 
 
@@ -59,7 +56,7 @@ void NestedSampler::Run() {
     for (const auto& point : mLivePoints)
     {
         UpdateLogEvidence(point);
-        mLogger.WritePoint(point, mLogImportanceWeight);
+        mLogger.WritePoint(point);
     }
 
     mLogger.WriteSummary(GetInfo());
@@ -75,7 +72,7 @@ void NestedSampler::NestedSamplingStep() {
 
     // Analysis and log dead point
     UpdateLogEvidence(deadPoint);
-    mLogger.WritePoint(deadPoint, mLogImportanceWeight);
+    mLogger.WritePoint(deadPoint);
 
     const MCPoint& randPoint = GetRandomLivePoint();
     SampleNewPoint(randPoint, deadPoint.likelihood);
@@ -138,11 +135,13 @@ const MCPoint NestedSampler::SampleFromPrior() {
 
 
 void NestedSampler::UpdateLogEvidence(const MCPoint& point) {
-    mLogImportanceWeight -= 1.0f / mLivePoints.size(); // compress space
+    int numLive = mConfig.numLive;
 
-    double logEvidence = mLogImportanceWeight + point.likelihood;
+    mLogX = mLogX + log(numLive) - log(numLive + 1); // compress space
 
-    mLogZ = logAdd(mLogZ, logEvidence);
+    double dLogZ = mLogX + point.likelihood - log(numLive + 1);
+
+    mLogZ = logAdd(mLogZ, dLogZ);
 }
 
 

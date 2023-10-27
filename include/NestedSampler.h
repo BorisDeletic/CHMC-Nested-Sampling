@@ -10,6 +10,7 @@
 #include <memory>
 #include <string>
 #include <set>
+#include <cfloat>
 
 class Logger;
 
@@ -50,8 +51,8 @@ private:
 
     int mIter;
 
-    double mLogZ; // log evidence
-    double mLogImportanceWeight = 0;
+    double mLogZ = -DBL_MAX; // log evidence. Z_init = 0
+    double mLogX = 0; // log prior volume. X_init = 1
 
     const double minLikelihood = -1e30;
     const double mReflectionRateThreshold;
