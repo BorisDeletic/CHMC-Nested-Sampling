@@ -121,7 +121,7 @@ void Hamiltonian::Reflection() {
     dxs.push_back(dx);
     likes.push_back(nextLikelihood);
 
-//    std::cout << std::endl << "|n| = " << normal.norm() << std::endl;
+    std::cout << std::endl << "|n| = " << mLikelihood.Gradient(mX).norm() << std::endl;
 //    std::cout << "|p| = ";
 //    std::cout << mP.norm() << std::endl;
 //    std::cout << "Mx = " << (mX).norm() << std::endl;

@@ -29,7 +29,7 @@ NSConfig config = {
 
 
 void runShells(std::string fname) {
-    const int d = 4;
+    const int d = 20;
 
     Logger logger = Logger(fname);
 
@@ -48,6 +48,13 @@ void runShells(std::string fname) {
     NS.Initialise();
     NS.Run();
 
+    std::cout << "This run D = " << d << std::endl;
+    std::cout << "Analytic evidences:" << std::endl;
+    std::cout << "D = 2: logZ = Z_true = -1.75" << std::endl;
+    std::cout << "D = 5: logZ = Z_true = -5.67" << std::endl;
+    std::cout << "D = 10: logZ = Z_true = -14.59" << std::endl;
+    std::cout << "D = 20: logZ = Z_true = -36.09" << std::endl;
+    std::cout << "D = 30: logZ = Z_true = -60.13" << std::endl;
 }
 
 int main() {
