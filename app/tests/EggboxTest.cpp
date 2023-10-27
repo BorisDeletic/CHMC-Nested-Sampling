@@ -48,6 +48,7 @@ void runEggbox(std::string fname) {
     NS.Initialise();
     NS.Run();
 
+    std::cout << "Analytic evidence value (2D): 235.88";
 }
 
 int main() {

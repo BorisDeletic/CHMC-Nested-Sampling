@@ -134,14 +134,30 @@ const MCPoint NestedSampler::SampleFromPrior() {
 }
 
 
+// see arxiv 1506.00171 appendix B
 void NestedSampler::UpdateLogEvidence(const MCPoint& point) {
-    int numLive = mConfig.numLive;
+    int n = mConfig.numLive;
 
-    mLogX = mLogX + log(numLive) - log(numLive + 1); // compress space
-
-    double dLogZ = mLogX + point.likelihood - log(numLive + 1);
-
+    // global evidence
+    double dLogZ = mLogX + point.likelihood - log(n + 1);
     mLogZ = logAdd(mLogZ, dLogZ);
+
+    // compress prior volume
+    mLogX = mLogX + log(n) - log(n + 1);
+
+    // evidence error
+    double dLogZZ_term1 = point.likelihood + mLogZX + log(2) - log(n+1);
+    double dLogZZ_term2 = 2 * point.likelihood + mLogXX - log(n+1) - log(n+2);
+    double dLogZZ = logAdd(dLogZZ_term1, dLogZZ_term2);
+    mLogZZ = logAdd(mLogZZ, dLogZZ);
+
+    // evidence volume correlation
+    double dLogZX = mLogXX + point.likelihood + log(n) - log(n + 1) - log(n + 2);
+    mLogZX = mLogZX + log(n) - log(n + 1);
+    mLogZX = logAdd(mLogZX, dLogZX);
+
+    // volume correlation
+    mLogXX = mLogXX + log(n) - log(n + 2);
 }
 
 
@@ -187,11 +203,15 @@ const double NestedSampler::GetReflectRate() {
 
 const NSInfo NestedSampler::GetInfo() {
 
+    double meanLogZ = 2 * mLogZ - 0.5 * mLogZZ;
+    double stdLogZ  = sqrt(mLogZZ - 2 * mLogZ);
+
     NSInfo info = {
             mIter,
             mConfig.numLive,
             mConfig.reflectionRateThreshold,
-            mLogZ,
+            meanLogZ,
+            stdLogZ,
             EstimateLogEvidenceRemaining()
     };
 
@@ -211,7 +231,12 @@ const bool NestedSampler::TerminateSampling() {
 
     double remainingEvidence = EstimateLogEvidenceRemaining();
     std::cout << "Step: " << mIter << std::endl;
-    std::cout << "Log(Z)=" << mLogZ << " ,LogZlive=" << remainingEvidence << std::endl << std::endl;
+    std::cout << "Log(Z)=" << mLogZ << " ,LogZlive=" << remainingEvidence << std::endl;
+
+    double meanLogZ = 2 * mLogZ - 0.5 * mLogZZ;
+    double stdLogZ  = sqrt(mLogZZ - 2 * mLogZ);
+    std::cout << "Normal Log(Z)=" << meanLogZ << " +- " << stdLogZ << std::endl << std::endl;
+
 
     if (mConfig.logDiagnostics) {
         mLogger.WriteLivePoints(GetInfo(), mLivePoints);

@@ -27,7 +27,7 @@ NSConfig config = {
 
 
 void runUniformGaussian(std::string fname) {
-    const int d = 200;
+    const int d = 10;
     const Eigen::VectorXd mean = Eigen::VectorXd::Zero(d);
     const Eigen::VectorXd var  = Eigen::VectorXd::Ones(d);
 

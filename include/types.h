@@ -38,7 +38,8 @@ typedef struct NSInfo {
     int iter;
     int numLive;
     double reflectRateThreshold;
-    double logZ;
+    double meanLogZ;
+    double stdLogZ;
     double logZLive;
 } NSSummary;
 

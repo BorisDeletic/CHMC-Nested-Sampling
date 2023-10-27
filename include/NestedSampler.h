@@ -51,8 +51,11 @@ private:
 
     int mIter;
 
-    double mLogZ = -DBL_MAX; // log evidence. Z_init = 0
+    double mLogZ =  -DBL_MAX; // log evidence. Z_init = 0
+    double mLogZZ = -DBL_MAX; // log Z^2. init = 0
+    double mLogZX = -DBL_MAX; // log ZX.  init = 0
     double mLogX = 0; // log prior volume. X_init = 1
+    double mLogXX = 0; // log XX. init = 1
 
     const double minLikelihood = -1e30;
     const double mReflectionRateThreshold;
