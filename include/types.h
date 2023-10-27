@@ -41,7 +41,7 @@ typedef struct NSInfo {
     double meanLogZ;
     double stdLogZ;
     double logZLive;
-} NSSummary;
+} NSInfo;
 
 
 #endif //CHMC_NESTED_SAMPLING_TYPES_H

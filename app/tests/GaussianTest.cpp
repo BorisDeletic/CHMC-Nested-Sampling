@@ -26,7 +26,7 @@ NSConfig config = {
 
 
 
-void runUniformGaussian(std::string fname) {
+void runGaussian(std::string fname) {
     const int d = 10;
     const Eigen::VectorXd mean = Eigen::VectorXd::Zero(d);
     const Eigen::VectorXd var  = Eigen::VectorXd::Ones(d);
@@ -51,6 +51,59 @@ void runUniformGaussian(std::string fname) {
 
 }
 
+
+void runUniformGaussian(std::string out_name, int dimension, int numPoints, int repetition) {
+    int maxIterations = dimension * numPoints * 1000;
+
+    NSConfig gaussianConfig = {
+            numPoints,
+            maxIterations,
+            precisionCriterion,
+            reflectionRateThreshold,
+            logDiagnostics
+    };
+
+    const Eigen::VectorXd mean = Eigen::VectorXd::Zero(dimension);
+    const Eigen::VectorXd var  = Eigen::VectorXd::Ones(dimension);
+
+    std::string fname = "gaussian_batch/" + std::to_string(dimension) + "D_"
+            + std::to_string(numPoints) + "nlive_r" + std::to_string(repetition);
+
+    Logger logger = Logger(fname, logDiagnostics);
+
+    UniformPrior prior = UniformPrior(dimension, priorWidth);
+    GaussianLikelihood likelihood = GaussianLikelihood(mean, var);
+
+    Adapter params = Adapter(epsilon, pathLength, likelihood.GetDimension());
+
+    CHMC sampler = CHMC(prior, likelihood, params, gaussianConfig.reflectionRateThreshold);
+
+    NestedSampler NS = NestedSampler(sampler, prior, likelihood, logger, gaussianConfig);
+
+    NS.SetAdaption(&params);
+    NS.Initialise();
+    NS.Run();
+
+    double analytic = -dimension * log(priorWidth);
+    std::cout << "Analytic evidence value: " << analytic << std::endl;
+
+    std::ofstream mOutFile;
+    mOutFile.open(out_name, std::ios_base::app);
+
+    NSInfo summary = NS.GetInfo();
+
+    //dimension,num_live,iters,logZ,std_logZ,true_logZ
+    mOutFile << dimension << ",";
+    mOutFile << summary.numLive << ",";
+    mOutFile << summary.iter << ",";
+    mOutFile << summary.meanLogZ << ",";
+    mOutFile << summary.stdLogZ << ",";
+    mOutFile << analytic << std::endl;
+
+    mOutFile.close();
+}
+
+
 // this doesnt work because i havent implemented non uniform priors in the energy function
 void runNormalGaussian(std::string fname) {
     const int d = 30;
@@ -74,8 +127,33 @@ void runNormalGaussian(std::string fname) {
 
 }
 
+
+void runGaussianBatch() {
+    int maxDim = 200;
+    int repetitions = 5;
+
+    std::string fname = "gaussian_batch.csv";
+    std::ofstream mOutFile;
+    mOutFile.open(fname);
+
+    mOutFile << "dimension,num_live,iters,logZ,std_logZ,true_logZ" << std::endl;
+    mOutFile.close();
+
+    for (double d = 5; d < maxDim; d *= 1.5) {
+        int numPoints = 20 * floor(d);
+
+        // parallelise this loop
+        for (int i = 0; i < repetitions; i++) {
+            runUniformGaussian(fname, floor(d), numPoints, i);
+        }
+    }
+}
+
+
 int main() {
-    runUniformGaussian("gaussian_200d_100nlive_r1");
+    runGaussianBatch();
+
+//    runGaussian("gaussian_200d_100nlive_r1");
 //    runUniformGaussian("gaussian_2d_100nlive_r2");
 //    runUniformGaussian("gaussian_2d_100nlive_r3");
 //    runUniformGaussian("gaussian_2d_100nlive_r4");

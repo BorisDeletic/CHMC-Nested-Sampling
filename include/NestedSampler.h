@@ -22,6 +22,7 @@ public:
     void Initialise();
     void Run();
 
+    const NSInfo GetInfo();
 private:
     void NestedSamplingStep();
     void SampleNewPoint(const MCPoint& deadPoint, double likelihoodConstraint);
@@ -31,7 +32,6 @@ private:
     void UpdateLogEvidence(const MCPoint&);
     const double EstimateLogEvidenceRemaining();
     const double GetReflectRate();
-    const NSInfo GetInfo();
 
     const bool TerminateSampling();
 
