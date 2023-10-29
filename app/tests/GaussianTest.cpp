@@ -4,6 +4,7 @@
 #include "Logger.h"
 #include "Gaussian.h"
 #include <Eigen/Dense>
+#include <omp.h>
 
 const double priorWidth = 60;
 

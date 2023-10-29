@@ -37,9 +37,11 @@ IF(USE_ENZYME)
     add_subdirectory(enzyme)
 ENDIF()
 
+
 #$<$<CONFIG:RELEASE>:-Ofast>
 add_compile_options(
         $<$<CONFIG:RELEASE>:-funroll-loops>
+#        $<$<CONFIG:RELEASE>:-fopenmp>
         $<$<CONFIG:DEBUG>:-O0>
         $<$<CONFIG:DEBUG>:-ggdb3>
 )

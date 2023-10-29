@@ -1,6 +1,5 @@
 find_package(Eigen3)
 
-
 set(LIKELIHOOD_SOURCES
         ${PROJECT_SOURCE_DIR}/app/likelihoods/Gaussian.cpp
         ${PROJECT_SOURCE_DIR}/app/likelihoods/Phi4Likelihood.cpp
@@ -26,6 +25,8 @@ add_executable(ShellsTest
         ShellsTest.cpp
         ${LIKELIHOOD_SOURCES}
         )
+
+
 
 
 target_include_directories(GaussianTest PRIVATE

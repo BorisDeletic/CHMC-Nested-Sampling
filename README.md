@@ -14,10 +14,15 @@ git submodule update --init --recursive
 
 ## Compiling
 
-This will build all binaries
+To build one target
 
 ```angular2html
 mkdir cmake-build-release && cd cmake-build-release
 cmake -G Ninja .. -DCMAKE_BUILD_TYPE=Release
+cmake --build . --target GaussianTest
+```
+
+or to build all binaries replace last line with 
+```angular2html
 ninja
 ```
