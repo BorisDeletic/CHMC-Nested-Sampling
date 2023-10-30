@@ -29,7 +29,6 @@ typedef struct NSConfig {
     int numLive;
     int maxIters;
     double precisionCriterion;
-    double reflectionRateThreshold;
     bool logDiagnostics;
 } NSConfig;
 
@@ -37,7 +36,6 @@ typedef struct NSConfig {
 typedef struct NSInfo {
     int iter;
     int numLive;
-    double reflectRateThreshold;
     double meanLogZ;
     double stdLogZ;
     double logZLive;

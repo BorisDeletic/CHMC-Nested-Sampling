@@ -10,18 +10,17 @@ const double priorWidth = 60;
 
 const double epsilon = 0.1;
 const int pathLength = 500;
+const double reflectionRateTarget = 0.01;
 
 const int numLive = 3000;
 const int maxIters = 2000000;
 const double precisionCriterion = 1e-8;
-const double reflectionRateThreshold = 0.9;
 const bool logDiagnostics = true;
 
 NSConfig config = {
         numLive,
         maxIters,
         precisionCriterion,
-        reflectionRateThreshold,
         logDiagnostics
 };
 
@@ -37,9 +36,9 @@ void runGaussian(std::string fname) {
     UniformPrior prior = UniformPrior(d, priorWidth);
     GaussianLikelihood likelihood = GaussianLikelihood(mean, var);
 
-    Adapter params = Adapter(epsilon, pathLength, likelihood.GetDimension());
+    Adapter params = Adapter(likelihood.GetDimension(), epsilon, pathLength, reflectionRateTarget);
 
-    CHMC sampler = CHMC(prior, likelihood, params, config.reflectionRateThreshold);
+    CHMC sampler = CHMC(prior, likelihood, params);
 
     NestedSampler NS = NestedSampler(sampler, prior, likelihood, logger, config);
 
@@ -60,7 +59,6 @@ void runUniformGaussian(std::string out_name, int dimension, int numPoints, int 
             numPoints,
             maxIterations,
             precisionCriterion,
-            reflectionRateThreshold,
             logDiagnostics
     };
 
@@ -75,9 +73,9 @@ void runUniformGaussian(std::string out_name, int dimension, int numPoints, int 
     UniformPrior prior = UniformPrior(dimension, priorWidth);
     GaussianLikelihood likelihood = GaussianLikelihood(mean, var);
 
-    Adapter params = Adapter(epsilon, pathLength, likelihood.GetDimension());
+    Adapter params = Adapter(likelihood.GetDimension(), epsilon, pathLength, reflectionRateTarget);
 
-    CHMC sampler = CHMC(prior, likelihood, params, gaussianConfig.reflectionRateThreshold);
+    CHMC sampler = CHMC(prior, likelihood, params);
 
     NestedSampler NS = NestedSampler(sampler, prior, likelihood, logger, gaussianConfig);
 
@@ -93,9 +91,11 @@ void runUniformGaussian(std::string out_name, int dimension, int numPoints, int 
 
     NSInfo summary = NS.GetInfo();
 
-    //dimension,num_live,iters,logZ,std_logZ,true_logZ
+    //dimension,num_live,path_length,reflect_rate,iters,logZ,std_logZ,true_logZ
     mOutFile << dimension << ",";
     mOutFile << summary.numLive << ",";
+    mOutFile << pathLength << ",";
+    mOutFile << reflectionRateTarget << ",";
     mOutFile << summary.iter << ",";
     mOutFile << summary.meanLogZ << ",";
     mOutFile << summary.stdLogZ << ",";
@@ -116,9 +116,9 @@ void runNormalGaussian(std::string fname) {
     GaussianPrior prior = GaussianPrior(d, priorWidth);
     GaussianLikelihood likelihood = GaussianLikelihood(mean, var);
 
-    Adapter params = Adapter(epsilon, pathLength, likelihood.GetDimension());
+    Adapter params = Adapter(likelihood.GetDimension(), epsilon, pathLength, reflectionRateTarget);
 
-    CHMC sampler = CHMC(prior, likelihood, params, config.reflectionRateThreshold);
+    CHMC sampler = CHMC(prior, likelihood, params);
 
     NestedSampler NS = NestedSampler(sampler, prior, likelihood, logger, config);
 
@@ -137,7 +137,7 @@ void runGaussianBatch() {
     std::ofstream mOutFile;
     mOutFile.open(fname);
 
-    mOutFile << "dimension,num_live,iters,logZ,std_logZ,true_logZ" << std::endl;
+    mOutFile << "dimension,num_live,path_length,reflect_rate,iters,logZ,std_logZ,true_logZ" << std::endl;
     mOutFile.close();
 
     for (double d = 5; d < maxDim; d *= 1.5) {

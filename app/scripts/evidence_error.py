@@ -65,20 +65,24 @@ def plot_evidence_error():
     avg_error = df.groupby('dimension')['error'].mean()
     avg_error_pcnt = df.groupby('dimension')['error_pcnt'].mean()
 
-    ax1.plot(avg_error, 'x', label='Avg Evidence Error')
+    ax1.plot(avg_error, 'x', label='Avg Evidence Error (absolute)')
     ax1.set_xscale('log')
-    ax1.set_xlabel('Dimension')
     ax1.set_ylabel('Avg LogZ Error')
+    ax1.set_title('Gaussian Likelihood - Dimension vs Evidence error (nlive = 20D)')
     ax1.legend()
+    ax1.grid(True)
 
     ax2.yaxis.set_major_formatter(FuncFormatter(percentage_formatter))
     ax2.plot(avg_error_pcnt, 'x', label='Avg Evidence Error (%)')
     ax2.set_xscale('log')
+    ax2.set_xlabel('Dimension')
     ax2.set_ylabel('Avg LogZ Error (%)')
     ax2.legend()
-    ax2.set_title('Gaussian Likelihood - Dimension vs Evidence error (nlive = 20D)')
+    ax2.grid(True)
 
 
+plot_dim_vs_ncall()
+plot_evidence()
 plot_evidence_error()
 
 plt.show()

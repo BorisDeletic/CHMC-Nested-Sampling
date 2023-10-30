@@ -1,10 +1,11 @@
 #include "Adapter.h"
 
-Adapter::Adapter(double initEpsilon, int initPathLength, const int dimension)
+Adapter::Adapter(const int dimension, double initEpsilon, int initPathLength, double reflectRateTarget)
     :
+    mDimension(dimension),
     mEpsilon(initEpsilon),
     mPathLength(initPathLength),
-    mDimension(dimension),
+    mDelta(reflectRateTarget),
     mMetric(Eigen::VectorXd::Ones(mDimension))
 {
     mMu = log(initEpsilon);

@@ -15,8 +15,7 @@ NestedSampler::NestedSampler(ISampler& sampler, IPrior& prior, ILikelihood& like
         mConfig(config),
         mDimension(mLikelihood.GetDimension()),
         gen(rd()),
-        mUniformRng(0, 1),
-        mReflectionRateThreshold(config.reflectionRateThreshold)
+        mUniformRng(0, 1)
 {
     if (mPrior.GetDimension() != mLikelihood.GetDimension()) {
         throw std::runtime_error("Prior dimension and likelihood dimensions do not match");
@@ -210,7 +209,6 @@ const NSInfo NestedSampler::GetInfo() {
     NSInfo info = {
             mIter,
             mConfig.numLive,
-            mConfig.reflectionRateThreshold,
             meanLogZ,
             stdLogZ,
             EstimateLogEvidenceRemaining()

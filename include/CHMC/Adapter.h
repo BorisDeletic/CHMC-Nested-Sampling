@@ -9,7 +9,7 @@
 
 class Adapter : public IParams {
 public:
-    Adapter(double initEpsilon, int initPathLength, int dimension);
+    Adapter(int dimension, double initEpsilon, int initPathLength, double reflectRateTarget);
 
     double GetEpsilon() const override { return mEpsilon; };
     int GetPathLength() const override { return mPathLength; };

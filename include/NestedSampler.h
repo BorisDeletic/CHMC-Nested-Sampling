@@ -58,7 +58,6 @@ private:
     double mLogXX = 0; // log XX. init = 1
 
     const double minLikelihood = -1e30;
-    const double mReflectionRateThreshold;
     const int mDimension;
     const int mSampleRetries = 5;
 
