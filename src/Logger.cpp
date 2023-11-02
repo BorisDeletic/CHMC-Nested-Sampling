@@ -47,12 +47,12 @@ void Logger::WritePoint(const MCPoint& point) {
     }
 
     for (const double theta : point.theta) {
-              mDeadFile << std::setprecision(10) << theta << " ";
+        //      mDeadFile << std::setprecision(10) << theta << " ";
 //              mPosteriorFile << theta << " ";
     }
 
-//    mDeadFile << point.theta[0] << " ";
-//    mDeadFile << point.theta[1] << " ";
+    mDeadFile << point.theta[0] << " ";
+    mDeadFile << point.theta[1] << " ";
  //   mDeadFile << point.theta[2] << " ";
 
     mDeadFile << std::setprecision(10) << point.likelihood << " " << point.birthLikelihood << std::endl;

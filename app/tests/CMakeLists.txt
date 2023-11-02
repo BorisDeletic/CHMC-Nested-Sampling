@@ -1,4 +1,5 @@
 find_package(Eigen3)
+find_package(OpenMP)
 
 set(LIKELIHOOD_SOURCES
         ${PROJECT_SOURCE_DIR}/app/likelihoods/Gaussian.cpp
@@ -53,6 +54,7 @@ target_include_directories(ShellsTest PRIVATE
 target_link_libraries(GaussianTest PRIVATE
         CHMC_NS_Lib
         Eigen3::Eigen
+        OpenMP::OpenMP_CXX
         )
 
 target_link_libraries(EggboxTest

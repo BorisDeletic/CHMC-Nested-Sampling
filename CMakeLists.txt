@@ -1,3 +1,6 @@
+# for mac you need to add these flags for openmp to work
+# -DOpenMP_CXX_FLAGS="-Xpreprocessor -fopenmp -I/opt/homebrew/Cellar/libomp/17.0.3/include" -DOpenMP_CXX_LIB_NAMES="omp" -DOpenMP_omp_LIBRARY=/opt/homebrew/Cellar/libomp/17.0.3/lib/libomp.dylib
+
 cmake_minimum_required(VERSION 3.16)
 
 set(USE_ENZYME FALSE)
@@ -38,10 +41,12 @@ IF(USE_ENZYME)
 ENDIF()
 
 
+
 #$<$<CONFIG:RELEASE>:-Ofast>
 add_compile_options(
         $<$<CONFIG:RELEASE>:-funroll-loops>
-#        $<$<CONFIG:RELEASE>:-fopenmp>
+#        $<$<CONFIG:RELEASE>:-ffast-math>
+#        $<$<CONFIG:RELEASE>:-march=cascadelake>
         $<$<CONFIG:DEBUG>:-O0>
         $<$<CONFIG:DEBUG>:-ggdb3>
 )

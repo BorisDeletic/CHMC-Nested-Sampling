@@ -131,19 +131,20 @@ void runNormalGaussian(std::string fname) {
 
 void runGaussianBatch() {
     int maxDim = 200;
-    int repetitions = 5;
+    int repetitions = 10;
 
-    std::string fname = "gaussian_batch.csv";
+    std::string fname = "gaussian_batch_nlive.csv";
     std::ofstream mOutFile;
-    mOutFile.open(fname);
+    mOutFile.open(fname, std::ios::app);
 
     mOutFile << "dimension,num_live,path_length,reflect_rate,iters,logZ,std_logZ,true_logZ" << std::endl;
     mOutFile.close();
 
-    for (double d = 5; d < maxDim; d *= 1.5) {
+    for (double d = 85.4; d < maxDim; d *= 1.5) {
         int numPoints = 20 * floor(d);
+//        int numPoints = 1000;
 
-        #pragma omp parallel
+        #pragma omp parallel for
         {
             for (int i = 0; i < repetitions; i++) {
                 runUniformGaussian(fname, floor(d), numPoints, i);
