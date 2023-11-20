@@ -242,10 +242,12 @@ const bool NestedSampler::TerminateSampling() {
     }
 
     if (remainingEvidence < mLogZ + log10(mConfig.precisionCriterion)) {
+        std::cout << "remaining evidence" << std::endl;
         return true;
     }
 
     if (mIter >= mConfig.maxIters) {
+        std::cout << "max iters: " << mConfig.maxIters << std::endl;
         return true;
     }
 

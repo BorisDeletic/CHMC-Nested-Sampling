@@ -105,7 +105,7 @@ def plot_evidence_error():
 
 
 plot_dim_vs_ncall()
-# plot_evidence()
+plot_evidence()
 plot_evidence_error()
 
 plt.show()

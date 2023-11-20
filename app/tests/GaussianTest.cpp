@@ -53,7 +53,9 @@ void runGaussian(std::string fname) {
 
 
 void runUniformGaussian(std::string out_name, int dimension, int numPoints, int repetition) {
-    int maxIterations = dimension * numPoints * 1000;
+    std::cout << dimension <<", " << numPoints << ", " << std::endl;
+    int maxIterations = dimension * numPoints * 10;
+    std::cout << maxIterations << std::endl;
 
     NSConfig gaussianConfig = {
             numPoints,
@@ -130,7 +132,7 @@ void runNormalGaussian(std::string fname) {
 
 
 void runGaussianBatch() {
-    int maxDim = 200;
+    int maxDim = 1000;
     int repetitions = 10;
 
     std::string fname = "gaussian_batch_nlive.csv";
@@ -140,16 +142,16 @@ void runGaussianBatch() {
     mOutFile << "dimension,num_live,path_length,reflect_rate,iters,logZ,std_logZ,true_logZ" << std::endl;
     mOutFile.close();
 
-    for (double d = 85.4; d < maxDim; d *= 1.5) {
+    for (double d = 432; d < maxDim; d *= 1.5) {
         int numPoints = 20 * floor(d);
 //        int numPoints = 1000;
 
-        #pragma omp parallel for
-        {
+//        #pragma omp parallel for
+//        {
             for (int i = 0; i < repetitions; i++) {
                 runUniformGaussian(fname, floor(d), numPoints, i);
             }
-        }
+//        }
     }
 }
 
