@@ -40,7 +40,7 @@ void runPhi4(std::string fname, int n, double kappa, double lambda)
     Phi4Likelihood likelihood = Phi4Likelihood(n, kappa, lambda);
     Logger logger = Logger(fname, true);
 
-    Adapter params = Adapter(n*n, epsilon, pathLength,reflectionRateTarget);
+    Adapter params = Adapter(n*n, epsilon, pathLength, reflectionRateTarget, acceptRateTarget);
 
     CHMC sampler = CHMC(prior, likelihood, params);
 

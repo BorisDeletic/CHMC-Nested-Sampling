@@ -1,11 +1,12 @@
 #include "Adapter.h"
 
-Adapter::Adapter(const int dimension, double initEpsilon, int initPathLength, double reflectRateTarget)
+Adapter::Adapter(const int dimension, double initEpsilon, int initPathLength, double reflectRateTarget, double acceptRateTarget)
     :
     mDimension(dimension),
     mEpsilon(initEpsilon),
     mPathLength(initPathLength),
-    mDelta(reflectRateTarget),
+    mReflectionRateTarget(reflectRateTarget),
+    mAcceptRateTarget(acceptRateTarget),
     mMetric(Eigen::VectorXd::Ones(mDimension))
 {
     mMu = log(initEpsilon);
@@ -20,16 +21,20 @@ void Adapter::Restart() {
     mXBar = 0;
 }
 
-void Adapter::AdaptEpsilon(double reflectRate) {
+void Adapter::AdaptEpsilon(double reflectRate, double acceptProb) {
     mIter++;
 
-    reflectRate = reflectRate > 1 ? 1 : reflectRate;
+    acceptProb = acceptProb > 1 ? 1 : acceptProb;
 
     // Nesterov Dual-Averaging of log(epsilon)
     const double eta = 1.0 / (mIter + mT0);
 
 //    mSBar = (1.0 - eta) * mSBar + eta * (reflectRate - mDelta);
-    mSBar = (1.0 - eta) * mSBar + eta * (mDelta - reflectRate);
+    if (reflectRate < mReflectionRateTarget) {
+        mSBar = (1.0 - eta) * mSBar + eta * (mAcceptRateTarget - acceptProb);
+    } else {
+        mSBar = (1.0 - eta) * mSBar + eta * (reflectRate - mReflectionRateTarget);
+    }
 
     const double x = mMu - mSBar * std::sqrt(mIter) / mGamma;
     const double x_eta = std::pow(mIter, -mKappa);

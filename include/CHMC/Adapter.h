@@ -9,7 +9,7 @@
 
 class Adapter : public IParams {
 public:
-    Adapter(int dimension, double initEpsilon, int initPathLength, double reflectRateTarget);
+    Adapter(int dimension, double initEpsilon, int initPathLength, double reflectRateTarget, double acceptRateTarget);
 
     double GetEpsilon() const override { return mEpsilon; };
     int GetPathLength() const override { return mPathLength; };
@@ -18,7 +18,7 @@ public:
     void Restart();
     void SetMu(double m) { mMu = m; };
 
-    void AdaptEpsilon(double acceptProb);
+    void AdaptEpsilon(double reflectRate, double acceptProb);
     void AdaptMetric(const std::multiset<MCPoint>& livePoints);
 
 private:
@@ -32,7 +32,8 @@ private:
     double mSBar;    // Moving average statistic
     double mXBar;    // Moving average parameter
     double mMu;       // Asymptotic mean of parameter
-    double mDelta;    // Target value of statistic
+    double mReflectionRateTarget;    // Target value of statistic
+    double mAcceptRateTarget;    // Target value of statistic
     double mGamma = 0.05;    // Adaptation scaling
     double mKappa = 0.75;    // Adaptation shrinkage
     double mT0 = 10;       // Effective starting iteration

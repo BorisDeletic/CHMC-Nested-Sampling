@@ -93,8 +93,6 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
             mLogger.WriteDiagnostics(GetInfo(), newPoint, *mAdapter);
 
             if (newPoint.rejected) {
-//                std::cout << "rejected" << std::endl;
-//                std::cout << "e = " << mAdapter->GetEpsilon() << std::endl;
                 mLogger.WriteRejectedPoint(newPoint, *mAdapter);
             }
         }
@@ -102,8 +100,7 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
         if (mAdapter != nullptr)
         {
             const double reflectRate = (double)newPoint.reflections / newPoint.steps;
-            //     mAdapter->AdaptEpsilon(reflectRate);
-            mAdapter->AdaptEpsilon(newPoint.acceptProbability);
+            mAdapter->AdaptEpsilon(reflectRate, newPoint.acceptProbability);
         }
 
         if (!newPoint.rejected)
