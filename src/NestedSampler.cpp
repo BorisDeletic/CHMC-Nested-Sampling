@@ -85,17 +85,25 @@ void NestedSampler::NestedSamplingStep() {
 void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likelihoodConstraint)
 {
     for (int i = 0; i < mSampleRetries; i++) {
+        samples++;
         const MCPoint newPoint = mSampler.SamplePoint(deadPoint, likelihoodConstraint);
-
-        if (mAdapter != nullptr)
-        {
-            const double reflectRate = (double)newPoint.reflections / newPoint.steps;
-            mAdapter->AdaptEpsilon(reflectRate);
-        }
 
         if (mConfig.logDiagnostics) {
             assert(mAdapter != nullptr);
             mLogger.WriteDiagnostics(GetInfo(), newPoint, *mAdapter);
+
+            if (newPoint.rejected) {
+//                std::cout << "rejected" << std::endl;
+//                std::cout << "e = " << mAdapter->GetEpsilon() << std::endl;
+                mLogger.WriteRejectedPoint(newPoint, *mAdapter);
+            }
+        }
+
+        if (mAdapter != nullptr)
+        {
+            const double reflectRate = (double)newPoint.reflections / newPoint.steps;
+            //     mAdapter->AdaptEpsilon(reflectRate);
+            mAdapter->AdaptEpsilon(newPoint.acceptProbability);
         }
 
         if (!newPoint.rejected)
@@ -107,12 +115,7 @@ void NestedSampler::SampleNewPoint(const MCPoint& deadPoint, const double likeli
                 return;
         }
 
-//        if (mConfig.logDiagnostics && newPoint.rejected) {
-        if (newPoint.rejected) {
-            std::cout << "rejected" << std::endl;
-//            std::cout << "e = " << mAdapter->GetEpsilon() << std::endl;
-            mLogger.WriteRejectedPoint(newPoint, *mAdapter);
-        }
+        rejections++;
     }
 }
 
@@ -226,6 +229,10 @@ const bool NestedSampler::TerminateSampling() {
         std::cout << "NS Step: " << mIter << ", Num Live = " << mLivePoints.size() << std::endl;
         std::cout << "e=" << mAdapter->GetEpsilon() << ", reflectionrate=" << GetReflectRate() << std::endl;
         std::cout << "alpha=" << mAdapter->GetMetric()[0] << std::endl;
+        std::cout << "rejection rate = " << (double)rejections / samples << std::endl;
+
+        rejections = 0;
+        samples = 0;
     }
 
     double remainingEvidence = EstimateLogEvidenceRemaining();

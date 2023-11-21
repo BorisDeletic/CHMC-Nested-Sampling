@@ -77,19 +77,23 @@ const Eigen::VectorXd Phi4Likelihood::DerivedParams(const Eigen::VectorXd &theta
     const int numDerived = ParamNames().size();
     Eigen::VectorXd derived(numDerived);
 
+    derived[0] = theta.mean();
+
     Eigen::VectorXd correlations = SpatialCorrelationFFT(theta);
     for (int i = 0; i < correlations.size(); i++) {
-        derived[i] = correlations[i];
+        derived[i + 1] = correlations[i];
     }
 
     // set last param to magnetisation.
-    derived[numDerived - 1] = theta.mean();
+//    derived[numDerived - 1] = theta.mean();
 
     return derived;
 }
 
 const std::vector<std::string> Phi4Likelihood::ParamNames() {
     std::vector<std::string> names;
+
+    names.push_back("mag");
 
     for (int r = 0; r < n; r++) {
         std::ostringstream corr_name;
@@ -98,7 +102,6 @@ const std::vector<std::string> Phi4Likelihood::ParamNames() {
         names.push_back(corr_name.str());
     }
 
-    names.push_back("mag");
     return names;
 }
 

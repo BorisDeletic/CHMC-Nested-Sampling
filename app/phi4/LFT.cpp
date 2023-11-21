@@ -20,16 +20,16 @@ const double priorWidth = 4;
 const double epsilon = 0.01;
 const int pathLength = 100;
 
-const int numLive = 100;
+const int numLive = 200;
 const int maxIters = 500000;
 const double precisionCriterion = 1e-2;
-const double reflectionRateThreshold = 0.9;
+const double reflectionRateTarget = 0.05;
+const double acceptRateTarget = 0.9;
 
 NSConfig config = {
         numLive,
         maxIters,
         precisionCriterion,
-        reflectionRateThreshold,
         logDiagnostics
 };
 
@@ -40,9 +40,9 @@ void runPhi4(std::string fname, int n, double kappa, double lambda)
     Phi4Likelihood likelihood = Phi4Likelihood(n, kappa, lambda);
     Logger logger = Logger(fname, true);
 
-    Adapter params = Adapter(epsilon, pathLength, n*n);
+    Adapter params = Adapter(n*n, epsilon, pathLength,reflectionRateTarget);
 
-    CHMC sampler = CHMC(prior, likelihood, params, config.reflectionRateThreshold);
+    CHMC sampler = CHMC(prior, likelihood, params);
 
     NestedSampler NS = NestedSampler(sampler, prior, likelihood, logger, config);
 
@@ -115,6 +115,6 @@ int main() {
    // generatePhaseDiagramData();
 
  //  generateCorrelationData();
-    runPhi4("Phi4_posterior_sampling", 4, 0.4, 0.2);
-    std::cout << "help";
+    runPhi4("Phi4_posterior_sampling", 16, 0.25, 0.02);
+    std::cout << "help!";
 }

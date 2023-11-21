@@ -21,11 +21,16 @@ void Hamiltonian::SetHamiltonian(const Eigen::VectorXd &x, const Eigen::VectorXd
     mLikelihoodConstraint = likelihoodConstraint;
     mLogLikelihood = mLikelihood.LogLikelihood(x);
 
-   // mLikelihoodGradient = mLikelihood.Gradient(x);
-    mPriorGradient = mPrior.Gradient(x);
+   mLikelihoodGradient = mLikelihood.Gradient(x);
+   if (mUsePosterior) {
+       mPriorGradient = mLikelihood.Gradient(x);
+   } else {
+       mPriorGradient = mPrior.Gradient(x);
+   }
 
     dxs.clear();
     likes.clear();
+    energies.clear();
 }
 
 
@@ -51,12 +56,17 @@ void Hamiltonian::Evolve()
         double dx = (mX - newX).norm();
         dxs.push_back(dx);
         likes.push_back(newLikelihood);
+        energies.push_back(GetEnergy());
 
         mX = newX;
         mLogLikelihood = newLikelihood;
     }
 
-    mPriorGradient = mPrior.Gradient(mX);
+    if (mUsePosterior) {
+        mPriorGradient = mLikelihood.Gradient(mX);
+    } else {
+        mPriorGradient = mPrior.Gradient(mX);
+    }
 
     mP = mIntegrator.UpdateP( mPriorGradient);
 }
@@ -104,6 +114,7 @@ void Hamiltonian::Reflection() {
             double dx = (mX - newX).norm();
             dxs.push_back(dx);
             likes.push_back(newLikelihood);
+            energies.push_back(GetEnergy());
 
             mX = newX;
             mLogLikelihood = newLikelihood;
@@ -111,7 +122,7 @@ void Hamiltonian::Reflection() {
             return;
         }
 
-        //ReflectP(normal);
+        ReflectP(mPriorGradient);
     }
 
     Eigen::VectorXd nextX = mIntegrator.UpdateX(mX, mP, mPriorGradient);
@@ -120,8 +131,9 @@ void Hamiltonian::Reflection() {
     double dx = (mX - nextX).norm();
     dxs.push_back(dx);
     likes.push_back(nextLikelihood);
+    energies.push_back(GetEnergy());
 
-    std::cout << std::endl << "|n| = " << mLikelihood.Gradient(mX).norm() << std::endl;
+//    std::cout << std::endl << "|n| = " << mLikelihood.Gradient(mX).norm() << std::endl;
 //    std::cout << "|p| = ";
 //    std::cout << mP.norm() << std::endl;
 //    std::cout << "Mx = " << (mX).norm() << std::endl;
@@ -137,9 +149,13 @@ double Hamiltonian::GetEnergy() const {
     const Eigen::VectorXd invMetric = mParams.GetMetric().cwiseInverse();
 
 //  need to make this function work with pi(theta) not being uniform
+    double energy;
 
-//    const double energy = 0.5 * mP.dot(invMetric.asDiagonal() * mP) - mLogLikelihood;
-    const double energy = 0.5 * mP.dot(invMetric.asDiagonal() * mP);
+    if (mUsePosterior) {
+        energy = 0.5 * mP.dot(invMetric.asDiagonal() * mP) - mLogLikelihood;
+    } else {
+        energy = 0.5 * mP.dot(invMetric.asDiagonal() * mP);
+    }
 
     return energy;
 }
@@ -147,6 +163,10 @@ double Hamiltonian::GetEnergy() const {
 
 bool Hamiltonian::OutsidePriorBounds(const Eigen::VectorXd &theta) {
     // this is a hack which assumes the prior function is min@0 and max@1
+
+    if (mUsePosterior) {
+        return false;
+    }
 
     Eigen::ArrayXd lowerBound = mPrior.PriorTransform(Eigen::VectorXd::Zero(mPrior.GetDimension()));
     Eigen::ArrayXd upperBound = mPrior.PriorTransform(Eigen::VectorXd::Ones(mPrior.GetDimension()));

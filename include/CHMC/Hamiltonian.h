@@ -23,6 +23,7 @@ public:
     const std::vector<double>& GetDxs() const { return dxs; };
     const std::vector<double>& GetLikes() const { return likes; };
     const std::vector<double>& GetProposedLikes() const { return proposed_likes; };
+    const std::vector<double>& GetPathEnergies() const { return energies; };
 
     void SetHamiltonian(const Eigen::VectorXd& x, const Eigen::VectorXd& p, double likelihoodConstraint);
 
@@ -59,7 +60,10 @@ private:
     // FOR DIAGNOSTICS
     std::vector<double> dxs;
     std::vector<double> likes;
+    std::vector<double> energies;
     std::vector<double> proposed_likes;
+
+    bool mUsePosterior = true;
 };
 
 

@@ -42,17 +42,18 @@ void Logger::WritePoint(const MCPoint& point) {
 //    mPosteriorFile << -point.likelihood << " ";
 
     for (const double phi : point.derived) {
-       // mDeadFile << phi << " ";
+        mDeadFile << phi << " ";
       //  mPosteriorFile << phi << " ";
     }
 
     for (const double theta : point.theta) {
-        //      mDeadFile << std::setprecision(10) << theta << " ";
+        mDeadFile << theta << " ";
+//        mDeadFile << std::setprecision(10) << theta << " ";
 //              mPosteriorFile << theta << " ";
     }
 
-    mDeadFile << point.theta[0] << " ";
-    mDeadFile << point.theta[1] << " ";
+//    mDeadFile << point.theta[0] << " ";
+//    mDeadFile << point.theta[1] << " ";
  //   mDeadFile << point.theta[2] << " ";
 
     mDeadFile << std::setprecision(10) << point.likelihood << " " << point.birthLikelihood << std::endl;
@@ -156,6 +157,12 @@ void Logger::WriteRejectedPoint(const MCPoint &point, const IParams &params) {
         mRejectedPointsFile << like << ", ";
     }
     mRejectedPointsFile << std::endl;
+
+    for (double energy : point.pathEnergy) {
+        mRejectedPointsFile << energy << ", ";
+    }
+    mRejectedPointsFile << std::endl;
+
 
     mRejectedPointsFile.close();
 }

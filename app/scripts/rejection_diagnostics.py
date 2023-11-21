@@ -3,13 +3,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import io
 
-path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/tests/"
-chain = "gaussian_200d_100nlive_r1.rejected_points"
+path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/"
+# chain = "gaussian_200d_100nlive_r1.rejected_points"
+chain = "Phi4_posterior_sampling.rejected_points"
 
 with open(path + chain) as f:
     headers = f.readline().split(",")
     print(headers)
-    for i in range(30):
+    for i in range(40):
         f.readline()
         # skip to 10th point
     # print(stats)
@@ -18,6 +19,8 @@ with open(path + chain) as f:
     deltaX = np.fromstring(f.readline()[:-2], sep=',')
 
     likes = np.fromstring(f.readline()[:-2], sep=',')
+
+    energies = np.fromstring(f.readline()[:-2], sep=',')
 
 
 with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
@@ -31,5 +34,9 @@ fig, ax = plt.subplots()
 ax.plot(likes)
 ax.set_title("likelihood vs integration step")
 ax.axhline(stats_df['birth_likelihood'].iloc[0], linestyle='--')
+
+fig, ax = plt.subplots()
+ax.plot(energies)
+ax.set_title("energy vs integration step")
 
 plt.show()

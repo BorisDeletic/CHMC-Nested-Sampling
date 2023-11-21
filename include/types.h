@@ -17,6 +17,7 @@ typedef struct MCPoint {
     const int ID = 0;
     std::vector<double> deltaX;
     std::vector<double> pathLikelihood;
+    std::vector<double> pathEnergy;
 } MCPoint;
 
 

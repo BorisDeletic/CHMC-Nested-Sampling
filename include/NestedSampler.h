@@ -61,6 +61,9 @@ private:
     const int mDimension;
     const int mSampleRetries = 5;
 
+    int rejections = 0;
+    int samples = 0;
+
     std::random_device rd;
     std::mt19937 gen;
     std::uniform_real_distribution<double> mUniformRng;
