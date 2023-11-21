@@ -71,7 +71,8 @@ const MCPoint CHMC::SamplePoint(const MCPoint &old, double likelihoodConstraint)
             mPointID,
             mHamiltonian.GetDxs(),
             mHamiltonian.GetLikes(),
-            mHamiltonian.GetPathEnergies()
+            mHamiltonian.GetPathEnergies(),
+            mHamiltonian.GetMomentums()
     };
 
     mPointID++;

@@ -39,7 +39,7 @@ void Hamiltonian::Evolve()
     if (mRejected) return;
     mIters++;
 
-    Eigen::VectorXd newX = mIntegrator.UpdateX(mX, mP, mPriorGradient);
+    Eigen::VectorXd newX = mIntegrator.UpdateX(mX, mP, mLikelihood.Gradient(mX));
     const double newLikelihood = mLikelihood.LogLikelihood(newX);
 
     if ((newLikelihood <= mLikelihoodConstraint) || OutsidePriorBounds(newX)) {
@@ -57,6 +57,7 @@ void Hamiltonian::Evolve()
         dxs.push_back(dx);
         likes.push_back(newLikelihood);
         energies.push_back(GetEnergy());
+        momentums.push_back(mP.dot(mParams.GetMetric().cwiseInverse().asDiagonal() * mP));
 
         mX = newX;
         mLogLikelihood = newLikelihood;
@@ -68,7 +69,7 @@ void Hamiltonian::Evolve()
         mPriorGradient = mPrior.Gradient(mX);
     }
 
-    mP = mIntegrator.UpdateP( mPriorGradient);
+    mP = mIntegrator.UpdateP( mLikelihood.Gradient(mX));
 }
 
 
@@ -90,7 +91,7 @@ void Hamiltonian::ReflectP(const Eigen::VectorXd &normal) {
 void Hamiltonian::Reflection() {
     mReflections++;
 
-    Eigen::VectorXd newX = mIntegrator.UpdateX(mX, mP, mPriorGradient);
+    Eigen::VectorXd newX = mIntegrator.UpdateX(mX, mP, mLikelihood.Gradient(mX));
     const double newLikelihood = mLikelihood.LogLikelihood(newX);
 
     if (newLikelihood <= mLikelihoodConstraint) {
@@ -105,7 +106,7 @@ void Hamiltonian::Reflection() {
     for (int i = 0; i < mEpsilonReflectionLimit; i++) {
         const double epsilonFactor = 1.0 / pow(2, i);
 
-        Eigen::VectorXd newX = mIntegrator.UpdateX(mX, mP, mPriorGradient, epsilonFactor);
+        Eigen::VectorXd newX = mIntegrator.UpdateX(mX, mP, mLikelihood.Gradient(mX), epsilonFactor);
         const double newLikelihood = mLikelihood.LogLikelihood(newX);
 
         if ((newLikelihood > mLikelihoodConstraint) && (!OutsidePriorBounds(newX))) {
@@ -115,6 +116,7 @@ void Hamiltonian::Reflection() {
             dxs.push_back(dx);
             likes.push_back(newLikelihood);
             energies.push_back(GetEnergy());
+            momentums.push_back(mP.dot(mParams.GetMetric().cwiseInverse().asDiagonal() * mP));
 
             mX = newX;
             mLogLikelihood = newLikelihood;
@@ -132,6 +134,8 @@ void Hamiltonian::Reflection() {
     dxs.push_back(dx);
     likes.push_back(nextLikelihood);
     energies.push_back(GetEnergy());
+
+    momentums.push_back(mP.dot(mParams.GetMetric().cwiseInverse().asDiagonal() * mP));
 
 //    std::cout << std::endl << "|n| = " << mLikelihood.Gradient(mX).norm() << std::endl;
 //    std::cout << "|p| = ";

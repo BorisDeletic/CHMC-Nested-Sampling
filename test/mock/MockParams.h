@@ -8,9 +8,9 @@ public:
     StaticParams(double epsilon, int pathLength, int dims)
     : mEpsilon(epsilon), mPathLength(pathLength), mMetric(Eigen::VectorXd::Ones(dims)) {}
 
-    double GetEpsilon() override { return mEpsilon; };
-    int GetPathLength() override { return mPathLength; };
-    const Eigen::VectorXd& GetMetric() override { return mMetric; };
+    double GetEpsilon() const override { return mEpsilon; };
+    int GetPathLength() const override { return mPathLength; };
+    const Eigen::VectorXd& GetMetric() const override { return mMetric; };
 
 private:
     const double mEpsilon;

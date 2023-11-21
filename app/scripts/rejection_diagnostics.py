@@ -10,8 +10,8 @@ chain = "Phi4_posterior_sampling.rejected_points"
 with open(path + chain) as f:
     headers = f.readline().split(",")
     print(headers)
-    for i in range(40):
-        f.readline()
+    # for i in range(50):
+    #     f.readline()
         # skip to 10th point
     # print(stats)
     stats_df = pd.read_csv(io.StringIO(f.readline()), names = headers)
@@ -21,6 +21,8 @@ with open(path + chain) as f:
     likes = np.fromstring(f.readline()[:-2], sep=',')
 
     energies = np.fromstring(f.readline()[:-2], sep=',')
+
+    momentums = np.fromstring(f.readline()[:-2], sep=',')
 
 
 with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
@@ -38,5 +40,9 @@ ax.axhline(stats_df['birth_likelihood'].iloc[0], linestyle='--')
 fig, ax = plt.subplots()
 ax.plot(energies)
 ax.set_title("energy vs integration step")
+
+fig, ax = plt.subplots()
+ax.plot(momentums)
+ax.set_title("momentum vs integration step")
 
 plt.show()

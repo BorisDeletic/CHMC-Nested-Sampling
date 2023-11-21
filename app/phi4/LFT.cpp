@@ -20,11 +20,11 @@ const double priorWidth = 4;
 const double epsilon = 0.01;
 const int pathLength = 100;
 
-const int numLive = 200;
+const int numLive = 100;
 const int maxIters = 500000;
-const double precisionCriterion = 1e-2;
+const double precisionCriterion = 1e-1;
 const double reflectionRateTarget = 0.05;
-const double acceptRateTarget = 0.9;
+const double acceptRateTarget = 0.8;
 
 NSConfig config = {
         numLive,
@@ -115,6 +115,6 @@ int main() {
    // generatePhaseDiagramData();
 
  //  generateCorrelationData();
-    runPhi4("Phi4_posterior_sampling", 16, 0.25, 0.02);
+    runPhi4("Phi4_posterior_sampling", 32, 0.28, 0.1);
     std::cout << "help!";
 }

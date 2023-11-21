@@ -9,7 +9,10 @@ const double Phi4Likelihood::LogLikelihood(const Eigen::VectorXd &theta) {
     // kinetic term
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            fieldAction -= 2 * mKappa * theta[i * n + j] * NeighbourSum(theta, i, j);
+            int idx_right = j - 1 < 0   ? i * n + (n-1) : i * n + (j-1);
+            int idx_down = i + 1 == n   ? j             : (i+1) * n + j; // with torus b.c.
+
+            fieldAction -= 2 * mKappa * theta[i * n + j] * (theta[idx_right] + theta[idx_down]);
         }
     }
 
@@ -36,7 +39,7 @@ const Eigen::VectorXd Phi4Likelihood::Gradient(const Eigen::VectorXd &theta) {
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            grad[i * n + j] -= 4 * mKappa * NeighbourSum(theta, i, j);
+            grad[i * n + j] -= 2 * mKappa * NeighbourSum(theta, i, j);
         }
     }
 
@@ -79,10 +82,10 @@ const Eigen::VectorXd Phi4Likelihood::DerivedParams(const Eigen::VectorXd &theta
 
     derived[0] = theta.mean();
 
-    Eigen::VectorXd correlations = SpatialCorrelationFFT(theta);
-    for (int i = 0; i < correlations.size(); i++) {
-        derived[i + 1] = correlations[i];
-    }
+//    Eigen::VectorXd correlations = SpatialCorrelationFFT(theta);
+//    for (int i = 0; i < correlations.size(); i++) {
+//        derived[i + 1] = correlations[i];
+//    }
 
     // set last param to magnetisation.
 //    derived[numDerived - 1] = theta.mean();
@@ -95,12 +98,12 @@ const std::vector<std::string> Phi4Likelihood::ParamNames() {
 
     names.push_back("mag");
 
-    for (int r = 0; r < n; r++) {
-        std::ostringstream corr_name;
-        corr_name << "c_" << r;
-
-        names.push_back(corr_name.str());
-    }
+//    for (int r = 0; r < n; r++) {
+//        std::ostringstream corr_name;
+//        corr_name << "c_" << r;
+//
+//        names.push_back(corr_name.str());
+//    }
 
     return names;
 }

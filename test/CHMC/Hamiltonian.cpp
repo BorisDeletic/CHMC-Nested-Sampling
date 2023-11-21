@@ -55,7 +55,6 @@ protected:
     StaticParams params = StaticParams(epsilon, steps, 2);
 
     GaussianLikelihood mGaussianLikelihood = GaussianLikelihood(mean, var);
-    Hamiltonian mHamiltonian = Hamiltonian(mGaussianLikelihood, params);
 };
 
 

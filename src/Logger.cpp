@@ -83,10 +83,6 @@ void Logger::WriteSummary(const NSInfo& summary) {
     mSummaryFile << "Log (Z) = " << summary.meanLogZ << " +- " << summary.stdLogZ << std::endl;
     mSummaryFile << "Log (Z) Remaining = " << summary.logZLive << std::endl;
 
-   // if (samplerSummary.rejectRatio != 0) {
-   //     mSummaryFile << "Rejection Ratio = " << samplerSummary.rejectRatio << std::endl;
-   // }
-
     mSummaryFile.close();
     mDeadFile.close();
 }
@@ -160,6 +156,11 @@ void Logger::WriteRejectedPoint(const MCPoint &point, const IParams &params) {
 
     for (double energy : point.pathEnergy) {
         mRejectedPointsFile << energy << ", ";
+    }
+    mRejectedPointsFile << std::endl;
+
+    for (double momentum : point.pathMomentum) {
+        mRejectedPointsFile << momentum << ", ";
     }
     mRejectedPointsFile << std::endl;
 
