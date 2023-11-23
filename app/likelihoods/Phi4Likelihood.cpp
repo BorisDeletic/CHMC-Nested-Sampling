@@ -81,6 +81,7 @@ const Eigen::VectorXd Phi4Likelihood::DerivedParams(const Eigen::VectorXd &theta
     Eigen::VectorXd derived(numDerived);
 
     derived[0] = theta.mean();
+    derived[1] = theta.cwisePow(2).sum() / pow(theta.size(), 2);
 
 //    Eigen::VectorXd correlations = SpatialCorrelationFFT(theta);
 //    for (int i = 0; i < correlations.size(); i++) {
@@ -97,6 +98,7 @@ const std::vector<std::string> Phi4Likelihood::ParamNames() {
     std::vector<std::string> names;
 
     names.push_back("mag");
+    names.push_back("mag_squared");
 
 //    for (int r = 0; r < n; r++) {
 //        std::ostringstream corr_name;

@@ -14,13 +14,13 @@
 std::string phase_dir = "phase_diagram";
 std::string correlation_dir = "correlation";
 
-const bool logDiagnostics = true;
+const bool logDiagnostics = false;
 const double priorWidth = 4;
 
 const double epsilon = 0.01;
 const int pathLength = 100;
 
-const int numLive = 100;
+const int numLive = 500;
 const int maxIters = 500000;
 const double precisionCriterion = 1e-1;
 const double reflectionRateTarget = 0.05;
@@ -78,6 +78,31 @@ void generatePhaseDiagramData() {
     }
 }
 
+void generatePhaseData() {
+    const int n = 32;
+    double kappaMin = 0.16;
+    double kappaMax = 0.24;
+    double lambda = 0.1;
+    int resolution = 10;
+
+    if (!std::filesystem::is_directory(phase_dir) || !std::filesystem::exists(phase_dir)) { // Check if src folder exists
+        std::filesystem::create_directory(phase_dir); // create src folder
+    }
+
+    for (double k = kappaMin; k < kappaMax; k += (kappaMax - kappaMin) / resolution) {
+        std::ostringstream fname;
+        fname << phase_dir;
+        fname << "/Phi4_" << std::setprecision(5) << std::fixed << k << "_" << lambda;
+
+        if(std::filesystem::exists(fname.str() + ".stats"))
+            continue;
+
+        std::cout << std::endl << std::endl <<"Running Phi4: kappa=" << k << ", lambda=" << lambda << std::endl;
+
+        runPhi4(fname.str(), n,k, lambda);
+    }
+}
+
 
 void generateCorrelationData() {
 
@@ -112,9 +137,10 @@ int main() {
 
 //    Phi4Likelihood likelihood = Phi4Likelihood(2, 0.05, 1.5, priorWidth);
 //    generateLikelihoodPlot(likelihood, {-4, 4}, {-4, 4});
-   // generatePhaseDiagramData();
+//    generatePhaseDiagramData();
+    generatePhaseData();
 
  //  generateCorrelationData();
-    runPhi4("Phi4_posterior_sampling", 32, 0.28, 0.1);
+//    runPhi4("Phi4_posterior_sampling", 32, 0.25, 0.02);
     std::cout << "help!";
 }

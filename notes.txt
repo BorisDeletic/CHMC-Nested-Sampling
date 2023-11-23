@@ -12,3 +12,13 @@ lots of 0,1,2 path length points.
 when we reject a point, we can resample from a random live point.
 this way we can target an acceptance rate such that clusters do not die out.
 it looks like points are getting stuck in local minima and causing epsilon to freeze.
+
+Our efforts throughout the section will be facilitated by the fact that
+the two-dimensional Landau-Ginzburg model is in the same universality
+class as the two-dimensional Ising model. This implies that their critical
+exponents are the same; in particular, ν = 1, γ = 7/4
+
+pg.70
+https://www.tpudlik.com/research/pudlik_Amherst_thesis.pdf
+N = 32
+mu_0^2 = 0.6717

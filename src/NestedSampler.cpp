@@ -56,7 +56,8 @@ void NestedSampler::Run() {
     for (const auto& point : mLivePoints)
     {
         UpdateLogEvidence(point);
-        mLogger.WritePoint(point);
+        double logWeight = -(double)mIter / mConfig.numLive;
+        mLogger.WritePoint(point, logWeight);
     }
 
     mLogger.WriteSummary(GetInfo());
@@ -72,7 +73,8 @@ void NestedSampler::NestedSamplingStep() {
 
     // Analysis and log dead point
     UpdateLogEvidence(deadPoint);
-    mLogger.WritePoint(deadPoint);
+    double logWeight = -(double)mIter / mConfig.numLive;
+    mLogger.WritePoint(deadPoint, logWeight);
 
     const MCPoint& randPoint = GetRandomLivePoint();
     SampleNewPoint(randPoint, deadPoint.likelihood);
