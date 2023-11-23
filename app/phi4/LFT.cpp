@@ -105,8 +105,8 @@ void generatePhaseData() {
 }
 
 void generateScalingData() {
-    const int nMin = 128;
-    const int nMax = 256;
+    const int nMin = 16;
+    const int nMax = 512;
     double kappaMin = 0.195;
     double kappaMax = 0.21;
     double lambda = 0.1;

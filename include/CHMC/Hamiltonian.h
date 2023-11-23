@@ -20,11 +20,11 @@ public:
     int GetReflections() const { return mReflections; };
     int GetIntegrationSteps() const { return mIters; };
 
-    const std::vector<double>& GetDxs() const { return dxs; };
-    const std::vector<double>& GetLikes() const { return likes; };
-    const std::vector<double>& GetProposedLikes() const { return proposed_likes; };
-    const std::vector<double>& GetPathEnergies() const { return energies; };
-    const std::vector<double>& GetMomentums() const { return momentums; };
+//    const std::vector<double>& GetDxs() const { return dxs; };
+//    const std::vector<double>& GetLikes() const { return likes; };
+//    const std::vector<double>& GetProposedLikes() const { return proposed_likes; };
+//    const std::vector<double>& GetPathEnergies() const { return energies; };
+//    const std::vector<double>& GetMomentums() const { return momentums; };
 
     void SetHamiltonian(const Eigen::VectorXd& x, const Eigen::VectorXd& p, double likelihoodConstraint);
 

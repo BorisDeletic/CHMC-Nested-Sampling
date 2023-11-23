@@ -31,6 +31,8 @@ void Hamiltonian::SetHamiltonian(const Eigen::VectorXd &x, const Eigen::VectorXd
 //    dxs.clear();
 //    likes.clear();
 //    energies.clear();
+//    momentums.clear();
+//    proposed_likes.clear()
 }
 
 
