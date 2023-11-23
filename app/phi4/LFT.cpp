@@ -38,7 +38,7 @@ void runPhi4(std::string fname, int n, double kappa, double lambda)
 {
     UniformPrior prior = UniformPrior(n*n, priorWidth);
     Phi4Likelihood likelihood = Phi4Likelihood(n, kappa, lambda);
-    Logger logger = Logger(fname, true);
+    Logger logger = Logger(fname, logDiagnostics);
 
     Adapter params = Adapter(n*n, epsilon, pathLength, reflectionRateTarget, acceptRateTarget);
 
@@ -55,8 +55,8 @@ void runPhi4(std::string fname, int n, double kappa, double lambda)
 void generatePhaseDiagramData() {
     const int n = 32;
     double kappaMax = 0.5;
-    double lambdaMax = 0.03;
-    int resolution = 40;
+    double lambdaMax = 0.1;
+    int resolution = 50;
 
     if (!std::filesystem::is_directory(phase_dir) || !std::filesystem::exists(phase_dir)) { // Check if src folder exists
         std::filesystem::create_directory(phase_dir); // create src folder
@@ -137,8 +137,8 @@ int main() {
 
 //    Phi4Likelihood likelihood = Phi4Likelihood(2, 0.05, 1.5, priorWidth);
 //    generateLikelihoodPlot(likelihood, {-4, 4}, {-4, 4});
-//    generatePhaseDiagramData();
-    generatePhaseData();
+    generatePhaseDiagramData();
+//    generatePhaseData();
 
  //  generateCorrelationData();
 //    runPhi4("Phi4_posterior_sampling", 32, 0.25, 0.02);

@@ -74,6 +74,8 @@ void Logger::WriteParamNames(const std::vector<std::string> &names, int totalPar
 void Logger::WriteSummary(const NSInfo& summary) {
     mSummaryFile.open(mName + ".stats");
 
+    mSummaryFile << "Num Live = " << summary.numLive << std::endl;
+    mSummaryFile << "Iterations = " << summary.iter << std::endl;
     mSummaryFile << "Log (Z) = " << summary.meanLogZ << " +- " << summary.stdLogZ << std::endl;
     mSummaryFile << "Log (Z) Remaining = " << summary.logZLive << std::endl;
 
