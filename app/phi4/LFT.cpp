@@ -57,7 +57,7 @@ void generatePhaseDiagramData() {
     const int n = 32;
     double kappaMax = 0.5;
     double lambdaMax = 0.1;
-    int resolution = 50;
+    int resolution = 25;
 
     if (!std::filesystem::is_directory(phase_dir) || !std::filesystem::exists(phase_dir)) { // Check if src folder exists
         std::filesystem::create_directory(phase_dir); // create src folder
@@ -105,7 +105,7 @@ void generatePhaseData() {
 }
 
 void generateScalingData() {
-    const int nMin = 16;
+    const int nMin = 128;
     const int nMax = 256;
     double kappaMin = 0.195;
     double kappaMax = 0.21;

@@ -52,6 +52,9 @@ void Logger::WritePoint(const MCPoint& point, double logWeight) {
 
     mDeadFile << std::setprecision(10) << point.likelihood << " " << point.birthLikelihood << std::endl;
     mPosteriorFile << std::endl;
+
+    mDeadFile.close();
+    mPosteriorFile.close();
 }
 
 

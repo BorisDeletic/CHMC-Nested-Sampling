@@ -59,11 +59,11 @@ private:
     const int mEpsilonReflectionLimit = 10; // Number of times Epsilon can be halved.
 
     // FOR DIAGNOSTICS
-    std::vector<double> dxs;
-    std::vector<double> likes;
-    std::vector<double> energies;
-    std::vector<double> momentums;
-    std::vector<double> proposed_likes;
+//    std::vector<double> dxs;
+//    std::vector<double> likes;
+//    std::vector<double> energies;
+//    std::vector<double> momentums;
+//    std::vector<double> proposed_likes;
 
     bool mUsePosterior = true;
 };
