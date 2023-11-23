@@ -107,10 +107,10 @@ void generatePhaseData() {
 void generateScalingData() {
     const int nMin = 16;
     const int nMax = 256;
-    double kappaMin = 0.18;
-    double kappaMax = 0.22;
+    double kappaMin = 0.195;
+    double kappaMax = 0.21;
     double lambda = 0.1;
-    int resolution = 20;
+    int resolution = 40;
 
     if (!std::filesystem::is_directory(scaling_dir) ||
         !std::filesystem::exists(scaling_dir)) { // Check if src folder exists
@@ -118,10 +118,18 @@ void generateScalingData() {
     }
 
     for (int n = nMin; n < nMax + 1; n *= 2) {
+        std::ostringstream dir_name;
+        dir_name << scaling_dir << "/" << n;
+
+        if (!std::filesystem::is_directory(dir_name.str()) ||
+            !std::filesystem::exists(dir_name.str())) { // Check if src folder exists
+            std::filesystem::create_directory(dir_name.str()); // create src folder
+        }
+
         for (double k = kappaMin; k < kappaMax; k += (kappaMax - kappaMin) / resolution) {
             std::ostringstream fname;
-            fname << scaling_dir;
-            fname << "/Phi4_" << n << "_" << std::setprecision(5) << std::fixed << k << "_" << lambda;
+            fname << dir_name.str();
+            fname << "/Phi4_" << std::setprecision(5) << std::fixed << k << "_" << lambda;
 
             if (std::filesystem::exists(fname.str() + ".stats"))
                 continue;

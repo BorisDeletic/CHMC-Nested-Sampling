@@ -4,9 +4,15 @@ import scipy
 import matplotlib.pyplot as plt
 import os
 
+# can get this number from .stats
 nlive = 500
 n=32
-logZ = 725.957
+
+root = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/"
+phase_folder = "phase_diagram/"
+scaling_folder = "scaling/"
+file = "Phi4_posterior_sampling"
+
 
 def read_file(fname, params):
     df = pd.read_csv(fname + ".posterior", names=['log_weight', "log_like", "mag", "mag_squared"], header=None, sep=" ", index_col=False)
@@ -57,39 +63,71 @@ def read_file(fname, params):
 
     return results
 
-root = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/"
-phase_folder = "phase_diagram/"
-file = "Phi4_posterior_sampling"
 
-data = []
+def load_phase_data():
+    data = []
 
-# out = read_file(root + file, [0.25, 0.02])
-# data.append(out)
-# print(data)
+    file_list = os.listdir(root + phase_folder)
+    for file in file_list:
+        fname = file[:20]
 
-file_list = os.listdir(root + phase_folder)
-for file in file_list:
-    fname = file[:20]
+        params = file[5:20].split('_')
+        params = [float(x) for x in params]
 
-    params = file[5:20].split('_')
-    params = [float(x) for x in params]
-
-    out = read_file(root + phase_folder + fname, params)
-    data.append(out)
+        out = read_file(root + phase_folder + fname, params)
+        data.append(out)
 
 
-phase_data = pd.DataFrame(data).sort_values(by='kappa')
+    phase_data = pd.DataFrame(data).sort_values(by='kappa')
 
-print(phase_data)
+    return phase_data
 
+
+def load_scaling_data():
+    scaling_dfs = {}
+
+    subfolder_list = os.listdir(root + scaling_folder)
+    for n in subfolder_list:
+        data = []
+        file_list = os.listdir(root + scaling_folder + n)
+
+        for file in file_list:
+            fname = file[:20]
+            path = root + scaling_folder + n + "/" + fname
+
+            params = file[5:20].split('_')
+            params = [float(x) for x in params]
+
+            out = read_file(path, params)
+            data.append(out)
+
+
+        scaling_data = pd.DataFrame(data).sort_values(by='kappa')
+
+        scaling_dfs[int(n)] = scaling_data
+
+    return scaling_dfs
+
+
+
+scaling_data = load_scaling_data()
+print(scaling_data)
+
+# phase_data = load_phase_data()
+# print(phase_data)
+
+data = scaling_data[32]
 fig, ax = plt.subplots()
-ax.plot(phase_data['kappa'], phase_data['chi'], linestyle='', marker='x')
+ax.plot(data['kappa'], data['chi'], linestyle='', marker='x')
+
+# fig, ax = plt.subplots()
+# ax.plot(phase_data['kappa'], phase_data['chi'], linestyle='', marker='x')
+# #
+# fig, ax = plt.subplots()
+# ax.plot(phase_data['kappa'], phase_data['U'], linestyle='', marker='x')
 #
-fig, ax = plt.subplots()
-ax.plot(phase_data['kappa'], phase_data['U'], linestyle='', marker='x')
-
-fig, ax = plt.subplots()
-ax.plot(phase_data['kappa'], phase_data['mean_mod_phi'], linestyle='', marker='x')
+# fig, ax = plt.subplots()
+# ax.plot(phase_data['kappa'], phase_data['mean_mod_phi'], linestyle='', marker='x')
 #
 # fig, ax = plt.subplots()
 # ax.hist(df['mag'], weights=df['weight'], bins=100)
