@@ -12,6 +12,7 @@
 #include <iomanip>
 
 std::string phase_dir = "phase_diagram";
+std::string scaling_dir = "scaling";
 std::string correlation_dir = "correlation";
 
 const bool logDiagnostics = false;
@@ -103,6 +104,37 @@ void generatePhaseData() {
     }
 }
 
+void generateScalingData() {
+    const int nMin = 16;
+    const int nMax = 256;
+    double kappaMin = 0.18;
+    double kappaMax = 0.22;
+    double lambda = 0.1;
+    int resolution = 20;
+
+    if (!std::filesystem::is_directory(scaling_dir) ||
+        !std::filesystem::exists(scaling_dir)) { // Check if src folder exists
+        std::filesystem::create_directory(scaling_dir); // create src folder
+    }
+
+    for (int n = nMin; n < nMax + 1; n *= 2) {
+        for (double k = kappaMin; k < kappaMax; k += (kappaMax - kappaMin) / resolution) {
+            std::ostringstream fname;
+            fname << scaling_dir;
+            fname << "/Phi4_" << n << "_" << std::setprecision(5) << std::fixed << k << "_" << lambda;
+
+            if (std::filesystem::exists(fname.str() + ".stats"))
+                continue;
+
+            std::cout << std::endl << std::endl << "Running Phi4: n = " << n << ", kappa = "
+            << k << ", lambda=" << lambda << std::endl;
+
+            runPhi4(fname.str(), n, k, lambda);
+        }
+    }
+}
+
+
 
 void generateCorrelationData() {
 
@@ -137,10 +169,14 @@ int main() {
 
 //    Phi4Likelihood likelihood = Phi4Likelihood(2, 0.05, 1.5, priorWidth);
 //    generateLikelihoodPlot(likelihood, {-4, 4}, {-4, 4});
-    generatePhaseDiagramData();
+//    generatePhaseDiagramData();
+    generateScalingData();
 //    generatePhaseData();
 
  //  generateCorrelationData();
 //    runPhi4("Phi4_posterior_sampling", 32, 0.25, 0.02);
     std::cout << "help!";
 }
+
+// kappa critical as given by 1705.06231 for 2d phi4 theory
+// k_c = (1 - 2 lambda) / 4
