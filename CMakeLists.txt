@@ -4,6 +4,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 set(USE_ENZYME FALSE)
+set(USE_CSD3 FALSE)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -50,6 +51,13 @@ add_compile_options(
         $<$<CONFIG:DEBUG>:-O0>
         $<$<CONFIG:DEBUG>:-ggdb3>
 )
+
+IF (USE_CSD3)
+    add_compile_options(
+        $<$<CONFIG:RELEASE>:-ffast-math>
+        $<$<CONFIG:RELEASE>:-march=cascadelake>
+    )
+ENDIF()
 
 add_subdirectory(extern/eigen)
 add_subdirectory(extern/googletest)
