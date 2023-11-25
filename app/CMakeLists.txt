@@ -1,6 +1,10 @@
 # app/CMakeLists.txt
-
+set(USE_OPENMP TRUE)
 find_package(Eigen3)
+
+IF(USE_OPENMP)
+    find_package(OpenMP)
+ENDIF()
 
 set(LIKELIHOOD_SOURCES
         likelihoods/Gaussian.cpp
@@ -41,9 +45,15 @@ target_link_libraries(Phi4LFT
         Eigen3::Eigen
         )
 
+IF(USE_OPENMP)
+    target_link_libraries(Phi4LFT
+            OpenMP::OpenMP_CXX
+            )
+ENDIF()
+
 target_link_libraries(Phi4Benchmark
-        CHMC_NS_Lib
-        Eigen3::Eigen
-        )
+    CHMC_NS_Lib
+    Eigen3::Eigen
+    )
 
 add_subdirectory(tests)

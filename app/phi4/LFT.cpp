@@ -10,6 +10,7 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <omp.h>
 
 std::string phase_dir = "phase_diagram";
 std::string scaling_dir = "scaling";
@@ -55,8 +56,9 @@ void runPhi4(std::string fname, int n, double kappa, double lambda)
 
 void generatePhaseDiagramData() {
     const int n = 32;
+    double kappaMin = 0;
     double kappaMax = 0.5;
-    double lambdaMin = 0.5;
+    double lambdaMin = 0;
     double lambdaMax = 1.0;
     int resolution = 50;
 
@@ -64,18 +66,25 @@ void generatePhaseDiagramData() {
         std::filesystem::create_directory(phase_dir); // create src folder
     }
 
-    for (double k = 0; k < kappaMax; k += kappaMax / resolution) {
-        for (double l = lambdaMin; l < lambdaMax; l += (lambdaMax - lambdaMin) / resolution) {
-            std::ostringstream fname;
-            fname << phase_dir;
-            fname << "/Phi4_" << std::setprecision(5) << std::fixed << k << "_" << l;
-            
-            if(std::filesystem::exists(fname.str() + ".stats"))
-                continue;
+    for (int i = 0; i < resolution; i++) {
+        #pragma omp parallel for
+        {
+            for (int j = 0; j < resolution; j++) {
+                double kappa = (kappaMax - kappaMin) / resolution;
+                double lambda = (lambdaMax - lambdaMin) / resolution;
 
-            std::cout << std::endl << std::endl <<"Running Phi4: kappa=" << k << ", lambda=" << l << std::endl;
+                std::ostringstream fname;
+                fname << phase_dir;
+                fname << "/Phi4_" << std::setprecision(5) << std::fixed << kappa << "_" << lambda;
 
-            runPhi4(fname.str(), n,k, l);
+                if (std::filesystem::exists(fname.str() + ".stats"))
+                    continue;
+
+                std::cout << std::endl << std::endl << "Running Phi4: kappa=" << kappa
+                << ", lambda=" << lambda << std::endl;
+
+                runPhi4(fname.str(), n, kappa, lambda);
+            }
         }
     }
 }
@@ -111,7 +120,7 @@ void generateScalingData() {
     double kappaMin = 0.200;
     double kappaMax = 0.201;
     double lambda = 0.1;
-    int resolution = 60;
+    int resolution = 50;
 
     std::vector<int> ns = {60, 70, 80, 90, 100};
 
@@ -130,18 +139,22 @@ void generateScalingData() {
             std::filesystem::create_directory(dir_name.str()); // create src folder
         }
 
-        for (double k = kappaMin; k < kappaMax; k += (kappaMax - kappaMin) / resolution) {
-            std::ostringstream fname;
-            fname << dir_name.str();
-            fname << "/Phi4_" << std::setprecision(6) << std::fixed << k << "_" << lambda;
+        #pragma omp parallel for
+        {
+            for (int i = 0; i < resolution; i++) {
+                double kappa = (kappaMax - kappaMin) / resolution;
+                std::ostringstream fname;
+                fname << dir_name.str();
+                fname << "/Phi4_" << std::setprecision(6) << std::fixed << kappa << "_" << lambda;
 
-            std::cout << std::endl << std::endl << "Running Phi4: n = " << n << ", kappa = "
-                      << k << ", lambda=" << lambda << std::endl;
+                std::cout << std::endl << std::endl << "Running Phi4: n = " << n << ", kappa = "
+                          << kappa << ", lambda=" << lambda << std::endl;
 
-            if (std::filesystem::exists(fname.str() + ".stats"))
-                continue;
+                if (std::filesystem::exists(fname.str() + ".stats"))
+                    continue;
 
-            runPhi4(fname.str(), n, k, lambda);
+                runPhi4(fname.str(), n, kappa, lambda);
+            }
         }
     }
 }
@@ -182,12 +195,12 @@ int main() {
 //    Phi4Likelihood likelihood = Phi4Likelihood(2, 0.05, 1.5, priorWidth);
 //    generateLikelihoodPlot(likelihood, {-4, 4}, {-4, 4});
 //    generatePhaseDiagramData();
- //   generateScalingData();
+    generateScalingData();
 //    generatePhaseData();
 
  //  generateCorrelationData();
 //    runPhi4("Phi4_posterior_sampling", 32, 0.4, 0.1);
-    runPhi4("scaling/70/Phi4_0.200283_0.100000", 70, 0.200283, 0.1);
+//    runPhi4("scaling/70/Phi4_0.200283_0.100000", 70, 0.200283, 0.1);
     std::cout << "help!";
 }
 
