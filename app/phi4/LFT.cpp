@@ -67,24 +67,22 @@ void generatePhaseDiagramData() {
     }
 
     for (int i = 0; i < resolution; i++) {
-        #pragma omp parallel for
-        {
-            for (int j = 0; j < resolution; j++) {
-                double kappa = (kappaMax - kappaMin) / resolution;
-                double lambda = (lambdaMax - lambdaMin) / resolution;
+        #pragma omp parallel
+        for (int j = 0; j < resolution; j++) {
+            double kappa = (kappaMax - kappaMin) / resolution;
+            double lambda = (lambdaMax - lambdaMin) / resolution;
 
-                std::ostringstream fname;
-                fname << phase_dir;
-                fname << "/Phi4_" << std::setprecision(5) << std::fixed << kappa << "_" << lambda;
+            std::ostringstream fname;
+            fname << phase_dir;
+            fname << "/Phi4_" << std::setprecision(5) << std::fixed << kappa << "_" << lambda;
 
-                if (std::filesystem::exists(fname.str() + ".stats"))
-                    continue;
+            if (std::filesystem::exists(fname.str() + ".stats"))
+                continue;
 
-                std::cout << std::endl << std::endl << "Running Phi4: kappa=" << kappa
-                << ", lambda=" << lambda << std::endl;
+            std::cout << std::endl << std::endl << "Running Phi4: kappa=" << kappa
+            << ", lambda=" << lambda << std::endl;
 
-                runPhi4(fname.str(), n, kappa, lambda);
-            }
+            runPhi4(fname.str(), n, kappa, lambda);
         }
     }
 }
@@ -139,22 +137,20 @@ void generateScalingData() {
             std::filesystem::create_directory(dir_name.str()); // create src folder
         }
 
-        #pragma omp parallel for
-        {
-            for (int i = 0; i < resolution; i++) {
-                double kappa = (kappaMax - kappaMin) / resolution;
-                std::ostringstream fname;
-                fname << dir_name.str();
-                fname << "/Phi4_" << std::setprecision(6) << std::fixed << kappa << "_" << lambda;
+        #pragma omp parallel
+        for (int i = 0; i < resolution; i++) {
+            double kappa = (kappaMax - kappaMin) / resolution;
+            std::ostringstream fname;
+            fname << dir_name.str();
+            fname << "/Phi4_" << std::setprecision(6) << std::fixed << kappa << "_" << lambda;
 
-                std::cout << std::endl << std::endl << "Running Phi4: n = " << n << ", kappa = "
-                          << kappa << ", lambda=" << lambda << std::endl;
+            std::cout << std::endl << std::endl << "Running Phi4: n = " << n << ", kappa = "
+                      << kappa << ", lambda=" << lambda << std::endl;
 
-                if (std::filesystem::exists(fname.str() + ".stats"))
-                    continue;
+            if (std::filesystem::exists(fname.str() + ".stats"))
+                continue;
 
-                runPhi4(fname.str(), n, kappa, lambda);
-            }
+            runPhi4(fname.str(), n, kappa, lambda);
         }
     }
 }
