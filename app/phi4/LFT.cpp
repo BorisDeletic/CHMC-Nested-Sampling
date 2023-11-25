@@ -131,11 +131,11 @@ void generateScalingData() {
             fname << dir_name.str();
             fname << "/Phi4_" << std::setprecision(5) << std::fixed << k << "_" << lambda;
 
+            std::cout << std::endl << std::endl << "Running Phi4: n = " << n << ", kappa = "
+                      << k << ", lambda=" << lambda << std::endl;
+
             if (std::filesystem::exists(fname.str() + ".stats"))
                 continue;
-
-            std::cout << std::endl << std::endl << "Running Phi4: n = " << n << ", kappa = "
-            << k << ", lambda=" << lambda << std::endl;
 
             runPhi4(fname.str(), n, k, lambda);
         }
@@ -178,11 +178,12 @@ int main() {
 //    Phi4Likelihood likelihood = Phi4Likelihood(2, 0.05, 1.5, priorWidth);
 //    generateLikelihoodPlot(likelihood, {-4, 4}, {-4, 4});
 //    generatePhaseDiagramData();
-    generateScalingData();
+ //   generateScalingData();
 //    generatePhaseData();
 
  //  generateCorrelationData();
-//    runPhi4("Phi4_posterior_sampling", 32, 0.25, 0.02);
+//    runPhi4("Phi4_posterior_sampling", 32, 0.4, 0.1);
+    runPhi4("scaling/70/Phi4_0.200283_0.100000", 70, 0.200283, 0.1);
     std::cout << "help!";
 }
 
