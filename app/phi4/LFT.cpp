@@ -69,8 +69,8 @@ void generatePhaseDiagramData() {
     for (int i = 0; i < resolution; i++) {
         #pragma omp parallel
         for (int j = 0; j < resolution; j++) {
-            double kappa = (kappaMax - kappaMin) / resolution;
-            double lambda = (lambdaMax - lambdaMin) / resolution;
+            double kappa = kappaMin + i * (kappaMax - kappaMin) / resolution;
+            double lambda = lambdaMin + j * (lambdaMax - lambdaMin) / resolution;
 
             std::ostringstream fname;
             fname << phase_dir;
@@ -139,7 +139,7 @@ void generateScalingData() {
 
         #pragma omp parallel
         for (int i = 0; i < resolution; i++) {
-            double kappa = (kappaMax - kappaMin) / resolution;
+            double kappa = kappaMin + i * (kappaMax - kappaMin) / resolution;
             std::ostringstream fname;
             fname << dir_name.str();
             fname << "/Phi4_" << std::setprecision(6) << std::fixed << kappa << "_" << lambda;
