@@ -10,7 +10,8 @@ import scipy
 # nlive = 500
 n=32
 
-root = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/"
+#root = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/"
+root="/home/bd418/rds/hpc-work/"
 phase_folder = "phase_diagram/"
 scaling_folder = "scaling/"
 file = "Phi4_posterior_sampling"
@@ -259,18 +260,6 @@ def phase_diagram(load = False):
 
 
 # print(phase_data)
-
-# fig, ax = plt.subplots()
-# ax.plot(phase_data['kappa'], phase_data['chi'], linestyle='', marker='x')
-# #
-# fig, ax = plt.subplots()
-# ax.plot(phase_data['kappa'], phase_data['U'], linestyle='', marker='x')
-#
-# fig, ax = plt.subplots()
-# ax.plot(phase_data['kappa'], phase_data['mean_mod_phi'], linestyle='', marker='x')
-#
-# fig, ax = plt.subplots()
-# ax.hist(df['mag'], weights=df['weight'], bins=100)
 
 scaling_analysis()
 # phase_diagram()
