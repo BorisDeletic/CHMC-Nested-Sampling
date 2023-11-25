@@ -8,7 +8,8 @@ import os
 nlive = 500
 n=32
 
-root = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/"
+#root = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/"
+root="/home/bd418/rds/hpc-work/"
 phase_folder = "phase_diagram/"
 scaling_folder = "scaling/"
 file = "Phi4_posterior_sampling"
@@ -116,9 +117,12 @@ print(scaling_data)
 # phase_data = load_phase_data()
 # print(phase_data)
 
-data = scaling_data[32]
-fig, ax = plt.subplots()
-ax.plot(data['kappa'], data['chi'], linestyle='', marker='x')
+sizes = [16,32,64,128]
+for n in sizes:
+	data = scaling_data[n]
+	fig, ax = plt.subplots()
+	ax.plot(data['kappa'], data['chi'], linestyle='', marker='x')
+	plt.savefig(root + "susceptibility_" + str(n) + ".png")
 
 # fig, ax = plt.subplots()
 # ax.plot(phase_data['kappa'], phase_data['chi'], linestyle='', marker='x')
@@ -133,4 +137,5 @@ ax.plot(data['kappa'], data['chi'], linestyle='', marker='x')
 # ax.hist(df['mag'], weights=df['weight'], bins=100)
 
 
-plt.show()
+#plt.show()
+#plt.savefig(root + "susceptibility_" + n + ".png")

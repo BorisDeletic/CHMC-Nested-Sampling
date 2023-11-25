@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 set(USE_ENZYME FALSE)
-set(USE_CSD3 FALSE)
+set(USE_CSD3 TRUE)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

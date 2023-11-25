@@ -56,15 +56,16 @@ void runPhi4(std::string fname, int n, double kappa, double lambda)
 void generatePhaseDiagramData() {
     const int n = 32;
     double kappaMax = 0.5;
-    double lambdaMax = 0.1;
-    int resolution = 25;
+    double lambdaMin = 0.5;
+    double lambdaMax = 1.0;
+    int resolution = 50;
 
     if (!std::filesystem::is_directory(phase_dir) || !std::filesystem::exists(phase_dir)) { // Check if src folder exists
         std::filesystem::create_directory(phase_dir); // create src folder
     }
 
     for (double k = 0; k < kappaMax; k += kappaMax / resolution) {
-        for (double l = 0; l < lambdaMax; l += lambdaMax / resolution) {
+        for (double l = lambdaMin; l < lambdaMax; l += (lambdaMax - lambdaMin) / resolution) {
             std::ostringstream fname;
             fname << phase_dir;
             fname << "/Phi4_" << std::setprecision(5) << std::fixed << k << "_" << l;
@@ -105,19 +106,22 @@ void generatePhaseData() {
 }
 
 void generateScalingData() {
-    const int nMin = 16;
-    const int nMax = 512;
-    double kappaMin = 0.195;
-    double kappaMax = 0.21;
+    const int nMin = 20;
+    const int nMax = 80;
+    double kappaMin = 0.200;
+    double kappaMax = 0.201;
     double lambda = 0.1;
-    int resolution = 40;
+    int resolution = 60;
+
+    std::vector<int> ns = {60, 70, 80, 90, 100};
 
     if (!std::filesystem::is_directory(scaling_dir) ||
         !std::filesystem::exists(scaling_dir)) { // Check if src folder exists
         std::filesystem::create_directory(scaling_dir); // create src folder
     }
 
-    for (int n = nMin; n < nMax + 1; n *= 2) {
+//    for (int n = nMin; n < nMax + 1; n *= 2) {
+    for (auto n : ns) {
         std::ostringstream dir_name;
         dir_name << scaling_dir << "/" << n;
 
@@ -129,7 +133,7 @@ void generateScalingData() {
         for (double k = kappaMin; k < kappaMax; k += (kappaMax - kappaMin) / resolution) {
             std::ostringstream fname;
             fname << dir_name.str();
-            fname << "/Phi4_" << std::setprecision(5) << std::fixed << k << "_" << lambda;
+            fname << "/Phi4_" << std::setprecision(6) << std::fixed << k << "_" << lambda;
 
             if (std::filesystem::exists(fname.str() + ".stats"))
                 continue;
