@@ -22,3 +22,17 @@ pg.70
 https://www.tpudlik.com/research/pudlik_Amherst_thesis.pdf
 N = 32
 mu_0^2 = 0.6717
+
+
+1. draft title
+2. proposed authors. put deletic. et al (add your names)
+3. abstract
+4. paper highlights (key contributions)
+    * 3-5 novel contributions
+    * both algorithm and physics related
+    * why is this useful for others
+5. introduction - dot points
+6. methods - nothing
+7. results
+    * graphs to show novelty
+8. conclusion

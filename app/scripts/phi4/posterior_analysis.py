@@ -8,77 +8,17 @@ import scipy
 
 # can get this number from .stats
 # nlive = 500
-n=32
+# n=32
 
-#root = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/"
-root="/home/bd418/rds/hpc-work/"
+root = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/"
+# root="/home/bd418/rds/hpc-work/"
 phase_folder = "phase_diagram/"
 scaling_folder = "scaling/"
 file = "Phi4_posterior_sampling"
 
-def get_stats(fname):
-    f = open(fname + ".stats")
-    nlive_str = f.readline()
-    iters_str = f.readline()
-    f.close()
-
-    num_live = int(nlive_str.split(" ")[-1])
-    iters = int(iters_str.split(" ")[-1])
-
-    return num_live, iters
-
-def read_file(fname, params):
-    nlive, iters = get_stats(fname)
-    # print(fname)
-    df = pd.read_csv(fname + ".posterior", names=['log_weight', "log_like", "mag", "mag_squared"], header=None, sep=" ", index_col=False)
-    # Z = np.exp(scipy.special.logsumexp(df['log_weight']))
-    # print(Z)
-    df['t'] = np.log(nlive/(nlive+1))
-    df['logX'] = df['t'].cumsum()
-    logXp = df['logX'].shift(1, fill_value=0)
-    logXm = df['logX'].shift(-1, fill_value=-np.inf)
-    df['logdX'] = np.log(1 - np.exp(logXm-logXp)) + logXp - np.log(2)
-    df.drop(df.tail(1).index,inplace=True)
-
-    df['logW'] = df['logdX'] + df['log_like']
-
-    logZ = scipy.special.logsumexp(df['logW'])
-
-    df['logW'] -= logZ
-
-    # df['weight'] = np.exp(df['log_weight']) / Z
-
-    # df['log_weighted_mag'] = df['logW'] + np.log(np.abs(df['mag']))
-    df['weighted_abs_phi'] = np.exp(df['logW']) * np.abs(df['mag'])
-    df['weighted_phi'] = np.exp(df['logW']) * df['mag']
-    df['weighted_phi_squared'] = np.exp(df['logW']) * df['mag']**2
-    df['weighted_phi_4'] = np.exp(df['logW']) * df['mag']**4
-    # print(df['log_weighted_mag'])
-
-    # mag = np.exp(scipy.special.logsumexp(df['log_weighted_mag']))
-    abs_phi = np.sum(df['weighted_abs_phi'])
-    phi = np.sum(df['weighted_phi'])
-    phi_squared = np.sum(df['weighted_phi_squared'])
-    phi_4 = np.sum(df['weighted_phi_4'])
-
-    chi = n**2 * (phi_squared - abs_phi**2)
-
-    # binder = 1 - phi_4 / (3 * phi_squared**2)
-    # print(chi)
-    results = {
-        'kappa': params[0],
-        'lambda': params[1],
-        'mean_phi': phi,
-        'mean_mod_phi': abs_phi,
-        'phi_squared': phi_squared,
-        'chi': chi,
-        # 'U': binder
-    }
-
-    return results
-
 
 def load_phase_data():
+    n = 32
     data = []
     files_searched = []
 
@@ -88,6 +28,7 @@ def load_phase_data():
 
         params = file[5:20].split('_')
         params = [float(x) for x in params]
+        params.append(n)
 
         try:
             out = read_file(root + phase_folder + fname, params)
@@ -101,23 +42,168 @@ def load_phase_data():
 
     return phase_data
 
+def posterior_points(data, logW):
+    w = np.exp(logW)
+    u = np.random.rand(len(w))
+
+    neff = 1 / np.max(w)
+
+    W = w * neff / w.sum()
+
+    fraction, integer = np.modf(W)
+    extra = (u < fraction).astype(int)
+    equal_weights = (integer + extra).astype(int)
+
+    equal_data = np.repeat(data, equal_weights).reset_index(drop=True)
+
+    # fig, ax = plt.subplots()
+    # ax.plot(equal_data.reset_index(drop=True), linestyle='', marker='x')
+
+    return equal_data
+
+
+def get_stats(fname):
+    f = open(fname + ".stats")
+    nlive_str = f.readline()
+    iters_str = f.readline()
+    f.close()
+
+    num_live = int(nlive_str.split(" ")[-1])
+    iters = int(iters_str.split(" ")[-1])
+
+    return num_live, iters
+
+
+def autocorrelation_weighted(observable, logW):
+    corrs = []
+    for shift in range(1, 1000):
+        time_delayed_product = (observable[shift:] * observable[:-shift]).dropna()
+        time_delayed_logW = (logW[shift:] + logW[:-shift]).dropna()
+        # time_delayed_product = (observable * observable).dropna()
+        # time_delayed_logW = (logW + logW).dropna()
+
+        observable_sqd = np.average(observable, weights = np.exp(logW))**2
+        correlation = np.average(time_delayed_product, weights=np.exp(time_delayed_logW)) - observable_sqd
+
+        corrs.append(correlation)
+
+    return corrs
+
+
+def autocorrelation(observable):
+    corrs = []
+    for shift in range(1, 1000):
+        time_delayed_product = (observable[shift:] * observable[:-shift]).dropna()
+
+        observable_sqd = np.mean(observable) ** 2
+        correlation = np.mean(time_delayed_product) - observable_sqd
+
+        corrs.append(correlation)
+    # shift = 1
+    # time_delayed_product = (observable[shift:] * observable[:-shift]).dropna()
+    # print(time_delayed_product)
+
+    return corrs
+
+
+# def correlation_function(field, logW):
+#     corrs = []
+#     for r in range(1, n//2):
+#         hor_shifted_product = observable * np.roll(observable, r, 0)
+#         # time_delayed_logW = (logW[shift:] + logW[:-shift]).dropna()
+#         # time_delayed_product = (observable * observable).dropna()
+#         # time_delayed_logW = (logW + logW).dropna()
+#
+#         observable_sqd = np.average(observable, weights = np.exp(logW))**2
+#         correlation = np.average(hor_shifted_product, weights=np.exp(logW)) - observable_sqd
+#
+#         corrs.append(correlation)
+#
+#     return corrs
+
+def plot_observables(df):
+
+    # mag = np.average(np.abs(df['mag']), weights=np.exp(df['logW']))
+    # mag_squared = np.average(df['mag']**2, weights=np.exp(df['logW']))
+
+    fig, ax = plt.subplots()
+    # ax.hist(np.abs(df['mag']), bins=30, weights=np.exp(df['logW']))
+    ax.hist(df['mag'], bins=100, weights=np.exp(df['logW']))
+    # ax.plot(np.abs(equal_mags))
+    # ax.plot(np.exp(df['logW']))
+
+
+def read_file(fname, params):
+    nlive, iters = get_stats(fname)
+    # print(fname)
+    df = pd.read_csv(fname + ".posterior", names=['log_weight', "log_like", "mag", "mag_squared"], header=None, sep=" ", index_col=False)
+    # Z = np.exp(scipy.special.logsumexp(df['log_weight']))
+    # print(Z)
+    df.drop(df.tail(1).index,inplace=True)
+    df.drop(df.head(nlive).index,inplace=True)
+
+    df['t'] = np.log(nlive/(nlive+1))
+    df['logX'] = df['t'].cumsum()
+    logXp = df['logX'].shift(1, fill_value=0)
+    logXm = df['logX'].shift(-1, fill_value=-np.inf)
+    df['logdX'] = np.log(1 - np.exp(logXm-logXp)) + logXp - np.log(2)
+
+    # df['logW'] = df['logdX'] + df['log_like']
+    df['logW'] = df['logdX']
+
+    logZ = scipy.special.logsumexp(df['logW'])
+
+    df['logW'] -= logZ
+
+    plot_observables(df)
+    # equal_mags = posterior_points(df['mag'], df['logW'])
+    # equal_mags2 = posterior_points(df['mag']**2, df['logW'])
+    # auto_corr = autocorrelation(np.abs(equal_mags))
+
+    phi = np.average(df['mag'], weights = np.exp(df['logW']))
+    abs_phi = np.average(np.abs(df['mag']), weights = np.exp(df['logW']))
+    phi_squared = np.average(df['mag']**2, weights = np.exp(df['logW']))
+    phi_4 = np.average(df['mag']**4, weights = np.exp(df['logW']))
+
+    chi = params[2]**2 * (phi_squared - abs_phi**2)
+
+    binder = 1 - phi_4 / (3 * phi_squared**2)
+
+    results = {
+        'kappa': params[0],
+        'lambda': params[1],
+        'mean_phi': phi,
+        'mean_mod_phi': abs_phi,
+        'phi_squared': phi_squared,
+        'chi': chi,
+        'U': binder,
+        'iters': iters,
+        # 'autocorrelation': auto_corr[0]
+    }
+
+    return results
+
 
 def scaling_ansatz(x, a, b, c):
     return a + b * x**c
 
+
 def residuals(c, x, y):
-    yfit = scaling_ansatz(x, c[0], c[1], c[2])
-    rs = (y - yfit)**2
-    # kappa_crit = y - c[0]
-    #
-    # rs = np.log(kappa_crit) - (c[1] - c[2] * np.log(x))
+    # yfit = scaling_ansatz(x, c[0], c[1], c[2])
+    # rs = (y - yfit)**2
+    kappa_crit = y - c[0]
+    ln_y_offset = np.log(y - c[0])
+    ln_scaling_law = np.log(c[1]) + c[2] * np.log(x)
+
+    rs = (ln_y_offset - ln_scaling_law)**2
 
     return rs.sum()
 
 def load_scaling_data():
     scaling_dfs = {}
 
-    subfolder_list = os.listdir(root + scaling_folder)
+    # subfolder_list = os.listdir(root + scaling_folder)
+    subfolder_list = ['32']
     for n in subfolder_list:
         files_searched = []
         data = []
@@ -136,6 +222,7 @@ def load_scaling_data():
 
             params = file[5:22].split('_')
             params = [float(x) for x in params]
+            params.append(int(n))
 
             out = read_file(path, params)
             data.append(out)
@@ -143,10 +230,6 @@ def load_scaling_data():
             files_searched.append(fname)
 
         scaling_data = pd.DataFrame(data).sort_values(by='kappa')
-        print(n)
-        with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-            print(scaling_data.loc[scaling_data['kappa'] == 0.200283])
-        print()
 
         scaling_dfs[int(n)] = scaling_data
 
@@ -155,24 +238,29 @@ def load_scaling_data():
 
 
 def find_critical_point(data, n):
-    # coeff = np.polyfit(data['kappa'], data['chi'], 50)
-    # spline = np.poly1d(coeff)
-    # print(data[['kappa', 'chi']])
-
-    f = scipy.interpolate.splrep(data['kappa'], data['chi'], s=1)
-
     kappa = np.linspace(data['kappa'].min(), data['kappa'].max(), 1000)
-    chi_fit = scipy.interpolate.BSpline(*f)(kappa)
+    if n == 20:
+        s_val = 3
+    elif n == 30:
+        s_val = 1
+    else:
+        s_val = 0.1
 
-    idx = np.argmax(chi_fit)
+    chi_fit = scipy.interpolate.UnivariateSpline(data['kappa'], data['chi'], k=3, s=s_val)  # Cubic spline
+
+    idx = np.argmax(chi_fit(kappa))
     kappa_c = kappa[idx]
-    chi_c = chi_fit[idx]
+    chi_c = chi_fit(kappa)[idx]
 
     fig, ax = plt.subplots()
     ax.plot(data['kappa'], data['chi'], linestyle='', marker='x')
-    # ax.plot(kappa, chi_fit, linestyle='--')
+    # ax.plot(kappa, chi_fit(kappa), linestyle='--')
     ax.set_title('Chi Vs Kappa, n = {}'.format(n))
-    # ax.plot(kappa, chi_ansatz(kappa, popt[0], popt[1], popt[2], popt[3], popt[4]), linestyle='--')
+
+    # fig, ax = plt.subplots()
+    # ax.plot(data['kappa'], data['autocorrelation'], linestyle='', marker='x')
+    # ax.plot(kappa, chi_fit(kappa), linestyle='--')
+    # ax.set_title('Autocorrelation Vs Kappa, n = {}'.format(n))
 
     return kappa_c, chi_c
 
@@ -191,11 +279,38 @@ def plot_kappa_scaling(critical):
     ax.axvline(0, linestyle='--', color='black')
 
     ax.legend()
-    # ax.set_xscale('log')
-    # ax.set_yscale('log')
+    ax.set_xscale('log')
+    ax.set_yscale('log')
     ax.set_title('Critical Kappa vs 1/L (inverse lattice size)')
     ax.set_xlabel('1 / L (lattice size)')
     ax.set_ylabel('Kappa critical')
+
+
+def find_continuum_kappa(critical):
+    coeff = np.polyfit(critical['inverse_n'], critical['kappa'], 1)
+    return coeff[1]
+
+def kappa_scaling_method2(critical):
+    k0 = find_continuum_kappa(critical)
+    y = np.log(critical['kappa'] - k0)
+
+    slope_1, intercept_1, r_val_1, p_val_1, stderr_1 = scipy.stats.linregress(np.log(critical['n']), y)
+
+    print(slope_1, intercept_1, r_val_1, p_val_1, stderr_1)
+
+    fig, ax = plt.subplots()
+    ax.plot(critical['inverse_n'], critical['kappa'], linestyle='', marker='x', label='Kappa Crit')
+
+    x = np.linspace(critical['inverse_n'].min(), critical['inverse_n'].max() * 1.1)
+    ax.plot(x, k0 + np.exp(intercept_1) * x**(-slope_1), linestyle = '--')
+
+    # ax.plot(x, y, linestyle = '--')
+    # ax.axvline(0, linestyle='--', color='black')
+    ax.set_title('Critical Kappa vs 1/N (inverse lattice size)')
+    ax.set_xlabel('1 / N (lattice size)')
+    ax.set_ylabel('Kappa critical')
+
+
 
 
 def plot_chi_scaling(critical):
@@ -218,20 +333,25 @@ def scaling_analysis():
     # scaling_data.to_csv('scaling_data.csv', index=False)
     # scaling_data = pd.read_csv('scaling_data.csv')
 
-    sizes = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+    # sizes = np.array([40, 50, 60, 70, 80, 90])
+    sizes = np.array([32])
+    # sizes = [int(n) for n in os.listdir(root + scaling_folder)]
 
-    critical = pd.DataFrame(columns=['kappa', 'chi', 'n', 'inverse_n'])
+    critical = pd.DataFrame(columns=['kappa', 'chi', 'iters', 'n', 'inverse_n'])
 
     for n in sizes:
         data = scaling_data[n]
 
         kappa_c, chi_c = find_critical_point(data, n)
-        critical.loc[len(critical)] = [kappa_c, chi_c, n, 1/n]
-
-    plot_kappa_scaling(critical)
-    plot_chi_scaling(critical)
+        critical.loc[len(critical)] = [kappa_c, chi_c, data['iters'].mean(), n, 1/n]
 
 
+    # plot_kappa_scaling(critical)
+    # plot_chi_scaling(critical)
+    kappa_scaling_method2(critical)
+
+    fig, ax = plt.subplots()
+    ax.plot(critical['n'], critical['iters'], linestyle='', marker='x')
 
 def phase_diagram(load = False):
     if load:
@@ -243,9 +363,7 @@ def phase_diagram(load = False):
     table = phase_data.pivot_table(index='lambda', columns='kappa', values='mean_mod_phi')
     # interp_df = table.interpolate(method='linear', axis=1)
 
-    print(table)
-
-    ax = sns.heatmap(table, vmin=0, vmax=3, cmap='mako')
+    ax = sns.heatmap(table, vmin=0, vmax=1, cmap='mako')
     # ax = sns.heatmap(interp_df, vmin=0, vmax=3)
 
     #ax.locator_params(axis='y', nbins=6)
@@ -257,13 +375,23 @@ def phase_diagram(load = False):
     ax.set_ylabel(r"$\lambda$")
 
 
+def plot_phase_line(l):
+    phase_data = pd.read_csv('phase_data.csv')
 
+    phase_data = phase_data[phase_data['lambda'] == l]
+
+    fig, ax = plt.subplots()
+    ax.plot(phase_data['kappa'], phase_data['chi'])
 
 # print(phase_data)
 
-scaling_analysis()
+# scaling_analysis()
 # phase_diagram()
+# plot_phase_line(0.02)
 # print(read_file(root + file, [0.35, 0.1]))
-# print(read_file(root + "scaling/80/Phi4_0.200283_0.100000", [0.35, 0.1]))
-#chi 1447
+print(read_file(root + "Phi4_posterior_sampling", [0.26, 0.02, 32]))
+# print(read_file(root + "scaling/32/Phi4_0.256000_0.020000", [0.256000, 0.02, 32]))
+# print(read_file(root + "scaling/80/Phi4_0.200980_0.100000", [0.200350, 0.1]))
+# print(read_file(root + "scaling/80/Phi4_0.200170_0.100000", [0.200170, 0.1]))
+
 plt.show()

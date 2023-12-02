@@ -9,7 +9,7 @@ const double Phi4Likelihood::LogLikelihood(const Eigen::VectorXd &theta) {
     // kinetic term
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            int idx_right = j - 1 < 0   ? i * n + (n-1) : i * n + (j-1);
+            int idx_right = j + 1 == n   ? i * n         : i * n + (j+1);
             int idx_down = i + 1 == n   ? j             : (i+1) * n + j; // with torus b.c.
 
             fieldAction -= 2 * mKappa * theta[i * n + j] * (theta[idx_right] + theta[idx_down]);

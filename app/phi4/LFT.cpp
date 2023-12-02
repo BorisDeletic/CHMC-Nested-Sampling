@@ -17,12 +17,12 @@ std::string scaling_dir = "scaling";
 std::string correlation_dir = "correlation";
 
 const bool logDiagnostics = false;
-const double priorWidth = 4;
+const double priorWidth = 50;
 
 const double epsilon = 0.01;
 const int pathLength = 100;
 
-const int numLive = 500;
+const int numLive = 1000;
 const int maxIters = 500000;
 const double precisionCriterion = 1e-1;
 const double reflectionRateTarget = 0.05;
@@ -67,7 +67,7 @@ void generatePhaseDiagramData() {
     }
 
     for (int i = 0; i < resolution; i++) {
-        #pragma omp parallel
+        #pragma omp parallel for
         for (int j = 0; j < resolution; j++) {
             double kappa = kappaMin + i * (kappaMax - kappaMin) / resolution;
             double lambda = lambdaMin + j * (lambdaMax - lambdaMin) / resolution;
@@ -89,9 +89,9 @@ void generatePhaseDiagramData() {
 
 void generatePhaseData() {
     const int n = 32;
-    double kappaMin = 0.16;
-    double kappaMax = 0.24;
-    double lambda = 0.1;
+    double kappaMin = 0.22;
+    double kappaMax = 0.32;
+    double lambda = 0.02;
     int resolution = 10;
 
     if (!std::filesystem::is_directory(phase_dir) || !std::filesystem::exists(phase_dir)) { // Check if src folder exists
@@ -100,8 +100,8 @@ void generatePhaseData() {
 
     for (double k = kappaMin; k < kappaMax; k += (kappaMax - kappaMin) / resolution) {
         std::ostringstream fname;
-        fname << phase_dir;
-        fname << "/Phi4_" << std::setprecision(5) << std::fixed << k << "_" << lambda;
+//        fname << phase_dir;
+        fname << "scaling/32/Phi4_" << std::setprecision(6) << std::fixed << k << "_" << lambda;
 
         if(std::filesystem::exists(fname.str() + ".stats"))
             continue;
@@ -118,7 +118,7 @@ void generateScalingData() {
     double kappaMin = 0.200;
     double kappaMax = 0.201;
     double lambda = 0.1;
-    int resolution = 50;
+    int resolution = 10;
 
     std::vector<int> ns = {60, 70, 80, 90, 100};
 
@@ -137,7 +137,7 @@ void generateScalingData() {
             std::filesystem::create_directory(dir_name.str()); // create src folder
         }
 
-        #pragma omp parallel
+        #pragma omp parallel for
         for (int i = 0; i < resolution; i++) {
             double kappa = kappaMin + i * (kappaMax - kappaMin) / resolution;
             std::ostringstream fname;
@@ -147,8 +147,8 @@ void generateScalingData() {
             std::cout << std::endl << std::endl << "Running Phi4: n = " << n << ", kappa = "
                       << kappa << ", lambda=" << lambda << std::endl;
 
-            if (std::filesystem::exists(fname.str() + ".stats"))
-                continue;
+//            if (std::filesystem::exists(fname.str() + ".stats"))
+//                continue;
 
             runPhi4(fname.str(), n, kappa, lambda);
         }
@@ -191,11 +191,11 @@ int main() {
 //    Phi4Likelihood likelihood = Phi4Likelihood(2, 0.05, 1.5, priorWidth);
 //    generateLikelihoodPlot(likelihood, {-4, 4}, {-4, 4});
 //    generatePhaseDiagramData();
-    generateScalingData();
+//    generateScalingData();
 //    generatePhaseData();
 
  //  generateCorrelationData();
-//    runPhi4("Phi4_posterior_sampling", 32, 0.4, 0.1);
+    runPhi4("Phi4_posterior_sampling", 32, 0.26, 0.02);
 //    runPhi4("scaling/70/Phi4_0.200283_0.100000", 70, 0.200283, 0.1);
     std::cout << "help!";
 }
