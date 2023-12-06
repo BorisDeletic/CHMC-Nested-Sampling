@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import os
 import seaborn as sns
 import scipy
+import anesthetic as ns
 
 # can get this number from .stats
 # nlive = 500
@@ -15,6 +16,17 @@ root = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-relea
 phase_folder = "phase_diagram/"
 scaling_folder = "scaling/"
 file = "Phi4_posterior_sampling"
+
+def get_stats(fname):
+    f = open(fname + ".stats")
+    nlive_str = f.readline()
+    iters_str = f.readline()
+    f.close()
+
+    num_live = int(nlive_str.split(" ")[-1])
+    iters = int(iters_str.split(" ")[-1])
+
+    return num_live, iters
 
 
 def load_phase_data():
@@ -42,6 +54,7 @@ def load_phase_data():
 
     return phase_data
 
+
 def posterior_points(data, logW):
     w = np.exp(logW)
     u = np.random.rand(len(w))
@@ -61,17 +74,24 @@ def posterior_points(data, logW):
 
     return equal_data
 
+def prior_points(data, logW):
+    w = np.exp(logW)
+    u = np.random.rand(len(w))
 
-def get_stats(fname):
-    f = open(fname + ".stats")
-    nlive_str = f.readline()
-    iters_str = f.readline()
-    f.close()
+    neff = 1 / np.max(w)
 
-    num_live = int(nlive_str.split(" ")[-1])
-    iters = int(iters_str.split(" ")[-1])
+    W = w * neff / w.sum()
 
-    return num_live, iters
+    fraction, integer = np.modf(W)
+    extra = (u < fraction).astype(int)
+    equal_weights = (integer + extra).astype(int)
+
+    equal_data = np.repeat(data, equal_weights).reset_index(drop=True)
+
+    # fig, ax = plt.subplots()
+    # ax.plot(equal_data.reset_index(drop=True), linestyle='', marker='x')
+
+    return equal_data
 
 
 def autocorrelation_weighted(observable, logW):
@@ -130,26 +150,76 @@ def plot_observables(df):
     # ax.hist(np.abs(df['mag']), bins=30, weights=np.exp(df['logW']))
     ax.hist(df['mag'], bins=100, weights=np.exp(df['logW']))
     # ax.plot(np.abs(equal_mags))
-    # ax.plot(np.exp(df['logW']))
+    fig, ax = plt.subplots()
+    ax.plot(df['mag'], 'x')
+    ax.set_title('log mag')
+
+    fig, ax = plt.subplots()
+    ax.plot(np.exp(df['logW']))
+    ax.set_title('log weight')
+
+    fig, ax = plt.subplots()
+    ax.plot(df['log_like'])
+    ax.set_title('log like')
+
+
+def read_file_ns(fname, params):
+    nlive, iters = get_stats(fname)
+    samples = ns.read_chains(fname)
+
+    prior = samples.prior()
+
+    phi = prior['mag'].mean()
+    abs_phi = np.abs(prior['mag']).mean()
+    phi_squared = (prior['mag']**2).mean()
+    phi_4 = (prior['mag']**4).mean()
+
+    chi = params[2]**2 * (phi_squared - abs_phi**2)
+
+    binder = 1 - phi_4 / (3 * phi_squared**2)
+
+    results = {
+        'kappa': params[0],
+        'lambda': params[1],
+        'mean_phi': phi,
+        'mean_mod_phi': abs_phi,
+        'phi_squared': phi_squared,
+        'chi': chi,
+        'U': binder,
+        'iters': iters,
+        # 'autocorrelation': auto_corr[0]
+    }
+
+    p = ['mag', 'abs_mag']
+    prior['abs_mag'] = np.abs(prior['mag'])
+    fig, axes = ns.make_1d_axes(p, figsize=(6, 1.8), facecolor='w')
+    prior.plot_1d(axes, kind='hist', label='Mag, k = {}'.format(params[0]))
+    axes.iloc[-1].legend(loc='upper right')
+
+    return results
 
 
 def read_file(fname, params):
     nlive, iters = get_stats(fname)
-    # print(fname)
-    df = pd.read_csv(fname + ".posterior", names=['log_weight', "log_like", "mag", "mag_squared"], header=None, sep=" ", index_col=False)
+    print(nlive)
+    df = pd.read_csv(fname + ".posterior", names=['log_like', "birth_like", "mag", "mag_squared"], header=None, sep=" ", index_col=False)
+    df.sort_values(by='log_like', inplace=True, ignore_index=True)
     # Z = np.exp(scipy.special.logsumexp(df['log_weight']))
     # print(Z)
-    df.drop(df.tail(1).index,inplace=True)
-    df.drop(df.head(nlive).index,inplace=True)
+    # df.drop(df.head(nlive).index,inplace=True)
 
     df['t'] = np.log(nlive/(nlive+1))
     df['logX'] = df['t'].cumsum()
     logXp = df['logX'].shift(1, fill_value=0)
     logXm = df['logX'].shift(-1, fill_value=-np.inf)
     df['logdX'] = np.log(1 - np.exp(logXm-logXp)) + logXp - np.log(2)
+    df.drop(df.tail(1).index,inplace=True)
 
     # df['logW'] = df['logdX'] + df['log_like']
     df['logW'] = df['logdX']
+
+    # experimental! set X of first nlive points to 1 (as they are unconstrained).
+    df['logW'].loc[:nlive] = df['logW'].iloc[nlive]
 
     logZ = scipy.special.logsumexp(df['logW'])
 
@@ -224,7 +294,7 @@ def load_scaling_data():
             params = [float(x) for x in params]
             params.append(int(n))
 
-            out = read_file(path, params)
+            out = read_file_ns(path, params)
             data.append(out)
 
             files_searched.append(fname)
@@ -256,6 +326,10 @@ def find_critical_point(data, n):
     ax.plot(data['kappa'], data['chi'], linestyle='', marker='x')
     # ax.plot(kappa, chi_fit(kappa), linestyle='--')
     ax.set_title('Chi Vs Kappa, n = {}'.format(n))
+
+    fig, ax = plt.subplots()
+    ax.plot(data['kappa'], data['U'], linestyle='', marker='x')
+    ax.set_title('Chi Vs U, n = {}'.format(n))
 
     # fig, ax = plt.subplots()
     # ax.plot(data['kappa'], data['autocorrelation'], linestyle='', marker='x')
@@ -389,8 +463,8 @@ def plot_phase_line(l):
 # phase_diagram()
 # plot_phase_line(0.02)
 # print(read_file(root + file, [0.35, 0.1]))
-print(read_file(root + "Phi4_posterior_sampling", [0.26, 0.02, 32]))
-# print(read_file(root + "scaling/32/Phi4_0.256000_0.020000", [0.256000, 0.02, 32]))
+print(read_file(root + "Phi4_posterior_sampling", [0.31, 0.02, 32]))
+print(read_file(root + "scaling/32/Phi4_0.310000_0.020000", [0.31, 0.02, 32]))
 # print(read_file(root + "scaling/80/Phi4_0.200980_0.100000", [0.200350, 0.1]))
 # print(read_file(root + "scaling/80/Phi4_0.200170_0.100000", [0.200170, 0.1]))
 

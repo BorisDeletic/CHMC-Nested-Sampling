@@ -17,13 +17,13 @@ std::string scaling_dir = "scaling";
 std::string correlation_dir = "correlation";
 
 const bool logDiagnostics = false;
-const double priorWidth = 50;
+const double priorWidth = 4;
 
 const double epsilon = 0.01;
 const int pathLength = 100;
 
-const int numLive = 1000;
-const int maxIters = 500000;
+const int numLive = 2000;
+const int maxIters = 5 * numLive;
 const double precisionCriterion = 1e-1;
 const double reflectionRateTarget = 0.05;
 const double acceptRateTarget = 0.8;
@@ -98,7 +98,9 @@ void generatePhaseData() {
         std::filesystem::create_directory(phase_dir); // create src folder
     }
 
-    for (double k = kappaMin; k < kappaMax; k += (kappaMax - kappaMin) / resolution) {
+    #pragma omp parallel for
+    for (int i = 0; i < resolution; i++) {
+        double k = kappaMin + i * (kappaMax - kappaMin) / resolution;
         std::ostringstream fname;
 //        fname << phase_dir;
         fname << "scaling/32/Phi4_" << std::setprecision(6) << std::fixed << k << "_" << lambda;
@@ -195,7 +197,7 @@ int main() {
 //    generatePhaseData();
 
  //  generateCorrelationData();
-    runPhi4("Phi4_posterior_sampling", 32, 0.26, 0.02);
+    runPhi4("Phi4_posterior_sampling", 32, 0.31, 0.02);
 //    runPhi4("scaling/70/Phi4_0.200283_0.100000", 70, 0.200283, 0.1);
     std::cout << "help!";
 }

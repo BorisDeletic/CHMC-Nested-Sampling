@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/tests/gaussian_shells"
-path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/scaling/32/Phi4_0.256000_0.020000"
+# path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/scaling/32/Phi4_0.256000_0.020000"
+path = "/Users/borisdeletic/CLionProjects/CHMC-Nested-Sampling/cmake-build-release/app/Phi4_posterior_sampling"
 
 samples = ns.read_chains(path)
 

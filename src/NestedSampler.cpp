@@ -26,17 +26,40 @@ NestedSampler::NestedSampler(ISampler& sampler, IPrior& prior, ILikelihood& like
 void NestedSampler::Initialise() {
     mIter = 0;
     mLivePoints.clear();
+    std::cout << "Burning In Live points" << std::endl;
 
+    // Burn in phase so live points are distributed according to (unconstrained) posterior.
     for (int i = mLivePoints.size(); i < mConfig.numLive; i++) {
-        MCPoint newPoint = SampleFromPrior();
+        const MCPoint newPoint = BurnInPoint(SampleFromPrior());
+
         mLivePoints.insert(newPoint);
     }
 
 }
 
 
-void NestedSampler::SetAdaption(Adapter* adapter) {
-    mAdapter = adapter;
+const MCPoint NestedSampler::BurnInPoint(const MCPoint& seedPoint) {
+    std::vector<MCPoint> burnInChain;
+    burnInChain.push_back(seedPoint);
+
+    for (int i = 0; i < mSampleRetries * mBurnInLength; i++) {
+        MCPoint newPoint = mSampler.SamplePoint(burnInChain.back(), minLikelihood);
+
+        if (mAdapter != nullptr) {
+            const double reflectRate = (double) newPoint.reflections / newPoint.steps;
+            mAdapter->AdaptEpsilon(reflectRate, newPoint.acceptProbability);
+        }
+
+        if (!newPoint.rejected) {
+            burnInChain.push_back(newPoint);
+        }
+
+        if (burnInChain.size() > mBurnInLength) {
+            return burnInChain.back();
+        }
+    }
+
+    throw std::runtime_error("Burn In Phase Failed");
 }
 
 

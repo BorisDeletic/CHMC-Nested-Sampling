@@ -81,7 +81,7 @@ const Eigen::VectorXd Phi4Likelihood::DerivedParams(const Eigen::VectorXd &theta
     Eigen::VectorXd derived(numDerived);
 
     derived[0] = theta.mean();
-    derived[1] = theta.cwisePow(2).sum() / theta.size();
+    derived[1] = theta.cwisePow(2).sum();
 
 //    Eigen::VectorXd correlations = SpatialCorrelationFFT(theta);
 //    for (int i = 0; i < correlations.size(); i++) {

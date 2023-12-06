@@ -18,7 +18,7 @@ class NestedSampler {
 public:
     NestedSampler(ISampler&, IPrior&, ILikelihood&, Logger&, NSConfig config);
 
-    void SetAdaption(Adapter* adapter);
+    void SetAdaption(Adapter* adapter) { mAdapter = adapter; };
     void Initialise();
     void Run();
 
@@ -26,6 +26,7 @@ public:
 private:
     void NestedSamplingStep();
     void SampleNewPoint(const MCPoint& deadPoint, double likelihoodConstraint);
+    const MCPoint BurnInPoint(const MCPoint& seedPoint);
     const MCPoint SampleFromPrior();
     const MCPoint& GetRandomLivePoint();
 
@@ -60,6 +61,7 @@ private:
     const double minLikelihood = -1e30;
     const int mDimension;
     const int mSampleRetries = 5;
+    const int mBurnInLength = 1;
 
     int rejections = 0;
     int samples = 0;
